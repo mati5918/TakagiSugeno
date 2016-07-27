@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TakagiSugeno.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TakagiSugeno
 {
@@ -29,6 +31,8 @@ namespace TakagiSugeno
         {
             // Add framework services.
             services.AddMvc();
+            services.AddDbContext<TakagiSugenoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<TakagiSugenoDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
