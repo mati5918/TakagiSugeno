@@ -8,9 +8,10 @@ using TakagiSugeno.Model;
 namespace TakagiSugeno.Migrations
 {
     [DbContext(typeof(TakagiSugenoDbContext))]
-    partial class TakagiSugenoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160731125346_Rename")]
+    partial class Rename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -21,7 +22,7 @@ namespace TakagiSugeno.Migrations
                     b.Property<int>("InputOutputId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<int>("Name");
 
                     b.Property<int>("TSSystemId");
 

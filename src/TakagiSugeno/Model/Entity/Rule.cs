@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 
 namespace TakagiSugeno.Model.Entity
 {
-    public class TSInputOutput
+    public class Rule
     {
-        public int TSInputOutputId { get; set; }
-        public int Name { get; set; }
-        public IOType Type { get; set; }
+        public int RuleId { get; set; }
 
-        public List<TSVariable> Variables { get; set; }
         public int TSSystemId { get; set; }
         public TSSystem System { get; set; }
+        public List<RuleElement> RuleElements { get; set; }
     }
 }

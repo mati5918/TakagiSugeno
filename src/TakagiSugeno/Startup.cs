@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TakagiSugeno.Model;
 using Microsoft.EntityFrameworkCore;
+using TakagiSugeno.Model.Repository;
+using TakagiSugeno.Model.Entity;
 
 namespace TakagiSugeno
 {
@@ -33,6 +35,17 @@ namespace TakagiSugeno
             services.AddMvc();
             services.AddDbContext<TakagiSugenoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<TakagiSugenoDbContext>();
+            RegisterRepositories(services);
+        }
+
+        private void RegisterRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IRepository<TSSystem>, SystemRepository>();
+            services.AddScoped<IRepository<Variable>, VariableRepository>();
+            services.AddScoped<IRepository<InputOutput>, InputOutputRepository>();
+            services.AddScoped<IRepository<Rule>, RuleRepository>();
+            services.AddScoped<IRepository<RuleElement>, RuleElementRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

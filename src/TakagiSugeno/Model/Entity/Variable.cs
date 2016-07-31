@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace TakagiSugeno.Model.Entity
 {
-    public class TSVariable
+    public class Variable
     {
-        public int TSVariableId { get; set; }
+        public int VariableId { get; set; }
         public string Name { get; set; }
         public VariableType Type { get; set; }
         public string Data { get; set; }
 
-        public int TSInputOutputId { get; set; }
-        public TSInputOutput InputOutput { get; set; }
+        public int InputOutputId { get; set; }
+        public InputOutput InputOutput { get; set; }
 
     }
 }

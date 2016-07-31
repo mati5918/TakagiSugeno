@@ -14,10 +14,10 @@ namespace TakagiSugeno.Model
         }
 
         public DbSet<TSSystem> Systems { get; set; }
-        public DbSet<TSInputOutput> InputsOutputs { get; set; }
-        public DbSet<TSRule> Rules { get; set; }
-        public DbSet<TSRuleElement> RuleElements { get; set; }
-        public DbSet<TSVariable> Variables { get; set; }
+        public DbSet<InputOutput> InputsOutputs { get; set; }
+        public DbSet<Rule> Rules { get; set; }
+        public DbSet<RuleElement> RuleElements { get; set; }
+        public DbSet<Variable> Variables { get; set; }
 
     }
 }
