@@ -7,8 +7,8 @@ namespace TakagiSugeno.Model
 {
     public enum VariableType
     {
-        Const,
-        Triangle, //TODO: add more
+        Triangle,
+        Trapeze //TODO: add more
 
     }
 
