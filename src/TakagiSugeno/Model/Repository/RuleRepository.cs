@@ -46,7 +46,9 @@ namespace TakagiSugeno.Model.Repository
 
         public IEnumerable<Rule> GetBySystemId(int systemId)
         {
-            return _context.Rules.Include(r => r.RuleElements).Where(r => r.TSSystemId == systemId);
+            return _context.Rules.Include(r => r.RuleElements).ThenInclude(re => re.Variable)
+                .Include(r => r.RuleElements).ThenInclude(re => re.InputOutput)
+                .Where(r => r.TSSystemId == systemId);
         }
 
         public void Update(Rule entity)
