@@ -17,7 +17,9 @@ namespace TakagiSugeno.Model.Wrappers
 
         private Variable _variable;
         public IMembershipFunction MembershipFunction { get; }
-        public string InputName { get { return _variable.InputOutput.Name; } }
-        public string VariableName { get { return _variable.Name; } }
+        //public string InputName { get { return _variable.InputOutput.Name; } }
+        //public string VariableName { get { return _variable.Name; } }
+        public int VariableId { get { return _variable.VariableId; } }
+        public int InputId { get { return _variable.InputOutputId; } }
     }
 }

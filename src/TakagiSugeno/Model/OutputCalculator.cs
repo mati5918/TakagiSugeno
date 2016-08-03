@@ -10,18 +10,23 @@ namespace TakagiSugeno.Model
     public class OutputCalculator
     {
         private List<Rule> _rules;
-        private List<VariableWrapper> _variables;
-        private Dictionary<string, double> _inputValues;
+        public List<VariableWrapper> Variables { get; set; }
+        public Dictionary<int, double> InputValues { get; set; }
 
-        private List<double> CalcRuleMembershipDegrees(Rule rule)
+        public List<double> CalcRuleMembershipDegrees(Rule rule)
         {
             List<double> degrees = new List<double>();
-            foreach(VariableWrapper variable in _variables)
+            foreach (RuleElement elem in rule.RuleElements)
             {
-                if(rule.RuleElements.Any(elem => elem.InputOutput.Name == variable.InputName && elem.Variable.Name == variable.VariableName))
+                VariableWrapper variable = Variables.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
+                if(variable != null)
                 {
-                    double inputValue = _inputValues[variable.InputName];
+                    double inputValue = InputValues[variable.InputId];
                     degrees.Add(variable.MembershipFunction.CalcMembership(inputValue));
+                }
+                else
+                {
+                    throw new Exception("Variable not found");
                 }
             }
             return degrees;
