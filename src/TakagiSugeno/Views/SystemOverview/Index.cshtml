@@ -1,0 +1,11 @@
+﻿@model TakagiSugeno.Model.ViewModels.SystemVM
+@inject TakagiSugeno.Model.Services.InputsService InputService
+@{
+    ViewBag.Title = "Przegląd systemu";
+    //string title = "overview";
+}
+
+<div>
+    <h2>Twój System</h2>
+    @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+</div>

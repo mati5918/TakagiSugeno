@@ -36,3 +36,18 @@ textarea {
     display: none
   }
 }
+
+.inputs-list li{
+    display: block;
+    width: 200px;
+    text-align: center;
+}
+
+.inputs-list .panel-body{
+    height: 150px;
+    padding: 0px 0px 0px 0px;
+}
+
+.input-element :hover{
+    cursor: pointer;
+}

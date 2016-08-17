@@ -1,0 +1,32 @@
+﻿@model IEnumerable<TakagiSugeno.Model.ViewModels.InputVM>
+
+@{
+}
+
+<ul class="inputs-list">
+    @foreach (var item in Model)
+    {
+        <li class="input-element" onclick="openInput(@item.InputId, '@ViewBag.Title')">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @item.Name
+                </div>
+                <div class="panel-body" id="@item.InputId">
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        var containers = $(".inputs-list .panel-body");
+        $.each(containers, function (index, value) {
+            createChart($(value).attr("id"))
+        })
+    });
+
+
+</script>

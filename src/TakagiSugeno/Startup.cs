@@ -11,6 +11,7 @@ using TakagiSugeno.Model;
 using Microsoft.EntityFrameworkCore;
 using TakagiSugeno.Model.Repository;
 using TakagiSugeno.Model.Entity;
+using TakagiSugeno.Model.Services;
 
 namespace TakagiSugeno
 {
@@ -35,6 +36,8 @@ namespace TakagiSugeno
             services.AddMvc();
             services.AddDbContext<TakagiSugenoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<TakagiSugenoDbContext>();
+            services.AddScoped<InputsService>();
+            services.AddScoped<ChartsService>();
             RegisterRepositories(services);
         }
 
@@ -70,8 +73,10 @@ namespace TakagiSugeno
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=SystemOverview}/{action=Index}/{id?}");
             });
+
+            SeedData.Initialize(app.ApplicationServices);
         }
     }
 }

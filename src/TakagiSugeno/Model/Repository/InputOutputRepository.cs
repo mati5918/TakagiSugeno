@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace TakagiSugeno.Model.Repository
@@ -31,7 +32,7 @@ namespace TakagiSugeno.Model.Repository
         {
             if (filter == null)
                 throw new ArgumentNullException("Filter cannot be null");
-            return _context.InputsOutputs.Where(filter);
+            return _context.InputsOutputs.Include(io => io.Variables).Where(filter);
         }
 
         public IEnumerable<InputOutput> GetAll()
@@ -41,12 +42,12 @@ namespace TakagiSugeno.Model.Repository
 
         public InputOutput GetById(int id)
         {
-            return _context.InputsOutputs.FirstOrDefault(io => io.InputOutputId == id);
+            return _context.InputsOutputs.Include(io => io.Variables).FirstOrDefault(io => io.InputOutputId == id);
         }
 
         public IEnumerable<InputOutput> GetBySystemId(int systemId)
         {
-            return _context.InputsOutputs.Where(io => io.TSSystemId == systemId);
+            return _context.InputsOutputs.Include(io => io.Variables).Where(io => io.TSSystemId == systemId);
         }
 
         public void Update(InputOutput entity)
