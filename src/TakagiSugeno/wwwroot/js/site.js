@@ -1,20 +1,20 @@
 ﻿// Write your Javascript code.
 
-function createChart(id)
+function createChart(inputId, containerId)
 {
-    var url = "/Charts/GetChartData/?inputId=" + id;
+    var url = "/Charts/GetChartData/?inputId=" + inputId;
     $.ajax({
         url: url,
         type: "GET",
         success: function (response) {
-            plot(response, id);
+            plot(response, containerId);
         }
     });
 }
 
 function plot(response, id)
 {
-    var chart = new CanvasJS.Chart(id.toString(), {
+    var chart = new CanvasJS.Chart(id, {
         data: [],
         interactivityEnabled: false
     });
@@ -24,15 +24,32 @@ function plot(response, id)
             dataPoints.push({ x: response[i].data[j].x, y: response[i].data[j].y });
 
         }
-        chart.options.data.push({type: "line", dataPoints: dataPoints});
+        //chart.options.data.push({ type: "line", dataPoints: dataPoints, name: response[i].variableId, click: test, markerSize: 5 });
+        chart.options.data.push({ type: "line", dataPoints: dataPoints});
         dataPoints = [];
     }
     chart.render();
 }
 
+function test(e)
+{
+    alert("adada");
+    //alert(e.dataSeries.name);
+}
+
 function openInput(id, title)
 {
-    if (title === "Przegląd systemu") {
-        alert(title);
+    var url = "/Inputs/Details/" + id;
+    if (title === "Przegląd systemu") {        
+        window.location.href = url;
+    }
+    else {
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
     }
 }

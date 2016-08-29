@@ -38,6 +38,7 @@ namespace TakagiSugeno
             //services.AddDbContext<TakagiSugenoDbContext>();
             services.AddScoped<InputsService>();
             services.AddScoped<ChartsService>();
+            services.AddScoped<VariablesService>();
             RegisterRepositories(services);
         }
 

@@ -1,0 +1,29 @@
+﻿@model TakagiSugeno.Model.ViewModels.VariableVM
+@using TakagiSugeno.Model;
+@{
+}
+
+<tr class="variable-row" id="@Model.VariableId">
+    @Html.HiddenFor(m => m.VariableId)
+    <td class="col-sm-2"><input asp-for="@Model.Name" class="form-control" style="width: 100px" /></td>
+    <td><select asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control"></select></td>
+    <td>
+        <div class="">
+            @for (int j = 0; j < Model.FunctionData.Count; j++)
+            {
+                var key = Model.FunctionData.Keys.ElementAt(j);
+                //@Html.HiddenFor(m => m.Variables[i].FunctionData[key])
+                <label asp-for="@key" class="control-label">@key:</label>
+                                <div class="form-group">
+                                    <input asp-for="@Model.FunctionData[key]" style="width:40px" class="form-control" id="@key" />
+                                    <span>&nbsp;</span>
+                                </div>
+
+            }
+        </div>
+    </td>
+    <td><span class="glyphicon glyphicon-remove remove-variable" onclick="alert(@Model.VariableId);"></span></td>
+</tr>
+
+
+

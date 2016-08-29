@@ -19,14 +19,10 @@
 </ul>
 
 <script type="text/javascript">
-
-
     $(document).ready(function () {
         var containers = $(".inputs-list .panel-body");
         $.each(containers, function (index, value) {
-            createChart($(value).attr("id"))
+            createChart($(value).attr("id"), $(value).attr("id"))
         })
     });
-
-
 </script>

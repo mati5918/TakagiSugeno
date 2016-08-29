@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,7 +8,9 @@ namespace TakagiSugeno.Model
 {
     public enum VariableType
     {
+        [Display(Name = "Trójkąt")]
         Triangle,
+        [Display(Name = "Trapez")]
         Trapeze //TODO: add more
 
     }

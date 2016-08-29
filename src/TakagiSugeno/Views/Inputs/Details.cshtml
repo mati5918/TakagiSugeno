@@ -1,0 +1,119 @@
+﻿@model TakagiSugeno.Model.ViewModels.InputVM
+@using TakagiSugeno.Model;
+@{
+    ViewBag.Title = "Wejścia";
+}
+<h2>
+    Szczegóły wejścia @Model.Name
+</h2>
+<form onsubmit="return addVariable();" method="post" id="form" class="form-inline" >
+    @Html.EditorFor(m => m.Name)
+    @Html.HiddenFor(m => m.InputId)
+    <div class="row">
+        <div class="col-sm-8">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Typ</th>
+                        <th>Dane</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @for (int i = 0; i < Model.Variables.Count; i++)
+                {
+                    <tr class="variable-row" id="@Model.Variables[i].VariableId">
+                        @Html.HiddenFor(m => m.Variables[i].VariableId)
+                        <td class="col-sm-2"><input asp-for="@Model.Variables[i].Name" class="form-control" style="width: 100px" /></td>
+                        <td><select asp-for="@Model.Variables[i].Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control select-type"></select></td>
+                        <td>
+                            <div class="">
+                                @for (int j = 0; j < Model.Variables[i].FunctionData.Count; j++)
+                                {
+                                    var key = Model.Variables[i].FunctionData.Keys.ElementAt(j);
+                                    //@Html.HiddenFor(m => m.Variables[i].FunctionData[key])
+                                    <label asp-for="@key" class="control-label">@key:</label>
+                                    <div class="form-group">
+                                        <input asp-for="@Model.Variables[i].FunctionData[key]" style="width:40px" class="form-control" id="@key" />
+                                        <span>&nbsp;</span>
+                                    </div>
+
+                                }
+                            </div>
+                        </td>
+                        <td><span class="glyphicon glyphicon-remove remove-variable"></span></td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="col-sm-4">
+            <div id="chart-container"></div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var container = $(".row #chart-container");
+        createChart(@Model.InputId, $(container).attr("id"))
+    });
+
+    $(".variable-row").click(function () {
+        $(".variable-row").removeClass("info");
+        $(this).toggleClass("info");
+    });
+
+    $(".select-type").change(function () {
+        var id = $(this).parent().parent().attr('id');
+        var url = "/Inputs/ChangeVariableType";
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: $("#form").serialize() + "&variableId=" + id,
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
+    });
+
+    function addVariable(){
+        var url = "/Inputs/AddVariable";
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: $("#form").serialize(),
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
+        return false;
+    }
+
+    function removeVariable(){
+        var id = $(this).parent().parent().attr('id');
+        alert($(this).attr('class'));
+        var url = "/Inputs/RemoveVariable";
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: $("#form").serialize() + "&variableId=" + id,
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
+    }
+
+    $(".remove-variable").click(function () {
+        var id = $(this).parent().parent().attr('id');
+        var url = "/Inputs/RemoveVariable";
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: $("#form").serialize() + "&variableId=" + id,
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
+    });
+
+</script>

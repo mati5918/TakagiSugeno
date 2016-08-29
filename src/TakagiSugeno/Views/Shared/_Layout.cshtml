@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TakagiSugeno</title>
-    
+
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -42,12 +42,16 @@
             </div>
         </div>
     </div>
+    @if (ViewBag.Title == "Wejścia")
+    {
+        @inject TakagiSugeno.Model.Services.InputsService InputService
+        <div class="navbar navbar-inverse navbar-fixed-left">
+            @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+        </div>
+
+    }
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2016 - TakagiSugeno</p>
-        </footer>
     </div>
 
     <environment names="Development">
