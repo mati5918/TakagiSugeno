@@ -2,28 +2,32 @@
 @using TakagiSugeno.Model;
 @{
 }
-
-<tr class="variable-row" id="@Model.VariableId">
-    @Html.HiddenFor(m => m.VariableId)
-    <td class="col-sm-2"><input asp-for="@Model.Name" class="form-control" style="width: 100px" /></td>
-    <td><select asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control"></select></td>
-    <td>
-        <div class="">
-            @for (int j = 0; j < Model.FunctionData.Count; j++)
-            {
+<form class="form-inline">
+    <div class="panel panel-default variable-row" id="variable-@Model.VariableId">
+        <div class="panel-heading">
+            @Html.HiddenFor(m => m.VariableId)
+            <span class="glyphicon glyphicon-remove remove-variable pull-right" ></span>
+            <div class="form-group">
+                <label asp-for="@Model.Name">Nazwa</label>
+                <input asp-for="@Model.Name" class="form-control" style="width: 100px" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Type">Typ</label>
+                <select asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control select-type"></select>
+            </div>
+            </div>
+        <div class="panel-body">
+            <div class="form-group">
+                @for (int j = 0; j < Model.FunctionData.Count; j++)
+                {
                 var key = Model.FunctionData.Keys.ElementAt(j);
-                //@Html.HiddenFor(m => m.Variables[i].FunctionData[key])
-                <label asp-for="@key" class="control-label">@key:</label>
-                                <div class="form-group">
-                                    <input asp-for="@Model.FunctionData[key]" style="width:40px" class="form-control" id="@key" />
-                                    <span>&nbsp;</span>
-                                </div>
+                    <label asp-for="@key" class="control-label">@key:</label>
+                    <input asp-for="@Model.FunctionData[key]" style="width:40px" class="form-control chart-data-input" id="@key" />
 
-            }
+                }
+            </div>
         </div>
-    </td>
-    <td><span class="glyphicon glyphicon-remove remove-variable" onclick="alert(@Model.VariableId);"></span></td>
-</tr>
-
+    </div>
+</form>
 
 

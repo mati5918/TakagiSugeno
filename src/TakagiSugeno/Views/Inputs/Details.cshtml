@@ -6,74 +6,49 @@
 <h2>
     Szczegóły wejścia @Model.Name
 </h2>
-<form onsubmit="return addVariable();" method="post" id="form" class="form-inline" >
+
     @Html.EditorFor(m => m.Name)
     @Html.HiddenFor(m => m.InputId)
+    <h3>Zmienne</h3>
     <div class="row">
-        <div class="col-sm-8">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Nazwa</th>
-                        <th>Typ</th>
-                        <th>Dane</th>
-                        <th></th>
-                    </tr>
-                </thead>
+        <div class="col-sm-6 variables-list">
                 @for (int i = 0; i < Model.Variables.Count; i++)
                 {
-                    <tr class="variable-row" id="@Model.Variables[i].VariableId">
-                        @Html.HiddenFor(m => m.Variables[i].VariableId)
-                        <td class="col-sm-2"><input asp-for="@Model.Variables[i].Name" class="form-control" style="width: 100px" /></td>
-                        <td><select asp-for="@Model.Variables[i].Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control select-type"></select></td>
-                        <td>
-                            <div class="">
-                                @for (int j = 0; j < Model.Variables[i].FunctionData.Count; j++)
-                                {
-                                    var key = Model.Variables[i].FunctionData.Keys.ElementAt(j);
-                                    //@Html.HiddenFor(m => m.Variables[i].FunctionData[key])
-                                    <label asp-for="@key" class="control-label">@key:</label>
-                                    <div class="form-group">
-                                        <input asp-for="@Model.Variables[i].FunctionData[key]" style="width:40px" class="form-control" id="@key" />
-                                        <span>&nbsp;</span>
-                                    </div>
-
-                                }
-                            </div>
-                        </td>
-                        <td><span class="glyphicon glyphicon-remove remove-variable"></span></td>
-                    </tr>
+                    Html.RenderPartial("VariableRow", Model.Variables[i]);
                 }
-            </table>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div id="chart-container"></div>
         </div>
     </div>
-    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
-</form>
+    <button class="btn btn-success" onclick="addVariable()"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
+
 <script type="text/javascript">
-    $(document).ready(function () {
-        var container = $(".row #chart-container");
-        createChart(@Model.InputId, $(container).attr("id"))
+
+    var id = $(".row #chart-container").attr("id");
+    var chart = new CanvasJS.Chart(id, {
+        data: [],
     });
+    $(document).ready(function () {
+        createCharts(chart);
+        chart.render();
+    });
+
+    
+
 
     $(".variable-row").click(function () {
-        $(".variable-row").removeClass("info");
-        $(this).toggleClass("info");
-    });
-
-    $(".select-type").change(function () {
-        var id = $(this).parent().parent().attr('id');
-        var url = "/Inputs/ChangeVariableType";
-        $.ajax({
-            url: url,
-            type: "GET",
-            data: $("#form").serialize() + "&variableId=" + id,
-            success: function (response) {
-                $(".body-content").html(response);
+        var clickedId = $(this).attr("id");
+        $(".variable-row").each(function () {
+            var currId = $(this).attr("id");
+            if (clickedId === currId) {
+                $(this).removeClass("panel-default");
+                $(this).addClass("panel-primary");
+            } else {
+                $(this).removeClass("panel-primary");
+                $(this).addClass("panel-default");
             }
-        });
+        })
     });
 
     function addVariable(){
@@ -81,39 +56,47 @@
         $.ajax({
             url: url,
             type: "GET",
-            data: $("#form").serialize(),
             success: function (response) {
-                $(".body-content").html(response);
+                $(".variables-list").append(response);
             }
         });
         return false;
     }
 
-    function removeVariable(){
-        var id = $(this).parent().parent().attr('id');
-        alert($(this).attr('class'));
-        var url = "/Inputs/RemoveVariable";
-        $.ajax({
-            url: url,
-            type: "GET",
-            data: $("#form").serialize() + "&variableId=" + id,
-            success: function (response) {
-                $(".body-content").html(response);
-            }
-        });
-    }
-
-    $(".remove-variable").click(function () {
-        var id = $(this).parent().parent().attr('id');
-        var url = "/Inputs/RemoveVariable";
-        $.ajax({
-            url: url,
-            type: "GET",
-            data: $("#form").serialize() + "&variableId=" + id,
-            success: function (response) {
-                $(".body-content").html(response);
-            }
-        });
+    $(".variables-list").on("click", ".remove-variable", function () {
+        console.log("aa");
+        $(this).closest("form").remove(); 
     });
+
+    $(".variables-list").on("change", ".select-type", function () {
+        var url = "/Inputs/ChangeVariableType";
+        var form = $(this).closest("form");
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: form.serialize(),
+            success: function (response) {
+                form.replaceWith(response);
+            }
+        });
+
+    });
+
+    $(".variables-list").on("change", ".chart-data-input", function () {
+        var id = $(this).parent().parent().parent().attr("id");
+        console.log(id);
+        var pos = $("#" + id + " .chart-data-input").index($(this));
+        var value = parseFloat($(this).val());
+    
+        for (var i in chart.options.data) {
+            var data = chart.options.data[i];
+            if (data.name == id) {
+                data.dataPoints[pos].x = value;
+            }
+        }
+        chart.render();
+
+    });
+    
 
 </script>

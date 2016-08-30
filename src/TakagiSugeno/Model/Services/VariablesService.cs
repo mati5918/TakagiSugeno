@@ -17,23 +17,22 @@ namespace TakagiSugeno.Model.Services
             _repository = repository;
         }
 
-        public void ChangeVariableType(InputVM viewModel, int variableId)
+        public void ChangeVariableType(VariableVM variable)
         {
-            VariableVM variable = viewModel.Variables.FirstOrDefault(v => v.VariableId == variableId);
             if (variable != null)
             {
                 ModifyVariableType(variable);
             }
         }
 
-        public void AddVariable(InputVM viewModel)
+        public VariableVM CreateVariable()
         {
-            viewModel.Variables.Add(new VariableVM
+            return new VariableVM
             {
-                VariableId = CreateFakeVariableId(viewModel),
+                VariableId = CreateFakeVariableId(),
                 Type = Model.VariableType.Triangle,
                 FunctionData = new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } }
-            });
+            };
         }
 
         public void RemoveVariable(InputVM viewModel, int variableId)
@@ -82,12 +81,14 @@ namespace TakagiSugeno.Model.Services
             return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 }, {"d", 0 } };
         }
 
-        private int CreateFakeVariableId(InputVM viewModel)
+        private int CreateFakeVariableId()
         {
+            /*if (viewModel.Variables.Count == 0) return -1;
             int res = 0;
             int minId = viewModel.Variables.Min(v => v.VariableId);
             res = minId >= 0 ? -1 : minId - 1;
-            return res;
+            return res;*/
+            return -1;
         }
     }
 }

@@ -31,11 +31,6 @@ function plot(response, id)
     chart.render();
 }
 
-function test(e)
-{
-    alert("adada");
-    //alert(e.dataSeries.name);
-}
 
 function openInput(id, title)
 {
@@ -53,3 +48,45 @@ function openInput(id, title)
         });
     }
 }
+
+function createCharts(chart) {
+    var rows = $(".variable-row");
+    $.each(rows, function (index, value) {
+        var id = $(value).attr("id");
+        //console.log(id);
+        var chartPoints = [];
+        var type = $(value).find(".select-type").first().val();
+        $(value).find(".chart-data-input").each(function () {
+            var value = parseFloat($(this).val());
+            chartPoints.push(value);
+        })
+        plotData(chartPoints, type, id, chart);
+    })
+}
+
+function plotData(chartPoints, type, id, chart) {
+    switch (parseInt(type)) {
+        case 0: plotTriangle(chartPoints, type, id, chart); break;
+        case 1: plotTrapeze(chartPoints, type, id, chart); break;
+    }
+}
+
+function plotTriangle(chartPoints, type, id, chart) {
+    var dataPoints = [];
+    dataPoints.push({ x: chartPoints[0], y: 0 });
+    dataPoints.push({ x: chartPoints[1], y: 1 });
+    dataPoints.push({ x: chartPoints[2], y: 0 });
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id });
+    chart.render();
+}
+
+function plotTrapeze(chartPoints, type, id, chart) {
+    var dataPoints = [];
+    dataPoints.push({ x: chartPoints[0], y: 0 });
+    dataPoints.push({ x: chartPoints[1], y: 1 });
+    dataPoints.push({ x: chartPoints[2], y: 1 });
+    dataPoints.push({ x: chartPoints[3], y: 0 });
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id });
+    chart.render();
+}
+

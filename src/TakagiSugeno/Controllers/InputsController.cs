@@ -33,16 +33,16 @@ namespace TakagiSugeno.Controllers
             return View(vm);
         }
 
-        public IActionResult AddVariable(InputVM viewModel)
+        public IActionResult AddVariable()
         {
-            _variablesService.AddVariable(viewModel);
-            return PartialView("Details", viewModel);
+            VariableVM variable = _variablesService.CreateVariable();
+            return PartialView("VariableRow", variable);
         }
 
-        public IActionResult ChangeVariableType(InputVM viewModel, int variableId)
+        public IActionResult ChangeVariableType(VariableVM variable)
         {
-            _variablesService.ChangeVariableType(viewModel, variableId);
-            return PartialView("Details", viewModel);
+            _variablesService.ChangeVariableType(variable);
+            return PartialView("VariableRow", variable);
         }
 
         public IActionResult RemoveVariable(InputVM viewModel, int variableId)
