@@ -36,39 +36,46 @@
 
     
 
-
-    $(".variable-row").click(function () {
+    $(".variables-list").on("click", ".variable-row", function () {
         var clickedId = $(this).attr("id");
-        $(".variable-row").each(function () {
-            var currId = $(this).attr("id");
-            if (clickedId === currId) {
-                $(this).removeClass("panel-default");
-                $(this).addClass("panel-primary");
-            } else {
-                $(this).removeClass("panel-primary");
-                $(this).addClass("panel-default");
-            }
-        })
+        selectVariable(clickedId, chart);
     });
 
-    function addVariable(){
-        var url = "/Inputs/AddVariable";
+    $(".variables-list").on("mouseenter", ".variable-row", function () {
+        var clickedId = $(this).attr("id");
+        hoverVariable(clickedId, chart);
+    });
+
+    $(".variables-list").on("mouseleave", ".variable-row", function () {
+        cancelHoverVariable(chart);
+    });
+
+
+    function addVariable() {
+        var fakeId = createFakeId();
+        var url = "/Inputs/AddVariable/?fakeId=" + parseInt(fakeId);
         $.ajax({
             url: url,
             type: "GET",
             success: function (response) {
                 $(".variables-list").append(response);
+                addNewSerieToChart(chart, fakeId);
+                selectVariable(fakeId, chart);
             }
         });
-        return false;
+        
     }
 
     $(".variables-list").on("click", ".remove-variable", function () {
-        console.log("aa");
-        $(this).closest("form").remove(); 
+        var id = $(this).parents(".panel").attr("id");
+        removeSerieFromChart(chart, id);
+        $(this).closest("form").remove();
+        return false;
+        
     });
 
     $(".variables-list").on("change", ".select-type", function () {
+        var id = $(this).parents(".panel").attr("id");
         var url = "/Inputs/ChangeVariableType";
         var form = $(this).closest("form");
         $.ajax({
@@ -76,15 +83,16 @@
             type: "GET",
             data: form.serialize(),
             success: function (response) {
-                form.replaceWith(response);
+                form.replaceWith(response);              
+                refreshSerie(id, chart);
+                selectVariable(id, chart);
             }
         });
 
     });
 
     $(".variables-list").on("change", ".chart-data-input", function () {
-        var id = $(this).parent().parent().parent().attr("id");
-        console.log(id);
+        var id = $(this).parents(".panel").attr("id");
         var pos = $("#" + id + " .chart-data-input").index($(this));
         var value = parseFloat($(this).val());
     

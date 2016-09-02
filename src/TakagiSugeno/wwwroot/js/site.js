@@ -1,5 +1,9 @@
 ﻿// Write your Javascript code.
 
+var selectedThickness = 3;
+var hoverThickness = 3;
+var unselectedThickness = 2;
+
 function createChart(inputId, containerId)
 {
     var url = "/Charts/GetChartData/?inputId=" + inputId;
@@ -53,7 +57,6 @@ function createCharts(chart) {
     var rows = $(".variable-row");
     $.each(rows, function (index, value) {
         var id = $(value).attr("id");
-        //console.log(id);
         var chartPoints = [];
         var type = $(value).find(".select-type").first().val();
         $(value).find(".chart-data-input").each(function () {
@@ -66,27 +69,118 @@ function createCharts(chart) {
 
 function plotData(chartPoints, type, id, chart) {
     switch (parseInt(type)) {
-        case 0: plotTriangle(chartPoints, type, id, chart); break;
-        case 1: plotTrapeze(chartPoints, type, id, chart); break;
+        case 0: plotTriangle(chartPoints, id, chart); break;
+        case 1: plotTrapeze(chartPoints, id, chart); break;
     }
 }
 
-function plotTriangle(chartPoints, type, id, chart) {
+function plotTriangle(chartPoints, id, chart) {
     var dataPoints = [];
     dataPoints.push({ x: chartPoints[0], y: 0 });
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 0 });
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id });
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness });
     chart.render();
 }
 
-function plotTrapeze(chartPoints, type, id, chart) {
+function plotTrapeze(chartPoints, id, chart) {
     var dataPoints = [];
     dataPoints.push({ x: chartPoints[0], y: 0 });
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 1 });
     dataPoints.push({ x: chartPoints[3], y: 0 });
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id });
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness });
     chart.render();
 }
 
+function selectVariable(clickedId, chart) {
+    $(".variable-row").each(function () {
+        var currId = $(this).attr("id");
+        if (clickedId == currId) {
+            $(this).removeClass("panel-default");
+            $(this).removeClass("panel-success");
+            $(this).addClass("panel-primary");
+        } else {
+            $(this).removeClass("panel-primary");
+            $(this).addClass("panel-default");
+        }
+    })
+    $.each(chart.options.data, function (i,v) {
+        if (v.name == clickedId) {
+            v.color = "blue";
+            v.lineThickness = selectedThickness
+        }
+        else {
+            v.color = "red";
+            v.lineThickness = unselectedThickness
+        }
+    })
+    chart.render();
+}
+
+function createFakeId() {
+    var rows = $(".variable-row");
+    var min = 0;
+    $.each(rows, function (index, value) {
+        var id = parseInt($(value).attr("id"));
+        if (id < min) min = id;
+    });
+    return min - 1;
+}
+
+function removeSerieFromChart(chart, id) {
+    chart.options.data = $.grep(chart.options.data, function (e) {
+        return e.name != id;
+    })
+    chart.render();
+}
+
+function addNewSerieToChart(chart, id) {
+    plotTriangle(Array.of(0,0,0), id, chart);
+}
+
+function refreshSerie(id, chart) {
+    removeSerieFromChart(chart, id);
+    var row = $("#" + id);
+    var chartPoints = [];
+    var type = $(row).find(".select-type").first().val();
+    $(row).find(".chart-data-input").each(function () {
+        var value = parseFloat($(this).val());
+        chartPoints.push(value);
+    })
+    plotData(chartPoints, type, id, chart);
+
+}
+
+function hoverVariable(clickedId, chart) {
+    $(".variable-row").each(function () {
+        var currId = $(this).attr("id");
+        if (clickedId == currId && !$(this).hasClass("panel-primary")) {
+            $(this).removeClass("panel-default");
+            $(this).addClass("panel-success");
+        }
+    })
+    $.each(chart.options.data, function (i,v) {
+        if (v.name == clickedId && v.color != "blue") {
+            v.color = "green";
+            v.lineThickness = hoverThickness
+        }
+    })
+    chart.render();
+}
+
+function cancelHoverVariable(chart) {
+    $(".variable-row").each(function () {
+        if ($(this).hasClass("panel-success")) {
+            $(this).removeClass("panel-success");
+            $(this).addClass("panel-default");
+        }
+    })
+    $.each(chart.options.data, function (i, v) {
+        if (v.color == "green") {
+            v.color = "red";
+            v.lineThickness = unselectedThickness
+        }
+    })
+    chart.render();
+}

@@ -25,11 +25,11 @@ namespace TakagiSugeno.Model.Services
             }
         }
 
-        public VariableVM CreateVariable()
+        public VariableVM CreateVariable(int fakeId)
         {
             return new VariableVM
             {
-                VariableId = CreateFakeVariableId(),
+                VariableId = fakeId,
                 Type = Model.VariableType.Triangle,
                 FunctionData = new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } }
             };

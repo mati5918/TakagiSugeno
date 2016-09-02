@@ -33,9 +33,9 @@ namespace TakagiSugeno.Controllers
             return View(vm);
         }
 
-        public IActionResult AddVariable()
+        public IActionResult AddVariable(int fakeId)
         {
-            VariableVM variable = _variablesService.CreateVariable();
+            VariableVM variable = _variablesService.CreateVariable(fakeId);
             return PartialView("VariableRow", variable);
         }
 
