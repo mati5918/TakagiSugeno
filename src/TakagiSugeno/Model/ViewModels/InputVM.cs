@@ -9,6 +9,7 @@ namespace TakagiSugeno.Model.ViewModels
     {
         public int InputId { get; set; }
         public string Name { get; set; }
+        public int SystemId { get; set; }
         public List<VariableVM> Variables { get; set; }
     }
 }

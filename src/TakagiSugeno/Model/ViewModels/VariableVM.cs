@@ -12,7 +12,6 @@ namespace TakagiSugeno.Model.ViewModels
         public List<ChartData> Data { get; set; }
         public Dictionary<string, double> FunctionData { get; set; }
         public VariableType Type { get; set; }
-        public bool IsToRemove { get; set; } = false;
     }
 
     public class ChartData

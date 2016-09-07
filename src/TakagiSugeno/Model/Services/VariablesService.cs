@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -81,14 +82,5 @@ namespace TakagiSugeno.Model.Services
             return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 }, {"d", 0 } };
         }
 
-        private int CreateFakeVariableId()
-        {
-            /*if (viewModel.Variables.Count == 0) return -1;
-            int res = 0;
-            int minId = viewModel.Variables.Min(v => v.VariableId);
-            res = minId >= 0 ? -1 : minId - 1;
-            return res;*/
-            return -1;
-        }
     }
 }

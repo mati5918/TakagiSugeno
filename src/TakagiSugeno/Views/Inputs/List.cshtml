@@ -9,7 +9,8 @@
         <li class="input-element" onclick="openInput(@item.InputId, '@ViewBag.Title')">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    @item.Name
+                    <span class="glyphicon glyphicon-remove pull-right"></span>
+                    <b>@item.Name</b>
                 </div>
                 <div class="panel-body" id="@item.InputId">
                 </div>

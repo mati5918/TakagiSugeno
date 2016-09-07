@@ -51,5 +51,12 @@ namespace TakagiSugeno.Controllers
             return PartialView("Details", viewModel);
         }
 
+        [HttpPost]
+        public IActionResult Save([FromBody] InputVM viewModel)
+        {
+            List<string> errors = _inputsService.Save(viewModel);
+            return Json(errors);
+        }
+
     }
 }

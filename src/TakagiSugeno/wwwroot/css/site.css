@@ -59,8 +59,12 @@ textarea {
     border-right: 5px;
 }
 
-.remove-variable:hover{
+.remove-variable:hover, .hide-alert:hover {
     cursor: pointer;
+}
+
+.hide-alert{
+    color: black;
 }
 
 .navbar-fixed-left {
@@ -82,4 +86,15 @@ textarea {
 
 .variable-row{
     text-align: center;
+}
+
+.nav-header {
+   margin-left: 0px;
+   background-color: burlywood;
+   width: 220px;
+}
+
+.nav-header button{
+    margin-top: 15px;
+    margin-right: 10px;
 }

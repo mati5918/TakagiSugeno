@@ -3,28 +3,77 @@
 @{
     ViewBag.Title = "Wejścia";
 }
-<h2>
-    Szczegóły wejścia @Model.Name
-</h2>
+<div class="row">
+    <div class="col-sm-8">
+        <h2>
+            Szczegóły wejścia
+        </h2>
+    </div>
+    <div class="col-sm-4">
+        <div class="pull-right">
+            <button class="btn btn-primary" onclick="save()" id="btnSave" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz</button>
+            <button class="btn btn-danger" onclick="" id="btnCancel" style="margin-top:20px;" disabled data-toggle="modal" data-target="#cancelModal"><span class="glyphicon glyphicon-bullhorn"></span> Anuluj</button>
+        </div>
+        
+    </div>
+</div>
+<div class="alert" id="alert-container" hidden>
+    <span class="glyphicon glyphicon-remove hide-alert pull-right" onclick="hideAlert()"></span>
+    <text id="alert-message"></text>
+</div>
+<div>
+    <div class="row">
+        <div class="col-sm-8">
+            <form class="form-inline">
+                <label asp-for="Name">Nazwa</label>
+                <input asp-for="Name" class="form-control" id="InputName" />
+                <input asp-for="InputId" class="form-control" id="InputId" type="hidden" />
+                <input asp-for="SystemId" class="form-control" id="SystemId" type="hidden" />
+            </form>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-sm-2"><h3>Zmienne</h3></div>
+        <div class="col-sm-4">
+            <button class="btn btn-success pull-right" style="margin-top:15px;" onclick="addVariable()"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
+        </div>
+    </div>
 
-    @Html.EditorFor(m => m.Name)
-    @Html.HiddenFor(m => m.InputId)
-    <h3>Zmienne</h3>
     <div class="row">
         <div class="col-sm-6 variables-list">
-                @for (int i = 0; i < Model.Variables.Count; i++)
-                {
-                    Html.RenderPartial("VariableRow", Model.Variables[i]);
-                }
+            @for (int i = 0; i < Model.Variables.Count; i++)
+            {
+                Html.RenderPartial("VariableRow", Model.Variables[i]);
+            }
         </div>
         <div class="col-sm-6">
             <div id="chart-container"></div>
         </div>
     </div>
-    <button class="btn btn-success" onclick="addVariable()"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
 
+    <div id="cancelModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Porzucenie zmian.</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Czy na pewno chcesz porzucić zmiany dla tego wejścia?</p>
+                    <span id="bookId" hidden></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="setTimeout(function(){openInput(@Model.InputId, '@ViewBag.Title')},200)" data-dismiss="modal">Tak</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
-
+    //var isModfied = false;
     var id = $(".row #chart-container").attr("id");
     var chart = new CanvasJS.Chart(id, {
         data: [],
@@ -34,10 +83,15 @@
         chart.render();
     });
 
-    
+
 
     $(".variables-list").on("click", ".variable-row", function () {
         var clickedId = $(this).attr("id");
+        selectVariable(clickedId, chart);
+    });
+
+    $(".variables-list").on("focus", "input", function () {
+        var clickedId = $(this).parents(".variable-row").attr("id");
         selectVariable(clickedId, chart);
     });
 
@@ -63,48 +117,140 @@
                 selectVariable(fakeId, chart);
             }
         });
-        
+
     }
 
     $(".variables-list").on("click", ".remove-variable", function () {
         var id = $(this).parents(".panel").attr("id");
         removeSerieFromChart(chart, id);
         $(this).closest("form").remove();
+        refreshButtonsState();
         return false;
-        
+
     });
+
+    $(document).on("change", "select, input", function () {
+        refreshButtonsState();
+
+    });
+
 
     $(".variables-list").on("change", ".select-type", function () {
         var id = $(this).parents(".panel").attr("id");
         var url = "/Inputs/ChangeVariableType";
         var form = $(this).closest("form");
+        var type = $(this).val();
         $.ajax({
             url: url,
             type: "GET",
             data: form.serialize(),
             success: function (response) {
-                form.replaceWith(response);              
-                refreshSerie(id, chart);
+                form.replaceWith(response);
+                refreshSerie(id, chart, type);
                 selectVariable(id, chart);
+
             }
         });
 
     });
 
     $(".variables-list").on("change", ".chart-data-input", function () {
-        var id = $(this).parents(".panel").attr("id");
-        var pos = $("#" + id + " .chart-data-input").index($(this));
-        var value = parseFloat($(this).val());
-    
-        for (var i in chart.options.data) {
-            var data = chart.options.data[i];
-            if (data.name == id) {
-                data.dataPoints[pos].x = value;
-            }
+        var regex = /^\-?\d+([\.\,]\d+)?$/;
+        var val = $(this).val();
+        var isMatch = regex.test(val);
+        if (!isMatch) {
+            $(this).parent(".form-group").addClass("has-error");
+            //$("#btnSave").prop("disabled", true);
         }
-        chart.render();
-
+        else {
+            $(this).parent(".form-group").removeClass("has-error");
+            //$("#btnSave").prop("disabled", false);
+            val = val.replace(',', '.');
+            var id = $(this).parents(".panel").attr("id");
+            var pos = $("#" + id + " .chart-data-input").index($(this));
+            val = parseFloat(val);
+            //console.log(val);
+            for (var i in chart.options.data) {
+                var data = chart.options.data[i];
+                if (data.name == id) {
+                    data.dataPoints[pos].x = val;
+                }
+            }
+            chart.render();
+        }
     });
-    
+
+    $(".variables-list").on("keypress", ".chart-data-input", function (evt) {
+        /*var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;*/
+    });
+
+    function save() {
+
+        var variables = [];
+        $(".variable-row").each(function () {
+            var id = $(this).attr("id");
+            var name = $(this).find("#Name").val();
+            var type = $(this).find("#Type").val();
+            var variableData = {};
+            $(this).find(".chart-data-input").each(function () {
+                var pointValue = parseFloat($(this).val());
+                var pointName = $(this).attr("id");
+                variableData[pointName] = pointValue;
+            })
+            var variable = {
+                Name: name,
+                VariableId: id,
+                Type: type,
+                FunctionData: variableData
+            };
+            variables.push(variable);
+        });
+
+        var inputVM = {
+            Name: $("#InputName").val(),
+            InputId: $("#InputId").val(),
+            SystemId: $("#SystemId").val(),
+            Variables: variables
+        };
+
+        $.ajax({
+            url: "@Url.Action("Save")",
+            type: "POST",
+            data: JSON.stringify(inputVM),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: function (response) {
+                //alert(response.responseText);
+            },
+            success: function (response) {
+                if (response.length == 0) {
+                    $("#alert-container").removeClass("alert-danger");
+                    $("#alert-container").addClass("alert-success");
+                    $("#alert-container #alert-message").text("Zapisano pomyślnie!");
+                    $("#btnCancel, #btnSave").prop("disabled", true);
+                }
+                else {
+                    $("#alert-container").removeClass("alert-success");
+                    $("#alert-container").addClass("alert-danger");
+                    var msg = "";
+                    $.each(response, function (i, v) {
+                        if (msg.length > 0) msg += "<br>";
+                        msg += v;
+                        msg += ".";
+
+                    })
+                    $("#alert-container #alert-message").html(msg);
+                }
+                $("#alert-container").show();
+            }
+        });
+
+
+    }
+
+
 
 </script>

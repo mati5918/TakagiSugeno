@@ -39,6 +39,7 @@ namespace TakagiSugeno
             services.AddScoped<InputsService>();
             services.AddScoped<ChartsService>();
             services.AddScoped<VariablesService>();
+            services.AddScoped<InputSaver>();
             RegisterRepositories(services);
         }
 

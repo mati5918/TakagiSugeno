@@ -1,6 +1,6 @@
 ﻿// Write your Javascript code.
 
-var selectedThickness = 3;
+var selectedThickness = 3 ;
 var hoverThickness = 3;
 var unselectedThickness = 2;
 
@@ -139,11 +139,12 @@ function addNewSerieToChart(chart, id) {
     plotTriangle(Array.of(0,0,0), id, chart);
 }
 
-function refreshSerie(id, chart) {
+function refreshSerie(id, chart, type) {
     removeSerieFromChart(chart, id);
     var row = $("#" + id);
     var chartPoints = [];
-    var type = $(row).find(".select-type").first().val();
+    //var type = $(row).find("#Type").val();
+    //console.log(type);
     $(row).find(".chart-data-input").each(function () {
         var value = parseFloat($(this).val());
         chartPoints.push(value);
@@ -183,4 +184,18 @@ function cancelHoverVariable(chart) {
         }
     })
     chart.render();
+}
+
+function hideAlert() {
+    $(".alert").hide();
+}
+
+function refreshButtonsState() {
+    if ($(".has-error").length > 0) {
+        $("#btnSave").prop("disabled", true);
+    }
+    else {
+        $("#btnSave").prop("disabled", false);
+    }
+    $("#btnCancel").prop("disabled", false);
 }
