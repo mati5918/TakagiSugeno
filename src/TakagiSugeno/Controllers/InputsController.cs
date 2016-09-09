@@ -54,8 +54,25 @@ namespace TakagiSugeno.Controllers
         [HttpPost]
         public IActionResult Save([FromBody] InputVM viewModel)
         {
-            List<string> errors = _inputsService.Save(viewModel);
-            return Json(errors);
+            SaveResult res = _inputsService.Save(viewModel);
+            return Json(res);
+        }
+        [HttpPost]
+        public IActionResult Remove(int id)
+        {
+            _inputsService.Remove(id);
+            return Json(string.Empty);
+        }
+
+        public IActionResult InputsList(int systemId)
+        {
+            return PartialView("List", _inputsService.GetSystemInputs(systemId));
+        }
+
+        public IActionResult Add(int systemId)
+        {
+            ViewBag.IsNewInput = true;
+            return PartialView("Details", _inputsService.AddInput(systemId));
         }
 
     }

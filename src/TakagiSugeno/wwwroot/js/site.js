@@ -4,16 +4,21 @@ var selectedThickness = 3 ;
 var hoverThickness = 3;
 var unselectedThickness = 2;
 
-function createChart(inputId, containerId)
-{
-    var url = "/Charts/GetChartData/?inputId=" + inputId;
-    $.ajax({
-        url: url,
-        type: "GET",
-        success: function (response) {
-            plot(response, containerId);
+/*var chart = new CanvasJS.Chart(id, {
+    data: [],
+});*/
+
+function createChartFromJSONData(chart, dataObj) {
+    var data = $.parseJSON($(dataObj).attr("data-chartJson"));
+    var chartPoints = [];
+    
+    for (var k in data) {
+        if (data.hasOwnProperty(k)) {
+            chartPoints.push(data[k]);
         }
-    });
+    }
+    var type = $(dataObj).attr("data-type");
+    plotData(chartPoints, type, "", chart)
 }
 
 function plot(response, id)
@@ -72,6 +77,11 @@ function plotData(chartPoints, type, id, chart) {
         case 0: plotTriangle(chartPoints, id, chart); break;
         case 1: plotTrapeze(chartPoints, id, chart); break;
     }
+    switch (type) {
+        case "Triangle": plotTriangle(chartPoints, id, chart); break;
+        case "Trapeze": plotTrapeze(chartPoints, id, chart); break;
+    }
+
 }
 
 function plotTriangle(chartPoints, id, chart) {
@@ -198,4 +208,48 @@ function refreshButtonsState() {
         $("#btnSave").prop("disabled", false);
     }
     $("#btnCancel").prop("disabled", false);
+}
+
+
+function removeInput(obj) {
+    var id = $(obj).attr("data-id");
+    setTimeout(function () {
+        var url = "/Inputs/Remove/" + id;
+        $.ajax({
+            url: url,
+            type: "POST",
+            success: function (response) {
+                var removeId = "Input-" + id;
+                getInputsList($("#SystemId").val());
+                var openedId = $("#InputId").val()
+                if (openedId == id) {
+                    $(".body-content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
+                }
+            }
+        })
+    },200)
+}
+
+function getInputsList(systemId) {
+    var url = "/Inputs/InputsList/?systemId=" + systemId;
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (response) {
+            $(".inputs-list").parent().replaceWith(response);
+        }
+    })
+}
+
+function addInput() {
+    var systemId = $(".inputs-list").attr("data-id");
+    console.log(systemId);
+    var url = "/Inputs/Add/?systemId=" + systemId;
+    $.ajax({
+        url: url,
+        type: "POST",
+        success: function (response) {
+            $(".body-content").html(response);
+        }
+    })
 }

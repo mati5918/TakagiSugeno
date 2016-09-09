@@ -2,11 +2,12 @@
 @using TakagiSugeno.Model;
 @{
     ViewBag.Title = "Wejścia";
+    string header = (ViewBag.IsNewInput != null)  ? "Nowe wejście" : "Szczegóły wejścia";
 }
 <div class="row">
     <div class="col-sm-8">
-        <h2>
-            Szczegóły wejścia
+        <h2 class="header">
+            @header
         </h2>
     </div>
     <div class="col-sm-4">
@@ -61,10 +62,27 @@
                 </div>
                 <div class="modal-body">
                     <p>Czy na pewno chcesz porzucić zmiany dla tego wejścia?</p>
-                    <span id="bookId" hidden></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" onclick="setTimeout(function(){openInput(@Model.InputId, '@ViewBag.Title')},200)" data-dismiss="modal">Tak</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="removeModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Usunięcie wejścia.</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Czy na pewno chcesz usunąć wejście <span id="remove-input-name"></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="removeInput(this)">Tak</button>
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
                 </div>
             </div>
@@ -115,6 +133,7 @@
                 $(".variables-list").append(response);
                 addNewSerieToChart(chart, fakeId);
                 selectVariable(fakeId, chart);
+                refreshButtonsState();
             }
         });
 
@@ -215,7 +234,7 @@
             SystemId: $("#SystemId").val(),
             Variables: variables
         };
-
+        console.log(inputVM);
         $.ajax({
             url: "@Url.Action("Save")",
             type: "POST",
@@ -226,17 +245,21 @@
                 //alert(response.responseText);
             },
             success: function (response) {
-                if (response.length == 0) {
+                if (response.errors.length == 0) {
                     $("#alert-container").removeClass("alert-danger");
                     $("#alert-container").addClass("alert-success");
                     $("#alert-container #alert-message").text("Zapisano pomyślnie!");
                     $("#btnCancel, #btnSave").prop("disabled", true);
+                    $(".header").text("Szczegóły wejścia");
+                    getInputsList($("#SystemId").val());
+                    $("#InputId").val(response.id);
+                    console.log($("#InputId").val())
                 }
                 else {
                     $("#alert-container").removeClass("alert-success");
                     $("#alert-container").addClass("alert-danger");
                     var msg = "";
-                    $.each(response, function (i, v) {
+                    $.each(response.errors, function (i, v) {
                         if (msg.length > 0) msg += "<br>";
                         msg += v;
                         msg += ".";

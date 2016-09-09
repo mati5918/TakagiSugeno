@@ -22,11 +22,22 @@ namespace TakagiSugeno.Model.Repository
             if (inputEntity != null)
             {
                 inputEntity.Name = viewModel.Name;
-                _context.Entry(inputEntity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                SaveVariables(viewModel);
-                _context.SaveChanges();
-
+                _context.Entry(inputEntity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;               
             }
+            else
+            {
+                inputEntity = new InputOutput
+                {
+                    Name = viewModel.Name,
+                    TSSystemId = viewModel.SystemId,
+                    Type = IOType.Input
+                };
+                _context.InputsOutputs.Add(inputEntity);
+                _context.SaveChanges();
+                viewModel.InputId = inputEntity.InputOutputId;
+            }
+            SaveVariables(viewModel);
+            _context.SaveChanges();
         }
 
         private void SaveVariables(InputVM viewModel)

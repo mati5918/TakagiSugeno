@@ -26,8 +26,9 @@ namespace TakagiSugeno.Model.Services
 
         public List<InputVM> GetSystemInputs(int systemId)
         {
-            return _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
-                .Select(i => new InputVM { Name = i.Name, InputId = i.InputOutputId}).ToList();               
+            return  _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
+                .Select(i => new InputVM { Name = i.Name, InputId = i.InputOutputId, SystemId = i.TSSystemId,
+                    Variables = i.Variables.Select(v => new VariableVM { Type = v.Type, JsonData = v.Data}).ToList()}).ToList();         
         }
 
         public InputVM GetInput(int inputId)
@@ -47,13 +48,18 @@ namespace TakagiSugeno.Model.Services
             return vm;
         }
 
-        public List<string> Save(InputVM viewModel)
+        public SaveResult Save(InputVM viewModel)
         {
             if (IsInputValid(viewModel))
             {
                 _saver.Save(viewModel);
             }
-            return validationErros;
+            return new SaveResult { Id = viewModel.InputId, Errors = validationErros};
+        }
+
+        internal void Remove(int id)
+        {
+            _inputRepository.Delete(_inputRepository.GetById(id));
         }
 
         private List<string> validationErros = new List<string>();
@@ -64,6 +70,16 @@ namespace TakagiSugeno.Model.Services
             ValidateVariables(input);
             validationErros = validationErros.Distinct().ToList();
             return validationErros.Count > 0 ? false : true;
+        }
+
+        public InputVM AddInput(int systemId)
+        {
+            return new InputVM
+            {
+                InputId = -1,
+                SystemId = systemId,
+                Variables = new List<VariableVM>()
+            };
         }
 
         private void ValidateInputName(InputVM input)

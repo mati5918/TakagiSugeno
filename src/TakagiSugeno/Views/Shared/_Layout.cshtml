@@ -8,9 +8,11 @@
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/scrollbars/jquery.mCustomScrollbar.min.css" />
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/jquery.canvasjs.min.js"></script>
+        <script src="~/scrollbars/jquery.mCustomScrollbar.concat.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -45,10 +47,10 @@
     @if (ViewBag.Title == "Wejścia")
     {
         @inject TakagiSugeno.Model.Services.InputsService InputService
-        <div class="navbar navbar-inverse navbar-fixed-left">
+        <div class="navbar navbar-inverse navbar-fixed-left ">
             <div class="nav-header row">
                 <div class="col-sm-8"><h3>Wejścia</h3></div>
-                <div class="col-sm-4"><button class="btn btn-success pull-right" id="addInput"><span class="glyphicon glyphicon-plus"></span></button></div>
+                <div class="col-sm-4"><button class="btn btn-success pull-right" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus" ></span></button></div>
             </div>
             <!--<div class="panel panel-warning">
                 <div class="panel-heading">
@@ -62,6 +64,7 @@
                 </div>
             </div>-->
             @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+        <br /><br />
         </div>
 
     }

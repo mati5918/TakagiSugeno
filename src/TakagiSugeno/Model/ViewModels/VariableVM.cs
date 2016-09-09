@@ -9,14 +9,9 @@ namespace TakagiSugeno.Model.ViewModels
     {
         public int VariableId { get; set; }
         public string Name { get; set; }
-        public List<ChartData> Data { get; set; }
+        public string JsonData { get; set; }
         public Dictionary<string, double> FunctionData { get; set; }
         public VariableType Type { get; set; }
     }
 
-    public class ChartData
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-    }
 }

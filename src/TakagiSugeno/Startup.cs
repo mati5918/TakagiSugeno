@@ -37,7 +37,6 @@ namespace TakagiSugeno
             services.AddDbContext<TakagiSugenoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDbContext<TakagiSugenoDbContext>();
             services.AddScoped<InputsService>();
-            services.AddScoped<ChartsService>();
             services.AddScoped<VariablesService>();
             services.AddScoped<InputSaver>();
             RegisterRepositories(services);

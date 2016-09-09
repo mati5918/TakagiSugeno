@@ -2,17 +2,23 @@
 
 @{
 }
-
-<ul class="inputs-list">
+<div>
+<ul class="inputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault().SystemId'>
     @foreach (var item in Model)
     {
-        <li class="input-element" onclick="openInput(@item.InputId, '@ViewBag.Title')">
+        <li class="input-element" id="Input-@item.InputId">
+            <p hidden>@item.InputId</p>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-remove pull-right"></span>
+                    <span class="glyphicon glyphicon-remove pull-right remove-input" data-toggle="modal" data-target="#cancelModal"></span>
                     <b>@item.Name</b>
+                    @foreach (var variable in item.Variables)
+                    {
+                        <div class="json-data" hidden data-chartJson='@variable.JsonData' data-type=@variable.Type></div>
+                    }
                 </div>
                 <div class="panel-body" id="@item.InputId">
+                    
                 </div>
             </div>
         </li>
@@ -21,9 +27,34 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        
         var containers = $(".inputs-list .panel-body");
         $.each(containers, function (index, value) {
-            createChart($(value).attr("id"), $(value).attr("id"))
+            var id = $(value).attr("id")
+            var chart = new CanvasJS.Chart(id, {
+                data: [],
+            });
+            $(value).parent().find(".json-data").each(function () {
+                createChartFromJSONData(chart, $(this));
+            })
+            chart.render();
         })
     });
+
+    $(".inputs-list").on("click", ".remove-input", function () {
+        var id = $(this).parents(".input-element").attr("id").split('-')[1];
+        $("#removeModal #remove-input-name").text($(this).parent().text().trim());
+        $(".modal-footer .btn-success").attr('data-id', id);
+        $("#removeModal").modal("show");
+        return false;
+
+    });
+
+    $(".inputs-list").on("click", ".input-element", function () {
+        var id = $(this).attr("id").split('-')[1];
+        var title = $(this).parents(".inputs-list").attr("id");
+        return openInput(id, title);
+
+    });
 </script>
+</div>
