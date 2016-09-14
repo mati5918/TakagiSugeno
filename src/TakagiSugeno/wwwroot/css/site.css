@@ -37,23 +37,23 @@ textarea {
   }
 }
 
-.inputs-list{
+.inputs-list, .outputs-list {
     margin-top: 20px;
     padding-left: 10px;
 
 }
-.inputs-list li{
+.inputs-list li, .outputs-list li {
     display: block;
     width: 200px;
     text-align: center;
 }
 
-.inputs-list .panel-body{
+.inputs-list .panel-body, .outputs-list .panel-body {
     height: 150px;
     padding: 0px 0px 0px 0px;
 }
 
-.input-element :hover{
+.input-element :hover, .output-element :hover{
     cursor: pointer;
     border: medium;
     border-right: 5px;

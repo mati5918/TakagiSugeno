@@ -15,8 +15,7 @@ namespace TakagiSugeno.Model
             using (var context = new TakagiSugenoDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<TakagiSugenoDbContext>>()))
             {
-                // Look for any movies.
-                if (context.Systems.Any())
+                /*if (context.Systems.Any())
                 {
                     return;   // DB has been seeded
                 }
@@ -39,7 +38,14 @@ namespace TakagiSugeno.Model
                 Variable y3 = new Variable { Name = "B3", Type = VariableType.Triangle, InputOutputId = input2.InputOutputId, Data = @"{a: 1, b: 3, c: 5}" };
 
                 context.Variables.AddRange(x1, x2, y1, y2, y3);
-                context.SaveChanges();
+                context.SaveChanges();*/
+
+                /*InputOutput output1 = new InputOutput { Type = IOType.Output, Name = "Wynik1", TSSystemId = 1 };
+                InputOutput output2 = new InputOutput { Type = IOType.Output, Name = "Wynik2", TSSystemId = 1 };
+
+                context.InputsOutputs.Add(output1);
+                context.InputsOutputs.Add(output2);
+                context.SaveChanges();*/
             }
         }
     }

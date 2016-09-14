@@ -1,5 +1,6 @@
 ﻿@model TakagiSugeno.Model.ViewModels.SystemVM
 @inject TakagiSugeno.Model.Services.InputsService InputService
+@inject TakagiSugeno.Model.Services.OutputsService OutputsService
 @{
     ViewBag.Title = "Przegląd systemu";
     //string title = "overview";
@@ -7,5 +8,16 @@
 
 <div>
     <h2>Twój System</h2>
-    @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+    <div class="row">
+        <div class="col-sm-4">
+            @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+        </div>
+        <div class="col-sm-4">
+             
+        </div>
+        <div class="col-sm-4">
+            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputsService.GetSystemOutputs(1));}
+        </div>
+    </div>
+    
 </div>

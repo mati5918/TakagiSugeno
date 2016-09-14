@@ -1,0 +1,25 @@
+﻿@model IEnumerable<TakagiSugeno.Model.ViewModels.OutputVM>
+@{
+}
+@if (Model != null && Model.Count() > 0)
+{
+<div>
+    <ul class="outputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault().SystemId'>
+        @foreach (var item in Model)
+        {
+            <li class="output-element" id="Output-@item.OutputId">
+                <p hidden>@item.OutputId</p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-remove pull-right remove-input" data-toggle="modal" data-target="#cancelModal"></span>
+                        <b>@item.Name</b>
+                    </div>
+                    <div class="panel-body" id="@item.OutputId">
+
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+}
