@@ -11,8 +11,11 @@ namespace TakagiSugeno.Model
         [Display(Name = "Trójkąt")]
         Triangle,
         [Display(Name = "Trapez")]
-        Trapeze //TODO: add more
-
+        Trapeze,
+        [Display(Name = "Stała")]
+        OutputConst = 100,
+        [Display(Name = "Funkcja")]
+        OutputFunction = 101
     }
 
     public enum IOType

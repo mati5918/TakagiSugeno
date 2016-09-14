@@ -21,7 +21,7 @@ function createChartFromJSONData(chart, dataObj) {
     plotData(chartPoints, type, "", chart)
 }
 
-function plot(response, id)
+/*function plot(response, id)
 {
     var chart = new CanvasJS.Chart(id, {
         data: [],
@@ -38,7 +38,7 @@ function plot(response, id)
         dataPoints = [];
     }
     chart.render();
-}
+}*/
 
 
 function openInput(id, title)
@@ -57,6 +57,23 @@ function openInput(id, title)
         });
     }
 }
+
+function openOutput(id, title) {
+    var url = "/Outputs/Details/" + id;
+    if (title === "Przegląd systemu") {        
+        window.location.href = url;
+    }
+    else {
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {
+                $(".body-content").html(response);
+            }
+        });
+    }
+}
+
 
 function createCharts(chart) {
     var rows = $(".variable-row");
@@ -89,7 +106,8 @@ function plotTriangle(chartPoints, id, chart) {
     dataPoints.push({ x: chartPoints[0], y: 0 });
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 0 });
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness });
+    chart.options.interactivityEnabled = false;
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
     chart.render();
 }
 
@@ -99,7 +117,8 @@ function plotTrapeze(chartPoints, id, chart) {
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 1 });
     dataPoints.push({ x: chartPoints[3], y: 0 });
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness });
+    chart.options.interactivityEnabled = false;
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
     chart.render();
 }
 

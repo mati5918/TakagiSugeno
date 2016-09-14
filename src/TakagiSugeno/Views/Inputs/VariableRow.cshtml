@@ -1,6 +1,12 @@
 ﻿@model TakagiSugeno.Model.ViewModels.VariableVM
 @using TakagiSugeno.Model;
+@using TakagiSugeno.Tools;
 @{
+    IOType variableType = IOType.Input;
+    if(ViewBag.Title == "Wyjścia")
+    {
+        variableType = IOType.Output;
+    }
 }
 <form class="form-inline">
     <div class="panel panel-default variable-row" id="@Model.VariableId">
@@ -13,7 +19,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="@Model.Type">Typ</label>
-                <select asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<VariableType>()" class="form-control select-type"></select>
+                <select asp-for="@Model.Type" asp-items="Html.GetEnumSelectList<VariableType>(variableType)" class="form-control select-type"></select>
             </div>
         </div>
         <div class="panel-body">

@@ -52,21 +52,22 @@
                 <div class="col-sm-8"><h3>Wejścia</h3></div>
                 <div class="col-sm-4"><button class="btn btn-success pull-right" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus" ></span></button></div>
             </div>
-            <!--<div class="panel panel-warning">
-                <div class="panel-heading">
-                    <div class="row">
-                    <div class="col-sm-8"><h3>Wejścia</h3></div>
-                    <div class="col-sm-4"><button class="btn btn-success pull-right" id="addInput"><span class="glyphicon glyphicon-plus"></span></button></div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    
-                </div>
-            </div>-->
             @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
         <br /><br />
         </div>
 
+    } 
+    else if (ViewBag.Title == "Wyjścia")
+    {
+        @inject TakagiSugeno.Model.Services.OutputsService OutputService
+        <div class="navbar navbar-inverse navbar-fixed-left ">
+            <div class="nav-header row">
+                <div class="col-sm-8"><h3>Wyjścia</h3></div>
+                <div class="col-sm-4"><button class="btn btn-success pull-right" id="addOutput" onclick="addOutput()"><span class="glyphicon glyphicon-plus"></span></button></div>
+            </div>
+            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputService.GetSystemOutputs(1));}
+            <br /><br />
+        </div>
     }
     <div class="container body-content">
         @RenderBody()

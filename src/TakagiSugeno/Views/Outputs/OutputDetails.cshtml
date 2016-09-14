@@ -1,0 +1,55 @@
+﻿@model TakagiSugeno.Model.ViewModels.OutputVM
+@{
+    ViewBag.Title = "Wyjścia";
+    string header = (ViewBag.IsNewOutput != null) ? "Nowe wyjście" : "Szczegóły wyjścia";
+}
+
+<div class="row">
+<div class="col-sm-8">
+    <h2 class="header">
+        @header
+    </h2>
+</div>
+<div class="col-sm-4">
+    <div class="pull-right">
+        <button class="btn btn-primary" onclick="save()" id="btnSave" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz</button>
+        <button class="btn btn-danger" onclick="" id="btnCancel" style="margin-top:20px;" disabled data-toggle="modal" data-target="#cancelModal"><span class="glyphicon glyphicon-bullhorn"></span> Anuluj</button>
+    </div>
+
+</div>
+</div>
+<div class="alert" id="alert-container" hidden>
+    <span class="glyphicon glyphicon-remove hide-alert pull-right" onclick="hideAlert()"></span>
+    <text id="alert-message"></text>
+</div>
+<div>
+    <div class="row">
+        <div class="col-sm-8">
+            <form class="form-inline">
+                <label asp-for="Name">Nazwa</label>
+                <input asp-for="Name" class="form-control" id="InputName" />
+                <input asp-for="OutputId" class="form-control" id="InputId" type="hidden" />
+                <input asp-for="SystemId" class="form-control" id="SystemId" type="hidden" />
+            </form>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-2"><h3>Zmienne</h3></div>
+        <div class="col-sm-4">
+            <button class="btn btn-success pull-right" style="margin-top:15px;" onclick="addVariable()"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 variables-list">
+            @for (int i = 0; i < Model.Variables.Count; i++)
+            {
+                Html.RenderPartial("~/Views/Inputs/VariableRow.cshtml", Model.Variables[i]);
+            }
+        </div>
+        <div class="col-sm-6">
+            <div id="chart-container"></div>
+        </div>
+    </div>
+</div>

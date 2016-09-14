@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<TakagiSugeno.Model.ViewModels.OutputVM>
 @{
 }
+
+<div>
 @if (Model != null && Model.Count() > 0)
 {
-<div>
     <ul class="outputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault().SystemId'>
         @foreach (var item in Model)
         {
@@ -14,12 +15,35 @@
                         <span class="glyphicon glyphicon-remove pull-right remove-input" data-toggle="modal" data-target="#cancelModal"></span>
                         <b>@item.Name</b>
                     </div>
-                    <div class="panel-body" id="@item.OutputId">
+                    <div class="panel-body" id="@item.OutputId" style="padding-top:20px;">
+                        @foreach(var variable in item.Variables)
+                        {
+                            <p>@variable.Name [@variable.Type]</p>
 
+                        }
                     </div>
                 </div>
             </li>
         }
     </ul>
-</div>
 }
+<script type="text/javascript">
+
+    /*$(".inputs-list").on("click", ".remove-input", function () {
+        var id = $(this).parents(".input-element").attr("id").split('-')[1];
+        $("#removeModal #remove-input-name").text($(this).parent().text().trim());
+        $(".modal-footer .btn-success").attr('data-id', id);
+        $("#removeModal").modal("show");
+        return false;
+
+    });*/
+
+    $(".outputs-list").on("click", ".output-element", function () {
+        var id = $(this).attr("id").split('-')[1];
+        var title = $(this).parents(".outputs-list").attr("id");
+        return openOutput(id, title);
+
+    });
+    </script>
+</div>
+

@@ -46,6 +46,16 @@ namespace TakagiSugeno.Model
                 context.InputsOutputs.Add(output1);
                 context.InputsOutputs.Add(output2);
                 context.SaveChanges();*/
+
+                /*Variable x1 = new Variable { Name = "0", Type = VariableType.OutputConst, InputOutputId = 3, Data = @"{wartość: 0}" };
+                Variable x2 = new Variable { Name = "2", Type = VariableType.OutputConst, InputOutputId = 3, Data = @"{wartość: 2}" };
+
+                Variable y1 = new Variable { Name = "-1", Type = VariableType.OutputConst, InputOutputId = 4, Data = @"{wartość: -1}" };
+                Variable y2 = new Variable { Name = "1", Type = VariableType.OutputConst, InputOutputId =  4, Data = @"{wartość: 1}" };
+                Variable y3 = new Variable { Name = "3", Type = VariableType.OutputConst, InputOutputId =  4, Data = @"{wartość: 3}" };
+
+                context.Variables.AddRange(x1, x2, y1, y2, y3);
+                context.SaveChanges();*/
             }
         }
     }
