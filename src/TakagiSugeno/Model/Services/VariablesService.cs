@@ -26,13 +26,39 @@ namespace TakagiSugeno.Model.Services
             }
         }
 
-        public VariableVM CreateVariable(int fakeId)
+        public VariableVM CreateVariable(int fakeId, IOType type)
+        {
+            if(type == IOType.Input)
+            {
+                return CreateInputVariable(fakeId);
+            }
+            else if (type == IOType.Output)
+            {
+                return CreateOutputVariable(fakeId);
+            }
+            else
+            {
+                throw new ArgumentException("Wrong IO type");
+            }
+        }
+
+        private VariableVM CreateInputVariable(int fakeId)
         {
             return new VariableVM
             {
                 VariableId = fakeId,
                 Type = Model.VariableType.Triangle,
                 FunctionData = new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } }
+            };
+        }
+
+        private VariableVM CreateOutputVariable(int fakeId)
+        {
+            return new VariableVM
+            {
+                VariableId = fakeId,
+                Type = VariableType.OutputConst,
+                FunctionData = new Dictionary<string, double> { { "wartość", 0 } }
             };
         }
 

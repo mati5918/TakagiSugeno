@@ -59,6 +59,7 @@ function openInput(id, title)
 }
 
 function openOutput(id, title) {
+    id = parseInt(id);
     var url = "/Outputs/Details/" + id;
     if (title === "Przegląd systemu") {        
         window.location.href = url;
@@ -134,17 +135,19 @@ function selectVariable(clickedId, chart) {
             $(this).addClass("panel-default");
         }
     })
-    $.each(chart.options.data, function (i,v) {
-        if (v.name == clickedId) {
-            v.color = "blue";
-            v.lineThickness = selectedThickness
-        }
-        else {
-            v.color = "red";
-            v.lineThickness = unselectedThickness
-        }
-    })
-    chart.render();
+    if (chart != null) {
+        $.each(chart.options.data, function (i, v) {
+            if (v.name == clickedId) {
+                v.color = "blue";
+                v.lineThickness = selectedThickness
+            }
+            else {
+                v.color = "red";
+                v.lineThickness = unselectedThickness
+            }
+        })
+        chart.render();
+    }
 }
 
 function createFakeId() {
@@ -190,13 +193,15 @@ function hoverVariable(clickedId, chart) {
             $(this).addClass("panel-success");
         }
     })
-    $.each(chart.options.data, function (i,v) {
-        if (v.name == clickedId && v.color != "blue") {
-            v.color = "green";
-            v.lineThickness = hoverThickness
-        }
-    })
-    chart.render();
+    if (chart != null) {
+        $.each(chart.options.data, function (i, v) {
+            if (v.name == clickedId && v.color != "blue") {
+                v.color = "green";
+                v.lineThickness = hoverThickness
+            }
+        })
+        chart.render();
+    }
 }
 
 function cancelHoverVariable(chart) {
@@ -206,13 +211,15 @@ function cancelHoverVariable(chart) {
             $(this).addClass("panel-default");
         }
     })
-    $.each(chart.options.data, function (i, v) {
-        if (v.color == "green") {
-            v.color = "red";
-            v.lineThickness = unselectedThickness
-        }
-    })
-    chart.render();
+    if (chart != null) {
+        $.each(chart.options.data, function (i, v) {
+            if (v.color == "green") {
+                v.color = "red";
+                v.lineThickness = unselectedThickness
+            }
+        })
+        chart.render();
+    }
 }
 
 function hideAlert() {
@@ -238,7 +245,6 @@ function removeInput(obj) {
             url: url,
             type: "POST",
             success: function (response) {
-                var removeId = "Input-" + id;
                 getInputsList($("#SystemId").val());
                 var openedId = $("#InputId").val()
                 if (openedId == id) {
@@ -247,6 +253,24 @@ function removeInput(obj) {
             }
         })
     },200)
+}
+
+function removeOutput(obj) {
+    var id = $(obj).attr("data-id");
+    setTimeout(function () {
+        var url = "/Outputs/Remove/" + id;
+        $.ajax({
+            url: url,
+            type: "POST",
+            success: function (response) {
+                getOutputsList($("#SystemId").val());
+                var openedId = $("#OutputId").val()
+                if (openedId == id) {
+                    $(".body-content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
+                }
+            }
+        })
+    }, 200)
 }
 
 function getInputsList(systemId) {
@@ -260,9 +284,19 @@ function getInputsList(systemId) {
     })
 }
 
+function getOutputsList(systemId) {
+    var url = "/Outputs/OutputsList/?systemId=" + systemId;
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (response) {
+            $(".outputs-list").parent().replaceWith(response);
+        }
+    })
+}
+
 function addInput() {
     var systemId = $(".inputs-list").attr("data-id");
-    console.log(systemId);
     var url = "/Inputs/Add/?systemId=" + systemId;
     $.ajax({
         url: url,
@@ -271,4 +305,66 @@ function addInput() {
             $(".body-content").html(response);
         }
     })
+}
+
+function addOutput() {
+    var systemId = $(".outputs-list").attr("data-id");
+    var url = "/Outputs/Add/?systemId=" + systemId;
+    $.ajax({
+        url: url,
+        type: "POST",
+        success: function (response) {
+            $(".body-content").html(response);
+        }
+    })
+}
+
+function collectData() {
+    var variables = [];
+    $(".variable-row").each(function () {
+        var id = $(this).attr("id");
+        var name = $(this).find("#Name").val();
+        var type = $(this).find("#Type").val();
+        var variableData = {};
+        $(this).find(".chart-data-input").each(function () {
+            var pointValue = parseFloat($(this).val().replace(',', '.'));
+            var pointName = $(this).attr("id");
+            variableData[pointName] = pointValue;
+        })
+        var variable = {
+            Name: name,
+            VariableId: id,
+            Type: type,
+            FunctionData: variableData
+        };
+        variables.push(variable);
+    });
+
+    var VM = {
+        Name: $("#InputName").val(),
+        //InputId: $("#InputId").val(),
+        SystemId: $("#SystemId").val(),
+        Variables: variables
+    };
+
+    return VM;
+}
+
+function printSaveSuccess(){
+    $("#alert-container").removeClass("alert-danger");
+    $("#alert-container").addClass("alert-success");
+    $("#alert-container #alert-message").text("Zapisano pomyślnie!");
+}
+
+function printSaveErrors(response){
+    $("#alert-container").removeClass("alert-success");
+    $("#alert-container").addClass("alert-danger");
+    var msg = "";
+    $.each(response.errors, function (i, v) {
+        if (msg.length > 0) msg += "<br>";
+        msg += v;
+        msg += ".";
+
+    })
+    $("#alert-container #alert-message").html(msg);
 }

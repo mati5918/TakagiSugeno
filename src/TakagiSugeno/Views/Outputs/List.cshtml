@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<TakagiSugeno.Model.ViewModels.OutputVM>
+@using TakagiSugeno.Tools;
 @{
 }
 
@@ -12,13 +13,13 @@
                 <p hidden>@item.OutputId</p>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <span class="glyphicon glyphicon-remove pull-right remove-input" data-toggle="modal" data-target="#cancelModal"></span>
+                        <span class="glyphicon glyphicon-remove pull-right remove-output"></span>
                         <b>@item.Name</b>
                     </div>
                     <div class="panel-body" id="@item.OutputId" style="padding-top:20px;">
                         @foreach(var variable in item.Variables)
                         {
-                            <p>@variable.Name [@variable.Type]</p>
+                            <p>@variable.Name [@variable.Type.DisplayName()]</p>
 
                         }
                     </div>
@@ -29,19 +30,19 @@
 }
 <script type="text/javascript">
 
-    /*$(".inputs-list").on("click", ".remove-input", function () {
-        var id = $(this).parents(".input-element").attr("id").split('-')[1];
-        $("#removeModal #remove-input-name").text($(this).parent().text().trim());
-        $(".modal-footer .btn-success").attr('data-id', id);
-        $("#removeModal").modal("show");
-        return false;
-
-    });*/
-
     $(".outputs-list").on("click", ".output-element", function () {
         var id = $(this).attr("id").split('-')[1];
         var title = $(this).parents(".outputs-list").attr("id");
         return openOutput(id, title);
+
+    });
+
+    $(".outputs-list").on("click", ".remove-output", function () {
+        var id = $(this).parents(".output-element").attr("id").split('-')[1];
+        $("#removeModal #remove-output-name").text($(this).parent().text().trim());
+        $(".modal-footer .btn-success").attr('data-id', id);
+        $("#removeModal").modal("show");
+        return false;
 
     });
     </script>

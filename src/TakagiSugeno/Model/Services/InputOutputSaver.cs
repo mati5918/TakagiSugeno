@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
 using TakagiSugeno.Model.ViewModels;
 
-namespace TakagiSugeno.Model.Repository
+namespace TakagiSugeno.Model.Services
 {
-    public class InputSaver
+    public class InputOutputSaver
     {
         private TakagiSugenoDbContext _context;
-        public InputSaver(TakagiSugenoDbContext context)
+        public InputOutputSaver(TakagiSugenoDbContext context)
         {
             _context = context;
         }
@@ -36,15 +36,39 @@ namespace TakagiSugeno.Model.Repository
                 _context.SaveChanges();
                 viewModel.InputId = inputEntity.InputOutputId;
             }
-            SaveVariables(viewModel);
+            SaveVariables(viewModel.InputId, viewModel.Variables);
             _context.SaveChanges();
         }
 
-        private void SaveVariables(InputVM viewModel)
+        public void Save(OutputVM viewModel)
         {
-            IEnumerable<Variable> variableEntities = _context.Variables.Where(v => v.InputOutputId == viewModel.InputId);
-            IEnumerable<VariableVM> existedVariables = viewModel.Variables.Where(v => v.VariableId >= 0);
-            IEnumerable<VariableVM> newVariables = viewModel.Variables.Where(v => v.VariableId < 0);
+            InputOutput outputEntity = _context.InputsOutputs.FirstOrDefault(i => i.InputOutputId == viewModel.OutputId);
+            if (outputEntity != null)
+            {
+                outputEntity.Name = viewModel.Name;
+                _context.Entry(outputEntity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            else
+            {
+                outputEntity = new InputOutput
+                {
+                    Name = viewModel.Name,
+                    TSSystemId = viewModel.SystemId,
+                    Type = IOType.Output
+                };
+                _context.InputsOutputs.Add(outputEntity);
+                _context.SaveChanges();
+                viewModel.OutputId = outputEntity.InputOutputId;
+            }
+            SaveVariables(viewModel.OutputId, viewModel.Variables);
+            _context.SaveChanges();
+        }
+
+        private void SaveVariables(int id, List<VariableVM> variables)
+        {
+            IEnumerable<Variable> variableEntities = _context.Variables.Where(v => v.InputOutputId == id);
+            IEnumerable<VariableVM> existedVariables = variables.Where(v => v.VariableId >= 0);
+            IEnumerable<VariableVM> newVariables = variables.Where(v => v.VariableId < 0);
             foreach (var variable in variableEntities)
             {
                 VariableVM itemToUpdate = existedVariables.FirstOrDefault(v => v.VariableId == variable.VariableId);
@@ -67,7 +91,7 @@ namespace TakagiSugeno.Model.Repository
                     Name = variable.Name,
                     Type = variable.Type,
                     Data = JsonConvert.SerializeObject(variable.FunctionData),
-                    InputOutputId = viewModel.InputId
+                    InputOutputId = id
                 };
                 _context.Variables.Add(newVariable);
             }

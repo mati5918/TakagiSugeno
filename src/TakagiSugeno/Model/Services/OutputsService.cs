@@ -12,10 +12,14 @@ namespace TakagiSugeno.Model.Services
     public class OutputsService
     {
         private IRepository<InputOutput> _outputsRepository;
+        private InputOutputSaver _saver;
 
-        public OutputsService(IRepository<InputOutput> repository)
+        private List<string> validationErros = new List<string>();
+
+        public OutputsService(IRepository<InputOutput> repository, InputOutputSaver saver)
         {
             _outputsRepository = repository;
+            _saver = saver;
         }
 
         public List<OutputVM> GetSystemOutputs(int systemId)
@@ -46,5 +50,30 @@ namespace TakagiSugeno.Model.Services
             }));
             return vm;
         }
+
+        public void Remove(int id)
+        {
+            _outputsRepository.Delete(_outputsRepository.GetById(id));
+        }
+
+        public SaveResult Save(OutputVM viewModel)
+        {
+            //if (IsInputValid(viewModel))
+            //{
+                _saver.Save(viewModel);
+            //}
+            return new SaveResult { Id = viewModel.OutputId, Errors = validationErros };
+        }
+
+        public OutputVM AddOutput(int systemId)
+        {
+            return new OutputVM
+            {
+                OutputId = -1,
+                SystemId = systemId,
+                Variables = new List<VariableVM>()
+            };
+        }
+
     }
 }

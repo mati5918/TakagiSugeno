@@ -3,7 +3,7 @@
 @using TakagiSugeno.Tools;
 @{
     IOType variableType = IOType.Input;
-    if(ViewBag.Title == "Wyjścia")
+    if(Model.Type == VariableType.OutputConst || Model.Type == VariableType.OutputFunction)
     {
         variableType = IOType.Output;
     }

@@ -35,7 +35,7 @@ namespace TakagiSugeno.Controllers
 
         public IActionResult AddVariable(int fakeId)
         {
-            VariableVM variable = _variablesService.CreateVariable(fakeId);
+            VariableVM variable = _variablesService.CreateVariable(fakeId, Model.IOType.Input);
             return PartialView("VariableRow", variable);
         }
 

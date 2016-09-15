@@ -37,7 +37,7 @@
     <div class="row">
         <div class="col-sm-2"><h3>Zmienne</h3></div>
         <div class="col-sm-4">
-            <button class="btn btn-success pull-right" style="margin-top:15px;" onclick="addVariable()"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
+            <button class="btn btn-success pull-right" style="margin-top:15px;" id="addVariable"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
         </div>
     </div>
 
@@ -64,7 +64,7 @@
                     <p>Czy na pewno chcesz porzucić zmiany dla tego wejścia?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="setTimeout(function(){openInput(@Model.InputId, '@ViewBag.Title')},200)" data-dismiss="modal">Tak</button>
+                    <button type="button" class="btn btn-success" onclick="cancelChanges()" data-dismiss="modal">Tak</button>
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
                 </div>
             </div>
@@ -122,8 +122,7 @@
         cancelHoverVariable(chart);
     });
 
-
-    function addVariable() {
+    $("#addVariable").click(function () {
         var fakeId = createFakeId();
         var url = "/Inputs/AddVariable/?fakeId=" + parseInt(fakeId);
         $.ajax({
@@ -136,8 +135,7 @@
                 refreshButtonsState();
             }
         });
-
-    }
+    });
 
     $(".variables-list").on("click", ".remove-variable", function () {
         var id = $(this).parents(".panel").attr("id");
@@ -150,7 +148,6 @@
 
     $(document).on("change", "select, input", function () {
         refreshButtonsState();
-
     });
 
 
@@ -179,16 +176,13 @@
         var isMatch = regex.test(val);
         if (!isMatch) {
             $(this).parent(".form-group").addClass("has-error");
-            //$("#btnSave").prop("disabled", true);
         }
         else {
             $(this).parent(".form-group").removeClass("has-error");
-            //$("#btnSave").prop("disabled", false);
             val = val.replace(',', '.');
             var id = $(this).parents(".panel").attr("id");
             var pos = $("#" + id + " .chart-data-input").index($(this));
             val = parseFloat(val);
-            //console.log(val);
             for (var i in chart.options.data) {
                 var data = chart.options.data[i];
                 if (data.name == id) {
@@ -199,81 +193,34 @@
         }
     });
 
-    $(".variables-list").on("keypress", ".chart-data-input", function (evt) {
-        /*var charCode = (evt.which) ? evt.which : event.keyCode
-        if (charCode > 31 && (charCode < 48 || charCode > 57))
-            return false;
-        return true;*/
-    });
-
-    function save() {
-
-        var variables = [];
-        $(".variable-row").each(function () {
-            var id = $(this).attr("id");
-            var name = $(this).find("#Name").val();
-            var type = $(this).find("#Type").val();
-            var variableData = {};
-            $(this).find(".chart-data-input").each(function () {
-                var pointValue = parseFloat($(this).val());
-                var pointName = $(this).attr("id");
-                variableData[pointName] = pointValue;
-            })
-            var variable = {
-                Name: name,
-                VariableId: id,
-                Type: type,
-                FunctionData: variableData
-            };
-            variables.push(variable);
-        });
-
-        var inputVM = {
-            Name: $("#InputName").val(),
-            InputId: $("#InputId").val(),
-            SystemId: $("#SystemId").val(),
-            Variables: variables
-        };
-        console.log(inputVM);
+    function save() {       
+        var inputVM = collectData();
+        inputVM.InputId = $("#InputId").val();
         $.ajax({
             url: "@Url.Action("Save")",
             type: "POST",
             data: JSON.stringify(inputVM),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            error: function (response) {
-                //alert(response.responseText);
-            },
             success: function (response) {
                 if (response.errors.length == 0) {
-                    $("#alert-container").removeClass("alert-danger");
-                    $("#alert-container").addClass("alert-success");
-                    $("#alert-container #alert-message").text("Zapisano pomyślnie!");
+                    printSaveSuccess();
                     $("#btnCancel, #btnSave").prop("disabled", true);
                     $(".header").text("Szczegóły wejścia");
                     getInputsList($("#SystemId").val());
                     $("#InputId").val(response.id);
-                    console.log($("#InputId").val())
                 }
                 else {
-                    $("#alert-container").removeClass("alert-success");
-                    $("#alert-container").addClass("alert-danger");
-                    var msg = "";
-                    $.each(response.errors, function (i, v) {
-                        if (msg.length > 0) msg += "<br>";
-                        msg += v;
-                        msg += ".";
-
-                    })
-                    $("#alert-container #alert-message").html(msg);
+                    printSaveErrors(response);
                 }
                 $("#alert-container").show();
             }
         });
-
-
     }
 
-
-
+    function cancelChanges() {
+        setTimeout(function(){
+            openInput( $("#InputId").val(), '@ViewBag.Title')
+        },200)
+    }
 </script>

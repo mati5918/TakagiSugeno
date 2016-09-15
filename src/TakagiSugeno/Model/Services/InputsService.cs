@@ -15,9 +15,11 @@ namespace TakagiSugeno.Model.Services
         private IRepository<InputOutput> _inputRepository;
         private IRepository<Variable> _variableRepository;
         //private VariablesService _variableService;
-        private InputSaver _saver;
+        private InputOutputSaver _saver;
 
-        public InputsService(IRepository<InputOutput> inputRepository, IRepository<Variable> variableRepository, InputSaver saver)
+        private List<string> validationErros = new List<string>();
+
+        public InputsService(IRepository<InputOutput> inputRepository, IRepository<Variable> variableRepository, InputOutputSaver saver)
         {
             _inputRepository = inputRepository;
             _variableRepository = variableRepository;
@@ -62,7 +64,7 @@ namespace TakagiSugeno.Model.Services
             _inputRepository.Delete(_inputRepository.GetById(id));
         }
 
-        private List<string> validationErros = new List<string>();
+        
         public bool IsInputValid(InputVM input)
         {
             validationErros.Clear();
@@ -86,7 +88,7 @@ namespace TakagiSugeno.Model.Services
         {
             string name = input.Name;
             bool isValid = IsNameValid(name, "wejścia");
-            if (isValid && _inputRepository.GetBySystemId(input.SystemId).Any(i => i.Name.ToUpper() == name.ToUpper() && i.InputOutputId != input.InputId))
+            if (isValid && _inputRepository.GetBySystemId(input.SystemId).Any(i => i.Name.ToUpper() == name.ToUpper() && i.InputOutputId != input.InputId && i.Type == IOType.Input))
             {
                 validationErros.Add("Nazwa wejścia musi być unikalna dla systemu");
                 return;

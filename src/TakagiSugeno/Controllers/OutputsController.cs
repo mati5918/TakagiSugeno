@@ -39,5 +39,30 @@ namespace TakagiSugeno.Controllers
             return View("OutputDetails", vm);
         }
 
+        public IActionResult AddVariable(int fakeId)
+        {
+            VariableVM variable = _variablesService.CreateVariable(fakeId, Model.IOType.Output);
+            return PartialView("~/Views/Inputs/VariableRow.cshtml", variable);
+        }
+
+        [HttpPost]
+        public IActionResult Save([FromBody] OutputVM viewModel)
+        {
+            SaveResult res = _outputsService.Save(viewModel);
+            return Json(res);
+        }
+
+        public IActionResult Remove(int id)
+        {
+            _outputsService.Remove(id);
+            return Json(string.Empty);
+        }
+
+        public IActionResult Add(int systemId)
+        {
+            ViewBag.IsNewOutput = true;
+            return PartialView("OutputDetails", _outputsService.AddOutput(systemId));
+        }
+
     }
 }
