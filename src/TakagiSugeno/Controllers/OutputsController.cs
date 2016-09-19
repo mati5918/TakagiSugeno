@@ -46,6 +46,16 @@ namespace TakagiSugeno.Controllers
         }
 
         [HttpPost]
+        public IActionResult ChangeVariableType(VariableVM variable, int? systemId)
+        {
+            if (systemId.HasValue)
+            {
+                _variablesService.ChangeVariableType(variable, systemId.Value);
+            }
+            return PartialView("~/Views/Inputs/VariableRow.cshtml", variable);
+        }
+
+        [HttpPost]
         public IActionResult Save([FromBody] OutputVM viewModel)
         {
             SaveResult res = _outputsService.Save(viewModel);

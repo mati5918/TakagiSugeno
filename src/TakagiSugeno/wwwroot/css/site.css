@@ -99,3 +99,14 @@ textarea {
     margin-top: 15px;
     margin-right: 10px;
 }
+
+.variable-row .panel-body .form-group{
+    padding-top: 7.5px;
+    padding-bottom: 7.5px;
+    
+}
+
+.variable-row .panel-body{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}

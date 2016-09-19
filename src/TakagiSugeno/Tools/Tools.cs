@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TakagiSugeno.Model;
 
@@ -48,6 +49,26 @@ namespace TakagiSugeno.Tools
                 return displayName.Name;
             }
             return value.ToString();
+        }
+
+        public static bool IsNameValid(string name, string type, List<string> validationErros)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                validationErros.Add($"Nazwa {type} nie może być pusta");
+                return false;
+            }
+            if (name.Length > 30)
+            {
+                validationErros.Add($"Nazwa {type} nie może być dłuższa niż 30 znaków");
+                return false;
+            }
+            if (!Regex.IsMatch(name, @"^[-a-zA-Z0-9]*$"))
+            {
+                validationErros.Add($"Nazwa {type} zawiera niedozwolone znaki");
+                return false;
+            }
+            return true;
         }
     }
 }

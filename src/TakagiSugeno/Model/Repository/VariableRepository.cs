@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace TakagiSugeno.Model.Repository
 {
@@ -45,7 +46,7 @@ namespace TakagiSugeno.Model.Repository
 
         public IEnumerable<Variable> GetBySystemId(int systemId)
         {
-            return _context.Variables.Where(v => v.InputOutput.TSSystemId == systemId);
+            return _context.Variables.Include(v => v.InputOutput).Where(v => v.InputOutput.TSSystemId == systemId);
         }
 
         public void Update(Variable entity)

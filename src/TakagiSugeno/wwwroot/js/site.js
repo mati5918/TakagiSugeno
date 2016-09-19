@@ -1,6 +1,6 @@
 ﻿// Write your Javascript code.
 
-var selectedThickness = 3 ;
+var selectedThickness = 3;
 var hoverThickness = 3;
 var unselectedThickness = 2;
 
@@ -134,16 +134,16 @@ function selectVariable(clickedId, chart) {
             $(this).removeClass("panel-primary");
             $(this).addClass("panel-default");
         }
-    })
+    });
     if (chart != null) {
         $.each(chart.options.data, function (i, v) {
             if (v.name == clickedId) {
                 v.color = "blue";
-                v.lineThickness = selectedThickness
+                v.lineThickness = selectedThickness;
             }
             else {
                 v.color = "red";
-                v.lineThickness = unselectedThickness
+                v.lineThickness = unselectedThickness;
             }
         })
         chart.render();
@@ -197,7 +197,7 @@ function hoverVariable(clickedId, chart) {
         $.each(chart.options.data, function (i, v) {
             if (v.name == clickedId && v.color != "blue") {
                 v.color = "green";
-                v.lineThickness = hoverThickness
+                v.lineThickness = hoverThickness;
             }
         })
         chart.render();
@@ -210,14 +210,14 @@ function cancelHoverVariable(chart) {
             $(this).removeClass("panel-success");
             $(this).addClass("panel-default");
         }
-    })
+    });
     if (chart != null) {
         $.each(chart.options.data, function (i, v) {
             if (v.color == "green") {
                 v.color = "red";
-                v.lineThickness = unselectedThickness
+                v.lineThickness = unselectedThickness;
             }
-        })
+        });
         chart.render();
     }
 }
@@ -246,13 +246,13 @@ function removeInput(obj) {
             type: "POST",
             success: function (response) {
                 getInputsList($("#SystemId").val());
-                var openedId = $("#InputId").val()
+                var openedId = $("#InputId").val();
                 if (openedId == id) {
                     $(".body-content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
                 }
             }
-        })
-    },200)
+        });
+    }, 200);
 }
 
 function removeOutput(obj) {
@@ -269,8 +269,8 @@ function removeOutput(obj) {
                     $(".body-content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
                 }
             }
-        })
-    }, 200)
+        });
+    }, 200);
 }
 
 function getInputsList(systemId) {

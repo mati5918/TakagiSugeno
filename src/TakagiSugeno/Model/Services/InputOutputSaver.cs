@@ -96,5 +96,41 @@ namespace TakagiSugeno.Model.Services
                 _context.Variables.Add(newVariable);
             }
         }
+
+        public void ModifyOutputsVariables(int systemId, string newName, string oldName, ModifyVariableAction action)
+        {
+            var variables = _context.Variables.Where(v => v.InputOutput.TSSystemId == systemId && v.Type == VariableType.OutputFunction);
+            foreach (var v in variables)
+            {
+                Dictionary<string, double> oldData = JsonConvert.DeserializeObject<Dictionary<string, double>>(v.Data);
+                Dictionary<string, double> newData = new Dictionary<string, double>();
+                switch (action)
+                {
+                    case ModifyVariableAction.Change:
+                        foreach (var item in oldData)
+                        {
+                            newData.Add(item.Key == oldName ? newName : item.Key, item.Value);
+                        }
+                        v.Data = JsonConvert.SerializeObject(newData);
+                        break;
+                    case ModifyVariableAction.Delete:
+                        oldData.Remove(oldName);
+                        v.Data = JsonConvert.SerializeObject(oldData);
+                        break;
+                    case ModifyVariableAction.Add:
+                        oldData.Add(newName, 0);
+                        v.Data = JsonConvert.SerializeObject(oldData);
+                        break;
+                }
+                _context.Entry(v).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            _context.SaveChanges();
+        }
+    }
+    public enum ModifyVariableAction
+    {
+        Change,
+        Add,
+        Delete
     }
 }

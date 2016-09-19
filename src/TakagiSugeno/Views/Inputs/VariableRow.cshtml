@@ -27,10 +27,27 @@
                 @for (int j = 0; j < Model.FunctionData.Count; j++)
                 {
                     var key = Model.FunctionData.Keys.ElementAt(j);
-                    <div class="form-group">
-                        <label asp-for="@key" class="control-label">@key:</label>
-                        <input asp-for="@Model.FunctionData[key]" style="width:80px" class="form-control chart-data-input" id="@key" />
-                    </div>
+                    if (Model.Type == VariableType.OutputFunction)
+                    {
+                        <div class="form-group">
+                            
+                            <input asp-for="@Model.FunctionData[key]" style="width:80px; text-align:right" class="form-control chart-data-input" id="@key" />
+                            <label asp-for="@key" class="control-label">@key</label>
+                            @if (j != Model.FunctionData.Count-1)
+                            {
+                                <span> + </span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="@key" class="control-label">@key:</label>
+                            <input asp-for="@Model.FunctionData[key]" style="width:80px" class="form-control chart-data-input" id="@key" />
+                            
+                        </div>
+                    }
+
 
                 }
             </div>

@@ -58,10 +58,10 @@ namespace TakagiSugeno.Model.Services
 
         public SaveResult Save(OutputVM viewModel)
         {
-            //if (IsInputValid(viewModel))
-            //{
+            if (IsOutputValid(viewModel))
+            {
                 _saver.Save(viewModel);
-            //}
+            }
             return new SaveResult { Id = viewModel.OutputId, Errors = validationErros };
         }
 
@@ -74,6 +74,53 @@ namespace TakagiSugeno.Model.Services
                 Variables = new List<VariableVM>()
             };
         }
+
+        #region validation
+        public bool IsOutputValid(OutputVM output)
+        {
+            validationErros.Clear();
+            ValidateOutputName(output);
+            ValidateVariables(output);
+            validationErros = validationErros.Distinct().ToList();
+            return validationErros.Count > 0 ? false : true;
+        }
+
+        private void ValidateOutputName(OutputVM output)
+        {
+            string name = output.Name;
+            bool isValid = Tools.Tools.IsNameValid(name, "wyjścia", validationErros);
+            if (isValid && _outputsRepository.GetBySystemId(output.SystemId).Any(i => i.Name.ToUpper() == name.ToUpper() && i.InputOutputId != output.OutputId && i.Type == IOType.Output))
+            {
+                validationErros.Add("Nazwa wyjścia musi być unikalna dla systemu");
+                return;
+            }
+        }
+
+        private void ValidateVariableName(VariableVM variable, List<string> names)
+        {
+            string name = variable.Name;
+            bool isValid = Tools.Tools.IsNameValid(name, "zmiennej", validationErros);
+            if (isValid && names.Count(n => n.ToUpper() == name.ToUpper()) > 1)
+            {
+                validationErros.Add($"Nazwa zmiennej {name.ToUpper()} musi być unikalna dla wyjścia");
+                return;
+            }
+        }
+
+        private void ValidateVariables(OutputVM output)
+        {
+            if (output.Variables == null || output.Variables.Count == 0)
+            {
+                validationErros.Add("Wyjście musi posiadać conajmniej jedną zmienną");
+                return;
+            }
+            List<string> names = output.Variables.Select(v => v.Name).ToList();
+            foreach (var variable in output.Variables)
+            {
+                ValidateVariableName(variable, names);
+            }
+        }
+        #endregion
 
     }
 }

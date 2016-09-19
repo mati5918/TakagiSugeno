@@ -17,10 +17,14 @@
                         <b>@item.Name</b>
                     </div>
                     <div class="panel-body" id="@item.OutputId" style="padding-top:20px;">
-                        @foreach(var variable in item.Variables)
+                        @foreach (var variable in item.Variables)
                         {
+                            if (item.Variables.IndexOf(variable) == 3)
+                            {
+                                <p>...</p>
+                                break;
+                            }
                             <p>@variable.Name [@variable.Type.DisplayName()]</p>
-
                         }
                     </div>
                 </div>

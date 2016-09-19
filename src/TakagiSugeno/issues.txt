@@ -1,0 +1,2 @@
+- can break save after click button when focus input with wrong value
+- cannot delete IO when selected is deleted (no modal in html code)

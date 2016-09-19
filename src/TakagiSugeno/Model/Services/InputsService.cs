@@ -13,16 +13,15 @@ namespace TakagiSugeno.Model.Services
     public class InputsService
     {
         private IRepository<InputOutput> _inputRepository;
-        private IRepository<Variable> _variableRepository;
+        //private IRepository<Variable> _variableRepository;
         //private VariablesService _variableService;
         private InputOutputSaver _saver;
 
         private List<string> validationErros = new List<string>();
 
-        public InputsService(IRepository<InputOutput> inputRepository, IRepository<Variable> variableRepository, InputOutputSaver saver)
+        public InputsService(IRepository<InputOutput> inputRepository, InputOutputSaver saver)
         {
             _inputRepository = inputRepository;
-            _variableRepository = variableRepository;
             _saver = saver;
         }
 
@@ -31,6 +30,12 @@ namespace TakagiSugeno.Model.Services
             return  _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
                 .Select(i => new InputVM { Name = i.Name, InputId = i.InputOutputId, SystemId = i.TSSystemId,
                     Variables = i.Variables.Select(v => new VariableVM { Type = v.Type, JsonData = v.Data}).ToList()}).ToList();         
+        }
+
+        public List<string> GetSystemInputsNames(int systemId)
+        {
+            return _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
+                .Select(i => i.Name).ToList();
         }
 
         public InputVM GetInput(int inputId)
@@ -54,24 +59,21 @@ namespace TakagiSugeno.Model.Services
         {
             if (IsInputValid(viewModel))
             {
+                string newName = viewModel.Name;
+                string oldName = viewModel.InputId == -1 ? string.Empty : GetInputName(viewModel.InputId);
+                ModifyVariableAction action = viewModel.InputId == -1 ? ModifyVariableAction.Add : ModifyVariableAction.Change;
                 _saver.Save(viewModel);
+                _saver.ModifyOutputsVariables(viewModel.SystemId, newName, oldName, action);
+                
             }
             return new SaveResult { Id = viewModel.InputId, Errors = validationErros};
         }
 
-        internal void Remove(int id)
+        public void Remove(int id)
         {
-            _inputRepository.Delete(_inputRepository.GetById(id));
-        }
-
-        
-        public bool IsInputValid(InputVM input)
-        {
-            validationErros.Clear();
-            ValidateInputName(input);
-            ValidateVariables(input);
-            validationErros = validationErros.Distinct().ToList();
-            return validationErros.Count > 0 ? false : true;
+            InputOutput item = _inputRepository.GetById(id);
+            _inputRepository.Delete(item);
+            _saver.ModifyOutputsVariables(item.TSSystemId, string.Empty, item.Name, ModifyVariableAction.Delete);
         }
 
         public InputVM AddInput(int systemId)
@@ -84,10 +86,25 @@ namespace TakagiSugeno.Model.Services
             };
         }
 
+        private string GetInputName(int id)
+        {
+            return _inputRepository.GetById(id).Name;
+        }
+
+        #region validation
+        public bool IsInputValid(InputVM input)
+        {
+            validationErros.Clear();
+            ValidateInputName(input);
+            ValidateVariables(input);
+            validationErros = validationErros.Distinct().ToList();
+            return validationErros.Count > 0 ? false : true;
+        }
+
         private void ValidateInputName(InputVM input)
         {
             string name = input.Name;
-            bool isValid = IsNameValid(name, "wejścia");
+            bool isValid = Tools.Tools.IsNameValid(name, "wejścia", validationErros);
             if (isValid && _inputRepository.GetBySystemId(input.SystemId).Any(i => i.Name.ToUpper() == name.ToUpper() && i.InputOutputId != input.InputId && i.Type == IOType.Input))
             {
                 validationErros.Add("Nazwa wejścia musi być unikalna dla systemu");
@@ -98,32 +115,12 @@ namespace TakagiSugeno.Model.Services
         private void ValidateVariableName(VariableVM variable, List<string> names)
         {
             string name = variable.Name;
-            bool isValid = IsNameValid(name, "zmiennej");
+            bool isValid = Tools.Tools.IsNameValid(name, "zmiennej", validationErros);
             if (isValid && names.Count( n => n.ToUpper() == name.ToUpper()) > 1)
             {
                 validationErros.Add($"Nazwa zmiennej {name.ToUpper()} musi być unikalna dla wejścia");
                 return;
             }
-        }
-
-        private bool IsNameValid(string name, string type)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                validationErros.Add($"Nazwa {type} nie może być pusta");
-                return false;
-            }
-            if (name.Length > 30)
-            {
-                validationErros.Add($"Nazwa {type} nie może być dłuższa niż 30 znaków");
-                return false;
-            }
-            if (!Regex.IsMatch(name, @"^[-a-zA-Z0-9]*$"))
-            {
-                validationErros.Add($"Nazwa {type} zawiera niedozwolone znaki");
-                return false;
-            }
-            return true;
         }
 
         private void ValidateVariables(InputVM input)
@@ -167,5 +164,6 @@ namespace TakagiSugeno.Model.Services
                 }
             }
         }
+        #endregion
     }
 }

@@ -149,6 +149,25 @@
 
     })
 
+    $(".variables-list").on("change", ".select-type", function () {
+        var id = $(this).parents(".panel").attr("id");
+        var url = "/Outputs/ChangeVariableType";
+        var form = $(this).closest("form");
+        var systemId = $("#SystemId").val()
+        var data = form.serialize() + "&systemId=" + systemId;
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            success: function (response) {
+                form.replaceWith(response);
+                selectVariable(id);
+
+            }
+        });
+
+    });
+
     function save() {
         var outputVM = collectData();
         outputVM.OutputId = $("#OutputId").val();

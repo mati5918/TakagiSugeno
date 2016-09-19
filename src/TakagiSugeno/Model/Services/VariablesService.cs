@@ -12,17 +12,31 @@ namespace TakagiSugeno.Model.Services
     public class VariablesService
     {
         private IRepository<Variable> _repository;
+        private InputsService _inputsService;
 
-        public VariablesService(IRepository<Variable> repository)
+        public VariablesService(IRepository<Variable> repository, InputsService service)
         {
             _repository = repository;
+            _inputsService = service;
         }
 
-        public void ChangeVariableType(VariableVM variable)
+        public void ChangeVariableType(VariableVM variable, int systemId = -1)
         {
             if (variable != null)
             {
-                ModifyVariableType(variable);
+                Dictionary<string, double> newData = GetVariableNewData(variable.Type, systemId);
+                List<string> keys = new List<string>(newData.Keys);
+                if (newData != null)
+                {
+                    foreach (var item in keys)
+                    {
+                        if (variable.FunctionData.ContainsKey(item))
+                        {
+                            newData[item] = variable.FunctionData[item];
+                        }
+                    }
+                }
+                variable.FunctionData = newData;
             }
         }
 
@@ -48,7 +62,7 @@ namespace TakagiSugeno.Model.Services
             {
                 VariableId = fakeId,
                 Type = Model.VariableType.Triangle,
-                FunctionData = new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } }
+                FunctionData = NewTriangleData()
             };
         }
 
@@ -58,7 +72,7 @@ namespace TakagiSugeno.Model.Services
             {
                 VariableId = fakeId,
                 Type = VariableType.OutputConst,
-                FunctionData = new Dictionary<string, double> { { "wartość", 0 } }
+                FunctionData = NewOutputConstData()
             };
         }
 
@@ -71,41 +85,42 @@ namespace TakagiSugeno.Model.Services
             }
         }
 
-        private void ModifyVariableType(VariableVM variable)
-        {
-            Dictionary<string, double> newData = GetVariableNewData(variable.Type);
-            List<string> keys = new List<string>(newData.Keys);
-            if(newData != null)
-            {
-                foreach(var item in keys)
-                {
-                    if(variable.FunctionData.ContainsKey(item))
-                    {
-                        newData[item] = variable.FunctionData[item];
-                    }
-                }
-            }
-            variable.FunctionData = newData;
-        }
-
-        private Dictionary<string, double> GetVariableNewData(VariableType type)
+        private Dictionary<string, double> GetVariableNewData(VariableType type, int systemId)
         {
             switch(type)
             {
-                case VariableType.Triangle: return GetNewTriangleFunctionData();
-                case VariableType.Trapeze: return GetNewTrapezeFunctionData();
+                case VariableType.Triangle: return NewTriangleData();
+                case VariableType.Trapeze: return NewTrapezeData();
+                case VariableType.OutputConst: return NewOutputConstData();
+                case VariableType.OutputFunction: return NewOutputFunctionData(systemId);
                 default: return null;
             }
         }
 
-        private Dictionary<string, double> GetNewTriangleFunctionData()
+        private Dictionary<string, double> NewTriangleData()
         {
             return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } };
         }
 
-        private Dictionary<string, double> GetNewTrapezeFunctionData()
+        private Dictionary<string, double> NewTrapezeData()
         {
             return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 }, {"d", 0 } };
+        }
+
+        private Dictionary<string, double> NewOutputConstData()
+        {
+            return new Dictionary<string, double> { { "wartość", 0 }};
+        }
+
+        private Dictionary<string, double> NewOutputFunctionData(int systemId)
+        {
+            List<string> names = _inputsService.GetSystemInputsNames(systemId);
+            Dictionary<string, double> res = new Dictionary<string, double>();
+            foreach(string name in names)
+            {
+                res.Add(name, 0);
+            }
+            return res;
         }
 
     }
