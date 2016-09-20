@@ -48,12 +48,12 @@ textarea {
     text-align: center;
 }
 
-.inputs-list .panel-body, .outputs-list .panel-body {
+.inputs-list .panel-body, .outputs-list .panel-body, .panel-rules .panel-body {
     height: 150px;
     padding: 0px 0px 0px 0px;
 }
 
-.input-element :hover, .output-element :hover{
+.input-element :hover, .output-element :hover, .panel-rules :hover {
     cursor: pointer;
     border: medium;
     border-right: 5px;
@@ -73,7 +73,6 @@ textarea {
   border-radius: 0;
   border: none;
   height: 100%;
-  background-color: cornsilk;
   overflow-y: auto;
 }
 
@@ -91,12 +90,18 @@ textarea {
 
 .nav-header {
    margin-left: 0px;
-   background-color: burlywood;
-   width: 220px;
+   background-color: #3e648d;
+   width: 230px;
+   
+}
+
+.nav-header h3{
+    color: #dddddd;
+    text-align: center;
 }
 
 .nav-header button{
-    margin-top: 15px;
+    margin-top: 10px;
     margin-right: 10px;
 }
 
@@ -109,4 +114,12 @@ textarea {
 .variable-row .panel-body{
     padding-top: 0px;
     padding-bottom: 0px;
+}
+
+.rules-table th, .rules-table td select{
+    text-align:center;
+}
+
+.inputs-list, .outputs-list{
+    text-shadow: none;
 }

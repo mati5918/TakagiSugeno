@@ -1,0 +1,86 @@
+﻿@model TakagiSugeno.Model.ViewModels.RuleGeneralVM
+@inject TakagiSugeno.Model.Services.RulesService rulesService;
+@using TakagiSugeno.Model;
+@{
+    ViewBag.Title = "Reguły";
+    int index = 1;
+}
+
+
+<div class="row">
+    <div class="col-sm-8">
+        <h2 class="header">
+            Reguły
+        </h2>
+    </div>
+    <div class="col-sm-4">
+        <div class="pull-right">
+            <button class="btn btn-primary" id="btnSave" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz</button>
+            <button class="btn btn-danger" id="btnCancel" style="margin-top:20px;" disabled data-toggle="modal" data-target="#cancelModal"><span class="glyphicon glyphicon-bullhorn"></span> Anuluj</button>
+        </div>
+
+    </div>
+</div>
+<div class="alert" id="alert-container" hidden>
+    <span class="glyphicon glyphicon-remove hide-alert pull-right" onclick="hideAlert()"></span>
+    <text id="alert-message"></text>
+</div>
+
+<table class="table table-striped rules-table">
+    <thead>
+        <tr>
+            <th>#</th>
+        @foreach (string name in rulesService.GetSystemInputsOutputsNames(ViewBag.SystemId))
+        {
+            <th>@name is</th>
+            <th></th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var rule in Model.Rules)
+        {
+            <tr>
+                <td style="padding-top:15px;">@(index++).</td>
+                @foreach (var elem in rule.RuleElements)
+                {
+                    //bool isLast = rule.RuleElements.ElementAt(rule.RuleElements.IndexOf(elem) + 1).Type == RuleElementType.OutputPart ? true : false;
+                    <td>
+                       <select asp-for="@elem.VariableId" asp-items="@Model.VariablesLists[elem.InputOutputId]" class="form-control" style="width:100px;"></select>
+                        
+                    </td>
+                    if (elem.Type == RuleElementType.InputPart)
+                    {
+                        bool isLast = rule.RuleElements.Where((e, i) => e.Type == RuleElementType.OutputPart && i == rule.RuleElements.IndexOf(elem) + 1).Count() > 0;
+                        if (isLast)
+                        {
+                        <td style="padding-top:15px;">Then</td>
+                        }
+                        else
+                        {
+                        <td>
+                            <select class="form-control" style="width:75px;">
+                                <option value="0" selected>And</option>
+                                <option value="1">Or</option>
+                            </select>
+                        </td>
+                        }
+                    }
+                    else
+                    {
+                        if (rule.RuleElements.IndexOf(elem) != rule.RuleElements.Count - 1)
+                        {
+                            <td style="padding-top:15px;">And</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                         }
+                    }
+
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+

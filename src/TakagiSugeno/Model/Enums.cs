@@ -36,6 +36,7 @@ namespace TakagiSugeno.Model
 
     public enum RuleElementType
     {
-        Default //TODO
+        InputPart,
+        OutputPart
     }
 }

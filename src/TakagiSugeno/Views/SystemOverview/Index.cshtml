@@ -13,7 +13,14 @@
             @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
         </div>
         <div class="col-sm-4">
-             
+            <div class="panel panel-default panel-rules" style="width:200px; margin-top: 20px;">
+                <div class="panel-heading">
+                    Reguły
+                </div>
+                <div class="panel-body">
+                    
+                </div>
+            </div>
         </div>
         <div class="col-sm-4">
             @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputsService.GetSystemOutputs(1));}
@@ -21,3 +28,11 @@
     </div>
     
 </div>
+<script type="text/javascript">
+    $(".panel-rules").click(function () {
+        var id = $(".inputs-list").attr("data-id");
+        console.log(id);
+        var url = "/Rules/SystemRules/?systemId=" + id;     
+        window.location.href = url;
+    });
+</script>
