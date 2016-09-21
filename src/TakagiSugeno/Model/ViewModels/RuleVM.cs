@@ -10,6 +10,7 @@ namespace TakagiSugeno.Model.ViewModels
     {
         public List<RuleVM> Rules { get; set; }
         public Dictionary<int, IEnumerable<SelectListItem>> VariablesLists { get; set; }
+        public Dictionary<int, Dictionary<int,string>> ChartsData { get; set; }
     }
     public class RuleVM
     {

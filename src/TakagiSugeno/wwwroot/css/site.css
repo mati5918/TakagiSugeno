@@ -48,10 +48,11 @@ textarea {
     text-align: center;
 }
 
-.inputs-list .panel-body, .outputs-list .panel-body, .panel-rules .panel-body {
+.inputs-list .panel-body, .outputs-list .panel-body, .panel-rules .panel-body, .panel .chart-container {
     height: 150px;
     padding: 0px 0px 0px 0px;
 }
+
 
 .input-element :hover, .output-element :hover, .panel-rules :hover {
     cursor: pointer;
@@ -59,7 +60,7 @@ textarea {
     border-right: 5px;
 }
 
-.remove-variable:hover, .hide-alert:hover {
+.remove-variable:hover, .hide-alert:hover, .collapse-button:hover {
     cursor: pointer;
 }
 
@@ -122,4 +123,24 @@ textarea {
 
 .inputs-list, .outputs-list{
     text-shadow: none;
+}
+
+
+
+.rules-table colgroup .variable-col {
+    min-width: 200px;
+}
+
+.rules-table colgroup .id-col {
+    min-width: 60px;
+}
+
+.rules-table colgroup .operation-col {
+    min-width: 120px;
+}
+
+.panel .text-only {
+    height: 59px;
+    text-align:center;
+    padding-top: 20px;
 }

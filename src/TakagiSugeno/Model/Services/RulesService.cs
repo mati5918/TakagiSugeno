@@ -40,6 +40,7 @@ namespace TakagiSugeno.Model.Services
                 }).ToList()
                 }).ToList();
             CreateVariablesLists(res, systemId);
+            FillChartsData(res, systemId);
             return res;
         }
 
@@ -57,6 +58,21 @@ namespace TakagiSugeno.Model.Services
                 vm.VariablesLists.Add(item.InputOutputId, item.Variables.Select(v => new SelectListItem { Value = v.VariableId.ToString(), Text = v.Name }));
             }
 
+        }
+
+        private void FillChartsData(RuleGeneralVM vm, int systemId)
+        {
+            vm.ChartsData = new Dictionary<int, Dictionary<int, string>>();
+            var inputs = _ioRepository.GetBySystemId(systemId).Where(io => io.Type == IOType.Input);
+            foreach(var item in inputs)
+            {
+                Dictionary<int, string> data = new Dictionary<int, string>();
+                foreach(var variable in item.Variables)
+                {
+                    data.Add(variable.VariableId, variable.Data);
+                }
+                vm.ChartsData.Add(item.InputOutputId, data);
+            }
         }
     }
 }

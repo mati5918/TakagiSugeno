@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "Reguły";
     int index = 1;
+    var names = rulesService.GetSystemInputsOutputsNames(ViewBag.SystemId);
 }
 
 
@@ -25,15 +26,30 @@
     <span class="glyphicon glyphicon-remove hide-alert pull-right" onclick="hideAlert()"></span>
     <text id="alert-message"></text>
 </div>
-
-<table class="table table-striped rules-table">
+<div class="row">
+<div class="col-sm-12" style="overflow-x:scroll;">
+<table class="table rules-table">
+    <colgroup>
+        <col span="1" class="id-col" />
+        @foreach (string name in names)
+        {
+            <col span="1" class="variable-col" />
+            if (names.IndexOf(name) != names.Count - 1)
+            {
+                <col span="1" class="operation-col" />
+            }
+        }
+    </colgroup>
     <thead>
         <tr>
             <th>#</th>
-        @foreach (string name in rulesService.GetSystemInputsOutputsNames(ViewBag.SystemId))
+        @foreach (string name in names)
         {
             <th>@name is</th>
-            <th></th>
+            if (names.IndexOf(name) != names.Count - 1)
+            {
+                <th></th>
+            }
         }
     </tr>
     </thead>
@@ -41,28 +57,55 @@
         @foreach (var rule in Model.Rules)
         {
             <tr>
-                <td style="padding-top:15px;">@(index++).</td>
+                <td style="padding-top:25px;">
+                    <span>@(index++).&nbsp;&nbsp;<i class="glyphicon glyphicon-chevron-down collapse-button"></i></span>                 
+                </td>
                 @foreach (var elem in rule.RuleElements)
                 {
                     //bool isLast = rule.RuleElements.ElementAt(rule.RuleElements.IndexOf(elem) + 1).Type == RuleElementType.OutputPart ? true : false;
-                    <td>
-                       <select asp-for="@elem.VariableId" asp-items="@Model.VariablesLists[elem.InputOutputId]" class="form-control" style="width:100px;"></select>
-                        
+                    <td>                       
+                        <div class="panel panel-default collapse-panel">
+                            <div class="panel-heading">
+                                <select asp-for="@elem.VariableId" asp-items="@Model.VariablesLists[elem.InputOutputId]" class="form-control"></select>
+                            </div>
+                            <div class="panel-body chart-container">
+                                @{
+                                    if (elem.Type == RuleElementType.InputPart)
+                                    {
+                                        Dictionary<int, string> chartData = Model.ChartsData[elem.InputOutputId];
+                                        foreach (var item in chartData)
+                                        {
+                                            <div class="json-data" hidden data-chartJson='@item.Value' data-type=0></div> //TODO pass type to vm, add id to charts
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
                     </td>
                     if (elem.Type == RuleElementType.InputPart)
                     {
                         bool isLast = rule.RuleElements.Where((e, i) => e.Type == RuleElementType.OutputPart && i == rule.RuleElements.IndexOf(elem) + 1).Count() > 0;
                         if (isLast)
                         {
-                        <td style="padding-top:15px;">Then</td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-heading text-only">
+                                    <span>Then</span>
+                                </div>
+                            </div>
+                        </td>
                         }
                         else
                         {
                         <td>
-                            <select class="form-control" style="width:75px;">
-                                <option value="0" selected>And</option>
-                                <option value="1">Or</option>
-                            </select>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <select class="form-control">
+                                        <option value="0" selected>And</option>
+                                        <option value="1">Or</option>
+                                    </select>
+                                </div>
+                            </div>                          
                         </td>
                         }
                     }
@@ -70,17 +113,55 @@
                     {
                         if (rule.RuleElements.IndexOf(elem) != rule.RuleElements.Count - 1)
                         {
-                            <td style="padding-top:15px;">And</td>
+                            <td>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading text-only">
+                                        <span>And</span>
+                                    </div>
+                                </div>
+                            </td>
                         }
-                        else
-                        {
-                            <td></td>
-                         }
                     }
-
                 }
             </tr>
         }
     </tbody>
 </table>
+</div>
+</div>
+<div id="temp" style="background-color:red;" hidden>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$(".collapse-panel .panel-body").hide();
+
+        var containers = $(".chart-container");
+        $.each(containers, function (index, value) {
+            var id = $(value).attr("id")
+            var chart = new CanvasJS.Chart("temp", {
+                data: [],
+            });
+            
+            $(value).find(".json-data").each(function () {
+                createChartFromJSONData(chart, $(this));
+            })
+            //chart.render();
+            $(value).CanvasJSChart(chart.options);
+        })
+
+        $(".collapse-panel .panel-body").hide();
+    });
+
+    $(".rules-table").on("click", ".collapse-button", function () {
+        var $this = $(this);
+        if ($this.hasClass('glyphicon-chevron-down')) {
+            $this.parents('tr').find('.panel-body').slideDown();
+            $this.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+        } else {
+            $this.parents('tr').find('.panel-body').slideUp();
+            $this.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+        }
+        return false;
+    });
+</script>
 

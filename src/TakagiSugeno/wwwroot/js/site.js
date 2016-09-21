@@ -11,7 +11,6 @@ var unselectedThickness = 2;
 function createChartFromJSONData(chart, dataObj) {
     var data = $.parseJSON($(dataObj).attr("data-chartJson"));
     var chartPoints = [];
-    
     for (var k in data) {
         if (data.hasOwnProperty(k)) {
             chartPoints.push(data[k]);
@@ -109,7 +108,7 @@ function plotTriangle(chartPoints, id, chart) {
     dataPoints.push({ x: chartPoints[2], y: 0 });
     chart.options.interactivityEnabled = false;
     chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
-    chart.render();
+    //chart.render();
 }
 
 function plotTrapeze(chartPoints, id, chart) {
@@ -120,7 +119,7 @@ function plotTrapeze(chartPoints, id, chart) {
     dataPoints.push({ x: chartPoints[3], y: 0 });
     chart.options.interactivityEnabled = false;
     chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
-    chart.render();
+    //chart.render();
 }
 
 function selectVariable(clickedId, chart) {
