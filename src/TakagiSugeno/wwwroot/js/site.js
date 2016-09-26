@@ -17,7 +17,8 @@ function createChartFromJSONData(chart, dataObj) {
         }
     }
     var type = $(dataObj).attr("data-type");
-    plotData(chartPoints, type, "", chart)
+    var id = $(dataObj).attr("data-id");
+    plotData(chartPoints, type, id, chart)
 }
 
 /*function plot(response, id)
@@ -135,18 +136,22 @@ function selectVariable(clickedId, chart) {
         }
     });
     if (chart != null) {
-        $.each(chart.options.data, function (i, v) {
-            if (v.name == clickedId) {
-                v.color = "blue";
-                v.lineThickness = selectedThickness;
-            }
-            else {
-                v.color = "red";
-                v.lineThickness = unselectedThickness;
-            }
-        })
-        chart.render();
+        selectVariableOnChart(clickedId, chart)
     }
+}
+
+function selectVariableOnChart(clickedId, chart) {
+    $.each(chart.options.data, function (i, v) {
+        if (v.name == clickedId) {
+            v.color = "blue";
+            v.lineThickness = selectedThickness;
+        }
+        else {
+            v.color = "red";
+            v.lineThickness = unselectedThickness;
+        }
+    })
+    chart.render();
 }
 
 function createFakeId() {
@@ -154,6 +159,16 @@ function createFakeId() {
     var min = 0;
     $.each(rows, function (index, value) {
         var id = parseInt($(value).attr("id"));
+        if (id < min) min = id;
+    });
+    return min - 1;
+}
+
+function createFakeRuleId() {
+    var rows = $(".rules-table tr");
+    var min = 0;
+    $.each(rows, function (index, value) {
+        var id = parseInt($(value).attr("data-id"));
         if (id < min) min = id;
     });
     return min - 1;
@@ -235,6 +250,10 @@ function refreshButtonsState() {
     $("#btnCancel").prop("disabled", false);
 }
 
+function changeRulesButtonsState(isDisabled) {
+    $("#btnSave").prop("disabled", isDisabled);
+    $("#btnCancel").prop("disabled", isDisabled);
+}
 
 function removeInput(obj) {
     var id = $(obj).attr("data-id");
@@ -366,4 +385,10 @@ function printSaveErrors(response){
 
     })
     $("#alert-container #alert-message").html(msg);
+}
+
+function numerateRulesRows() {
+    $(".rules-table tr").each(function (i, v) {
+        $(v).find(".index").text(i++);
+    });
 }

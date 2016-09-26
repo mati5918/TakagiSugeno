@@ -10,7 +10,7 @@ namespace TakagiSugeno.Model.ViewModels
     {
         public List<RuleVM> Rules { get; set; }
         public Dictionary<int, IEnumerable<SelectListItem>> VariablesLists { get; set; }
-        public Dictionary<int, Dictionary<int,string>> ChartsData { get; set; }
+        public Dictionary<int, List<VariableChartData>> ChartsData { get; set; }
     }
     public class RuleVM
     {
@@ -27,5 +27,12 @@ namespace TakagiSugeno.Model.ViewModels
         public int InputOutputId { get; set; }
         public string VariableName { get; set; }
         public string InputOutputName { get; set; }
+    }
+
+    public class VariableChartData
+    {
+        public String Data { get; set; }
+        public int VariableId { get; set; }
+        public VariableType Type { get; set; }
     }
 }

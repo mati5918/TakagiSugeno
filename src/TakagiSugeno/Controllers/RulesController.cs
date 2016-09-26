@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TakagiSugeno.Model.ViewModels;
 using TakagiSugeno.Model.Services;
+using TakagiSugeno.Tools;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +24,14 @@ namespace TakagiSugeno.Controllers
         {
             RuleGeneralVM vm = _service.GetSystemRules(systemId);
             ViewBag.SystemId = systemId;
+            if (Request.IsAjaxRequest())
+                return PartialView(vm);
             return View(vm);
+        }
+
+        public IActionResult NewRule(int systemId, int ruleId)
+        {
+            return PartialView("RuleRow", _service.CreateNewRule(systemId, ruleId));
         }
     }
 }

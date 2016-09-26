@@ -3,8 +3,9 @@
 @using TakagiSugeno.Model;
 @{
     ViewBag.Title = "Reguły";
-    int index = 1;
     var names = rulesService.GetSystemInputsOutputsNames(ViewBag.SystemId);
+    ViewBag.VariablesList = Model.VariablesLists;
+    ViewBag.ChartsData = Model.ChartsData;
 }
 
 
@@ -16,6 +17,7 @@
     </div>
     <div class="col-sm-4">
         <div class="pull-right">
+            <button class="btn btn-success" id="btnAdd" style="margin-top:20px;"><span class="glyphicon glyphicon-plus"></span> Dodaj</button>
             <button class="btn btn-primary" id="btnSave" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz</button>
             <button class="btn btn-danger" id="btnCancel" style="margin-top:20px;" disabled data-toggle="modal" data-target="#cancelModal"><span class="glyphicon glyphicon-bullhorn"></span> Anuluj</button>
         </div>
@@ -30,6 +32,7 @@
 <div class="col-sm-12" style="overflow-x:scroll;">
 <table class="table rules-table">
     <colgroup>
+        <col span="1" class="remove-col" />
         <col span="1" class="id-col" />
         @foreach (string name in names)
         {
@@ -42,6 +45,7 @@
     </colgroup>
     <thead>
         <tr>
+            <th></th>
             <th>#</th>
         @foreach (string name in names)
         {
@@ -56,74 +60,7 @@
     <tbody>
         @foreach (var rule in Model.Rules)
         {
-            <tr>
-                <td style="padding-top:25px;">
-                    <span>@(index++).&nbsp;&nbsp;<i class="glyphicon glyphicon-chevron-down collapse-button"></i></span>                 
-                </td>
-                @foreach (var elem in rule.RuleElements)
-                {
-                    //bool isLast = rule.RuleElements.ElementAt(rule.RuleElements.IndexOf(elem) + 1).Type == RuleElementType.OutputPart ? true : false;
-                    <td>                       
-                        <div class="panel panel-default collapse-panel">
-                            <div class="panel-heading">
-                                <select asp-for="@elem.VariableId" asp-items="@Model.VariablesLists[elem.InputOutputId]" class="form-control"></select>
-                            </div>
-                            <div class="panel-body chart-container">
-                                @{
-                                    if (elem.Type == RuleElementType.InputPart)
-                                    {
-                                        Dictionary<int, string> chartData = Model.ChartsData[elem.InputOutputId];
-                                        foreach (var item in chartData)
-                                        {
-                                            <div class="json-data" hidden data-chartJson='@item.Value' data-type=0></div> //TODO pass type to vm, add id to charts
-                                        }
-                                    }
-                                }
-                            </div>
-                        </div>
-                    </td>
-                    if (elem.Type == RuleElementType.InputPart)
-                    {
-                        bool isLast = rule.RuleElements.Where((e, i) => e.Type == RuleElementType.OutputPart && i == rule.RuleElements.IndexOf(elem) + 1).Count() > 0;
-                        if (isLast)
-                        {
-                        <td>
-                            <div class="panel panel-default">
-                                <div class="panel-heading text-only">
-                                    <span>Then</span>
-                                </div>
-                            </div>
-                        </td>
-                        }
-                        else
-                        {
-                        <td>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <select class="form-control">
-                                        <option value="0" selected>And</option>
-                                        <option value="1">Or</option>
-                                    </select>
-                                </div>
-                            </div>                          
-                        </td>
-                        }
-                    }
-                    else
-                    {
-                        if (rule.RuleElements.IndexOf(elem) != rule.RuleElements.Count - 1)
-                        {
-                            <td>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading text-only">
-                                        <span>And</span>
-                                    </div>
-                                </div>
-                            </td>
-                        }
-                    }
-                }
-            </tr>
+            Html.RenderPartial("RuleRow", rule);
         }
     </tbody>
 </table>
@@ -131,22 +68,40 @@
 </div>
 <div id="temp" style="background-color:red;" hidden>
 </div>
+<div id="cancelModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Porzucenie zmian.</h4>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz porzucić wszystkie zmiany w regułach?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="cancelChanges()" data-dismiss="modal">Tak</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
-        //$(".collapse-panel .panel-body").hide();
+        numerateRulesRows();
 
         var containers = $(".chart-container");
         $.each(containers, function (index, value) {
-            var id = $(value).attr("id")
             var chart = new CanvasJS.Chart("temp", {
                 data: [],
             });
-            
+
             $(value).find(".json-data").each(function () {
                 createChartFromJSONData(chart, $(this));
             })
-            //chart.render();
             $(value).CanvasJSChart(chart.options);
+            var id = $(this).parents(".panel").find(".variable-select").val();
+            selectVariableOnChart(id, $(value).CanvasJSChart());
         })
 
         $(".collapse-panel .panel-body").hide();
@@ -155,13 +110,68 @@
     $(".rules-table").on("click", ".collapse-button", function () {
         var $this = $(this);
         if ($this.hasClass('glyphicon-chevron-down')) {
-            $this.parents('tr').find('.panel-body').slideDown();
+            $this.parents('tr').find('.panel-body').slideDown(function () {
+                $this.parents('tr').find('.chart-container').each(function (i, v) {
+                    var id = $(v).parents(".panel").find("select").val();
+                    selectVariableOnChart(id, $(v).CanvasJSChart());
+                })
+            });
             $this.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
         } else {
             $this.parents('tr').find('.panel-body').slideUp();
             $this.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
         }
         return false;
+    });
+
+    $(".rules-table").on("change", ".variable-select", function () {
+        var id = $(this).val();
+        var container = $(this).parents(".panel").find(".chart-container");
+        if ($(this).parents("tr").find(".collapse-button").hasClass('glyphicon-chevron-up')) {
+            selectVariableOnChart(id, $(container).CanvasJSChart());
+        }
+    });
+
+    $(".rules-table").on("change", "select", function () {
+        changeRulesButtonsState(false);
+    });
+
+    $(".rules-table").on("click", ".remove-rule", function () {
+        $(this).closest("tr").remove();
+        changeRulesButtonsState(false);
+        numerateRulesRows();
+    });
+
+    function cancelChanges() {
+        setTimeout(function () {
+            var id = 1; //TODO id
+            var url = "/Rules/SystemRules/?systemId=" + id;
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (response) {
+                    $(".body-content").html(response);                   
+                }
+            });
+            //window.location.href = url;
+        }, 200)
+    }
+
+    $("#btnAdd").click(function () {
+        var id = 1; //TODO id
+        var ruleId = createFakeRuleId();
+        var url = "/Rules/NewRule/?systemId=" + id + "&ruleId=" + ruleId;
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {              
+                $(".rules-table tbody").append(response);
+                numerateRulesRows();
+                console.log($(response).find(".chart-container"));
+                $("#" + ruleId + " .chart-container").hide();
+                
+            }
+        });
     });
 </script>
 

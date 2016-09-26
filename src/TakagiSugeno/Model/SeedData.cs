@@ -57,26 +57,27 @@ namespace TakagiSugeno.Model
                 context.Variables.AddRange(x1, x2, y1, y2, y3);
                 context.SaveChanges();*/
 
-                /*Rule r1 = new Rule { TSSystemId = 1 };
-                Rule r2 = new Rule { TSSystemId = 1 };
+                
+                /*Rule r1 = new Rule { TSSystemId = 1, RuleId=1};
+                Rule r2 = new Rule { TSSystemId = 1, RuleId=2 };
                 context.Rules.AddRange(r1, r2);
                 context.SaveChanges();
 
                 RuleElement re1 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 1007, InputOutputId = 1 };
                 RuleElement re2 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 4, InputOutputId = 2 };
-                RuleElement re3 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 2014, InputOutputId = 1011 };
-                RuleElement re4 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 4010, InputOutputId = 2007 };
-                RuleElement re5 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.OutputPart, VariableId = 6, InputOutputId = 3 };
-                RuleElement re6 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.OutputPart, VariableId = 10, InputOutputId = 4 };
+                RuleElement re3 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 2029, InputOutputId = 23 };
+                //RuleElement re4 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.InputPart, VariableId = 4010, InputOutputId = 2007 };
+                RuleElement re5 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.OutputPart, VariableId = 2030, InputOutputId = 24 };
+                RuleElement re6 = new RuleElement { RuleId = r1.RuleId, Type = RuleElementType.OutputPart, VariableId = 2033, InputOutputId = 25 };
 
                 RuleElement re7 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 1006, InputOutputId = 1 };
                 RuleElement re8 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 5, InputOutputId = 2 };
-                RuleElement re9 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 2014, InputOutputId = 1011 };
-                RuleElement re10 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 4010, InputOutputId = 2007 };
-                RuleElement re11 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.OutputPart, VariableId = 7, InputOutputId = 3 };
-                RuleElement re12 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.OutputPart, VariableId = 8, InputOutputId = 4 };
+                RuleElement re9 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 2029, InputOutputId = 23 };
+                //RuleElement re10 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.InputPart, VariableId = 4010, InputOutputId = 2007 };
+                RuleElement re11 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.OutputPart, VariableId = 2032, InputOutputId = 24 };
+                RuleElement re12 = new RuleElement { RuleId = r2.RuleId, Type = RuleElementType.OutputPart, VariableId = 2033, InputOutputId = 25 };
 
-                context.RuleElements.AddRange(re1, re2, re3, re4, re5, re6, re7, re8, re9, re10, re11, re12);
+                context.RuleElements.AddRange(re1, re2, re3, re5, re6, re7, re8, re9, re11, re12);
                 context.SaveChanges();*/
             }
         }

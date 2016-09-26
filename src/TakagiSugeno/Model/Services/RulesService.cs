@@ -39,8 +39,8 @@ namespace TakagiSugeno.Model.Services
                     VariableName = elem.Variable.Name
                 }).ToList()
                 }).ToList();
-            CreateVariablesLists(res, systemId);
-            FillChartsData(res, systemId);
+            res.VariablesLists = CreateVariablesLists(systemId);
+            res.ChartsData = CreateChartsData(systemId);
             return res;
         }
 
@@ -49,30 +49,57 @@ namespace TakagiSugeno.Model.Services
             return _ioRepository.GetBySystemId(systemId).OrderBy(io => io.Type).Select(io => io.Name).ToList();
         }
 
-        private void CreateVariablesLists(RuleGeneralVM vm, int systemId)
+        public Dictionary<int, IEnumerable<SelectListItem>> CreateVariablesLists(int systemId)
         {
-            vm.VariablesLists = new Dictionary<int, IEnumerable<SelectListItem>>();
+            Dictionary<int, IEnumerable<SelectListItem>> variablesLists = new Dictionary<int, IEnumerable<SelectListItem>>();
             var inputsOutputs = _ioRepository.GetBySystemId(systemId);
             foreach(var item in inputsOutputs)
             {
-                vm.VariablesLists.Add(item.InputOutputId, item.Variables.Select(v => new SelectListItem { Value = v.VariableId.ToString(), Text = v.Name }));
+                List<SelectListItem> items = new List<SelectListItem>();
+                items.Add(new SelectListItem { Value = "-1", Text = "Not set" });
+                items.AddRange(item.Variables.OrderBy(v => v.VariableId).Select(v => new SelectListItem { Value = v.VariableId.ToString(), Text = v.Name }));
+                variablesLists.Add(item.InputOutputId, items);
             }
-
+            return variablesLists;
         }
 
-        private void FillChartsData(RuleGeneralVM vm, int systemId)
+        public Dictionary<int, List<VariableChartData>> CreateChartsData(int systemId)
         {
-            vm.ChartsData = new Dictionary<int, Dictionary<int, string>>();
+            Dictionary<int, List<VariableChartData>>  chartsData = new Dictionary<int, List<VariableChartData>>();
             var inputs = _ioRepository.GetBySystemId(systemId).Where(io => io.Type == IOType.Input);
             foreach(var item in inputs)
             {
-                Dictionary<int, string> data = new Dictionary<int, string>();
+                List<VariableChartData> data = new List<VariableChartData>();
                 foreach(var variable in item.Variables)
                 {
-                    data.Add(variable.VariableId, variable.Data);
+                    data.Add(new VariableChartData
+                    {
+                         Data = variable.Data,
+                         VariableId = variable.VariableId,
+                         Type = variable.Type
+                    });
                 }
-                vm.ChartsData.Add(item.InputOutputId, data);
+                chartsData.Add(item.InputOutputId, data);
             }
+            return chartsData;
+        }
+
+        public RuleVM CreateNewRule(int systemId, int ruleId)
+        {
+            RuleVM rule = new RuleVM { RuleId = ruleId, SystemId = systemId, RuleElements = new List<RuleElementVM>() };
+            foreach(var io in _ioRepository.GetBySystemId(systemId).OrderBy(io => io.Type))
+            {
+                rule.RuleElements.Add(new RuleElementVM
+                {
+                    ElementId = -1,
+                    Type = io.Type == IOType.Input ? RuleElementType.InputPart : RuleElementType.OutputPart,
+                    InputOutputId = io.InputOutputId,
+                    VariableId = -1,
+                    InputOutputName = io.Name,
+                    VariableName = string.Empty
+                });
+            }
+            return rule;
         }
     }
 }

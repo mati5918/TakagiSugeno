@@ -60,7 +60,7 @@ textarea {
     border-right: 5px;
 }
 
-.remove-variable:hover, .hide-alert:hover, .collapse-button:hover {
+.remove-variable:hover, .hide-alert:hover, .collapse-button:hover, .remove-rule:hover {
     cursor: pointer;
 }
 
@@ -133,6 +133,10 @@ textarea {
 
 .rules-table colgroup .id-col {
     min-width: 60px;
+}
+
+.rules-table colgroup .remove-col {
+    min-width: 30px;
 }
 
 .rules-table colgroup .operation-col {
