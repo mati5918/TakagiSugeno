@@ -2,11 +2,11 @@
 @using TakagiSugeno.Model
 @inject TakagiSugeno.Model.Services.RulesService rulesService
 @{
-    var VariablesLists = ViewBag.VariablesList ?? rulesService.CreateVariablesLists(1); // TODO id
-    var ChartsData = ViewBag.ChartsData ?? rulesService.CreateChartsData(1); //TODO id
+    var VariablesLists = ViewBag.VariablesList ?? rulesService.CreateVariablesLists(Model.SystemId);
+    var ChartsData = ViewBag.ChartsData ?? rulesService.CreateChartsData(Model.SystemId); 
 }
 
-<tr id="@Model.RuleId">
+<tr id="@Model.RuleId" data-systemId="@Model.SystemId">
     <td style="padding-top:25px;">
         <span class="glyphicon glyphicon-remove remove-rule"></span>
     </td>
@@ -15,16 +15,20 @@
     </td>
     @foreach (var elem in Model.RuleElements)
     {
-        <td>
+        <td class="element-variable">
+            @{var i = Model.RuleElements.IndexOf(elem); }
+            <input asp-for="RuleElements[i].ElementId" class="form-control elementId" type="hidden" />
+            <input asp-for="RuleElements[i].Type" class="form-control elementType" type="hidden" />
+            <input asp-for="RuleElements[i].InputOutputId" class="form-control elementInputOutputId" type="hidden" />
             <div class="panel panel-default collapse-panel">
                 <div class="panel-heading">
                     @if (elem.Type == RuleElementType.InputPart)
                     {
-                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variable-select"></select>
+                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variable-select variableId"></select>
                     }
                     else
                     {
-                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control"></select>
+                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variableId"></select>
                     }
 
                 </div>
@@ -44,7 +48,7 @@
         </td>
                                 if (elem.Type == RuleElementType.InputPart)
                                 {
-                                    bool isLast = Model.RuleElements.Where((e, i) => e.Type == RuleElementType.OutputPart && i == Model.RuleElements.IndexOf(elem) + 1).Count() > 0;
+                                    bool isLast = Model.RuleElements.Where((e, j) => e.Type == RuleElementType.OutputPart && j == Model.RuleElements.IndexOf(elem) + 1).Count() > 0;
                                     if (isLast)
                                     {
                                         <td>

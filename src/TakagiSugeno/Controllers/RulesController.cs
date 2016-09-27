@@ -33,5 +33,11 @@ namespace TakagiSugeno.Controllers
         {
             return PartialView("RuleRow", _service.CreateNewRule(systemId, ruleId));
         }
+
+        [HttpPost]
+        public IActionResult Save([FromBody] List<RuleVM> rules)
+        {
+            return Json("");
+        }
     }
 }

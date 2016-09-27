@@ -144,7 +144,7 @@
 
     function cancelChanges() {
         setTimeout(function () {
-            var id = 1; //TODO id
+            var id = $("tbody tr").first().attr("data-systemId");
             var url = "/Rules/SystemRules/?systemId=" + id;
             $.ajax({
                 url: url,
@@ -153,12 +153,11 @@
                     $(".body-content").html(response);                   
                 }
             });
-            //window.location.href = url;
         }, 200)
     }
 
     $("#btnAdd").click(function () {
-        var id = 1; //TODO id
+        var id = $("tbody tr").first().attr("data-systemId");
         var ruleId = createFakeRuleId();
         var url = "/Rules/NewRule/?systemId=" + id + "&ruleId=" + ruleId;
         $.ajax({
@@ -167,11 +166,54 @@
             success: function (response) {              
                 $(".rules-table tbody").append(response);
                 numerateRulesRows();
-                console.log($(response).find(".chart-container"));
+                createChartForRuleRow($("tbody").find("#" + ruleId));
                 $("#" + ruleId + " .chart-container").hide();
+                changeRulesButtonsState(false);
                 
             }
         });
     });
+
+    $("#btnSave").click(function () {
+        var rules = collectRulesData();
+        console.log(rules);
+        $.ajax({
+            url: "@Url.Action("Save")",
+            type: "POST",
+            data: JSON.stringify(rules),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.errors.length == 0) {
+                    printSaveSuccess();
+                    $("#btnCancel, #btnSave").prop("disabled", true);
+                    $(".header").text("Szczegóły wejścia");
+                    getInputsList($("#SystemId").val());
+                    $("#InputId").val(response.id);
+                }
+                else {
+                    printSaveErrors(response);
+                }
+                $("#alert-container").show();
+        }
+    });
+    });
+
+    function createChartForRuleRow(row) {
+        var containers = $(row).find(".chart-container");
+        $.each(containers, function (index, value) {
+            var chart = new CanvasJS.Chart("temp", {
+                data: [],
+            });
+
+            $(value).find(".json-data").each(function () {
+                createChartFromJSONData(chart, $(this));
+            })
+            $(value).CanvasJSChart(chart.options);
+            var id = $(this).parents(".panel").find(".variable-select").val();
+            selectVariableOnChart(id, $(value).CanvasJSChart());
+        })
+
+    }
 </script>
 

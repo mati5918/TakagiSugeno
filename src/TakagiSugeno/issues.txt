@@ -1,2 +1,3 @@
 - can break save after click button when focus input with wrong value
 - cannot delete IO when selected is deleted (no modal in html code)
+- probably not find systemId when inputs/outputs/rules are empty for system (add id to nav button)

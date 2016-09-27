@@ -165,10 +165,10 @@ function createFakeId() {
 }
 
 function createFakeRuleId() {
-    var rows = $(".rules-table tr");
+    var rows = $(".rules-table tbody tr");
     var min = 0;
     $.each(rows, function (index, value) {
-        var id = parseInt($(value).attr("data-id"));
+        var id = parseInt($(value).attr("id"));
         if (id < min) min = id;
     });
     return min - 1;
@@ -366,6 +366,33 @@ function collectData() {
     };
 
     return VM;
+}
+
+function collectRulesData() {
+    var rules = [];
+    $(".rules-table tbody tr").each(function (i, v) {
+        var elements = [];
+        $(v).find(".element-variable").each(function (i, v) {
+            var elem = {
+                ElemntId: $(v).find(".elementId").val(),
+                InputOutputId: $(v).find(".elementInputOutputId").val(),
+                Type: $(v).find(".elementType").val(),
+                //RuleId: $(v).parents("tr").attr("id")
+                VariableId: $(v).find(".variableId").val(),
+                VariableName: "",
+                InputOutputName: ""
+            }
+            elements.push(elem);
+        })
+        
+        var rule = {
+            RuleId: $(v).attr("id"),
+            SystemId: $(v).attr("data-systemId"),
+            RuleElements: elements
+        }
+        rules.push(rule);
+    });
+    return rules;
 }
 
 function printSaveSuccess(){
