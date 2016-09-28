@@ -37,6 +37,7 @@ namespace TakagiSugeno.Controllers
         [HttpPost]
         public IActionResult Save([FromBody] List<RuleVM> rules)
         {
+            _service.Save(rules);
             return Json("");
         }
     }

@@ -9,11 +9,13 @@ namespace TakagiSugeno.Model.Entity
     {
         public int RuleElementId { get; set; }
         public RuleElementType Type { get; set; }
-      
+        public RuleNextOperation NextOpartion { get; set; }
+        public bool IsNegation { get; set; }
+
         public int InputOutputId { get; set; }
         public InputOutput InputOutput { get; set; }
 
-        public int VariableId { get; set; }
+        public int? VariableId { get; set; }
         public Variable Variable { get; set; }
 
         public int RuleId { get; set; }

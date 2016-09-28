@@ -250,6 +250,17 @@ function refreshButtonsState() {
     $("#btnCancel").prop("disabled", false);
 }
 
+function refreshCheckboxes() {
+    $("input[type=checkbox]").each(function (i, v) {
+        var value = $(v).parents(".panel").find("select").val();
+        if (value == -1) {
+            $(v).prop("disabled", true);
+        } else {
+            $(v).prop("disabled", false);
+        }
+    });
+}
+
 function changeRulesButtonsState(isDisabled) {
     $("#btnSave").prop("disabled", isDisabled);
     $("#btnCancel").prop("disabled", isDisabled);
@@ -309,6 +320,20 @@ function getOutputsList(systemId) {
         type: "GET",
         success: function (response) {
             $(".outputs-list").parent().replaceWith(response);
+        }
+    })
+}
+
+function RefreshRules(systemId) {
+    var url = "/Rules/SystemRules/?systemId=" + systemId;
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (response) {
+            $(".body-content").html(response);
+            printSaveSuccess();
+            changeRulesButtonsState(true);
+            $("#alert-container").show();
         }
     })
 }
@@ -373,14 +398,20 @@ function collectRulesData() {
     $(".rules-table tbody tr").each(function (i, v) {
         var elements = [];
         $(v).find(".element-variable").each(function (i, v) {
+            var operation = $(v).next("td").find("select").val();
+            if (operation == null) {
+                operation = 2;
+            }
+            var negation = $(v).find("input[type=checkbox]").prop("checked");
             var elem = {
-                ElemntId: $(v).find(".elementId").val(),
+                ElementId: $(v).find(".elementId").val(),
                 InputOutputId: $(v).find(".elementInputOutputId").val(),
                 Type: $(v).find(".elementType").val(),
-                //RuleId: $(v).parents("tr").attr("id")
                 VariableId: $(v).find(".variableId").val(),
                 VariableName: "",
-                InputOutputName: ""
+                InputOutputName: "",
+                NextOperation: operation,
+                IsNegation: negation
             }
             elements.push(elem);
         })

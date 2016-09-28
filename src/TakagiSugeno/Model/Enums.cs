@@ -39,4 +39,11 @@ namespace TakagiSugeno.Model
         InputPart,
         OutputPart
     }
+
+    public enum RuleNextOperation
+    {
+        And = 0,
+        Or = 1,
+        None = 2
+    }
 }

@@ -27,6 +27,8 @@ namespace TakagiSugeno.Model.ViewModels
         public int InputOutputId { get; set; }
         public string VariableName { get; set; }
         public string InputOutputName { get; set; }
+        public RuleNextOperation NextOperation { get; set; }
+        public bool IsNegation { get; set; }
     }
 
     public class VariableChartData

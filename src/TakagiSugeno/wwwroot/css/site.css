@@ -148,3 +148,10 @@ textarea {
     text-align:center;
     padding-top: 20px;
 }
+
+.rules-table input[type="checkbox"] {
+    margin-top: 0px;
+    height: 0px;
+    position: center;
+    margin-left: 5px;
+}

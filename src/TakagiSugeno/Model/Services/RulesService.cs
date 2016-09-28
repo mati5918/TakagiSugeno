@@ -13,11 +13,13 @@ namespace TakagiSugeno.Model.Services
     {
         private IRepository<InputOutput> _ioRepository;
         private IRepository<Rule> _ruleRepository;
+        private RulesSaver _saver;
 
-        public RulesService(IRepository<Rule> ruleRepository, IRepository<InputOutput> ioRepository)
+        public RulesService(IRepository<Rule> ruleRepository, IRepository<InputOutput> ioRepository, RulesSaver saver)
         {
             _ruleRepository = ruleRepository;
             _ioRepository = ioRepository;
+            _saver = saver;
         }
 
         public RuleGeneralVM GetSystemRules(int systemId)
@@ -34,9 +36,11 @@ namespace TakagiSugeno.Model.Services
                     ElementId = elem.RuleElementId,
                     Type = elem.Type,
                     InputOutputId = elem.InputOutputId,
-                    VariableId = elem.VariableId,
+                    VariableId = elem.VariableId.HasValue ? elem.VariableId.Value : -1,
                     InputOutputName = elem.InputOutput.Name,
-                    VariableName = elem.Variable.Name
+                    VariableName = elem.Variable?.Name,
+                    NextOperation = elem.NextOpartion,
+                    IsNegation = elem.IsNegation
                 }).ToList()
                 }).ToList();
             res.VariablesLists = CreateVariablesLists(systemId);
@@ -96,10 +100,17 @@ namespace TakagiSugeno.Model.Services
                     InputOutputId = io.InputOutputId,
                     VariableId = -1,
                     InputOutputName = io.Name,
-                    VariableName = string.Empty
+                    VariableName = string.Empty,
+                    IsNegation = false,
+                    NextOperation = RuleNextOperation.And
                 });
             }
             return rule;
+        }
+
+        public void Save(List<RuleVM> rules)
+        {
+            _saver.Save(rules);
         }
     }
 }

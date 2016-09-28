@@ -20,72 +20,84 @@
             <input asp-for="RuleElements[i].ElementId" class="form-control elementId" type="hidden" />
             <input asp-for="RuleElements[i].Type" class="form-control elementType" type="hidden" />
             <input asp-for="RuleElements[i].InputOutputId" class="form-control elementInputOutputId" type="hidden" />
-            <div class="panel panel-default collapse-panel">
-                <div class="panel-heading">
-                    @if (elem.Type == RuleElementType.InputPart)
-                    {
-                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variable-select variableId"></select>
-                    }
-                    else
-                    {
-                        <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variableId"></select>
-                    }
 
-                </div>
-                @{
-                    if (elem.Type == RuleElementType.InputPart)
-                    {
-                        <div class="panel-body chart-container">
-                            @{var chartData = ChartsData[elem.InputOutputId];}
-                            @foreach (var item in chartData)
-                            {
-                                <div class="json-data" hidden data-chartJson='@item.Data' data-type=@item.Type data-id=@item.VariableId></div>
-                            }
+            @if (elem.Type == RuleElementType.InputPart)
+            {
+                <div class="panel panel-success collapse-panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <span>Not</span>
+                                <input asp-for="RuleElements[i].IsNegation" class="form-control" />
+                            </div>
+                            <div class="col-sm-10">
+                                <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variable-select variableId"></select>
+                            </div>
                         </div>
-                    }
-                }
-            </div>
+                    </div>
+                    <div class="panel-body chart-container">
+                        @{var chartData = ChartsData[elem.InputOutputId];}
+                        @foreach (var item in chartData)
+                        {
+                            <div class="json-data" hidden data-chartJson='@item.Data' data-type=@item.Type data-id=@item.VariableId></div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="panel panel-warning collapse-panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select asp-for="@elem.VariableId" asp-items="@VariablesLists[elem.InputOutputId]" class="form-control variableId"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            }
         </td>
-                                if (elem.Type == RuleElementType.InputPart)
-                                {
-                                    bool isLast = Model.RuleElements.Where((e, j) => e.Type == RuleElementType.OutputPart && j == Model.RuleElements.IndexOf(elem) + 1).Count() > 0;
-                                    if (isLast)
-                                    {
-                                        <td>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading text-only">
-                                                    <span>Then</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <select class="form-control">
-                                                        <option value="0" selected>And</option>
-                                                        <option value="1">Or</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    }
-                                }
-                                else
-                                {
-                                    if (Model.RuleElements.IndexOf(elem) != Model.RuleElements.Count - 1)
-                                    {
-                                        <td>
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading text-only">
-                                                    <span>And</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        }
-                                    }
-                                }
+        if (elem.Type == RuleElementType.InputPart)
+        {
+            bool isLast = Model.RuleElements.Where((e, j) => e.Type == RuleElementType.OutputPart && j == Model.RuleElements.IndexOf(elem) + 1).Count() > 0;
+            if (isLast)
+            {
+                    <td>
+                        <div class="panel panel-danger">
+                            <div class="panel-heading text-only">
+                                <span><b>Then</b></span>
+                            </div>
+                        </div>
+                    </td>
+             }
+             else
+             {
+                 <td class="operation">
+                     <div class="panel panel-info">
+                         <div class="panel-heading">
+                             <select asp-for="RuleElements[i].NextOperation" class="form-control">
+                                 <option value="0">And</option>
+                                 <option value="1">Or</option>
+                             </select>
+                         </div>
+                     </div>
+                 </td>
+             }
+        }
+        else
+        {
+            if (Model.RuleElements.IndexOf(elem) != Model.RuleElements.Count - 1)
+            {
+                <td>
+                    <div class="panel panel-info">
+                        <div class="panel-heading text-only">
+                            <span><b>And</b></span>
+                        </div>
+                    </div>
+                </td>
+                }
+            }
+        }
 </tr>
 

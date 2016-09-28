@@ -46,7 +46,7 @@
     <thead>
         <tr>
             <th></th>
-            <th>#</th>
+            <th></th>
         @foreach (string name in names)
         {
             <th>@name is</th>
@@ -89,6 +89,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         numerateRulesRows();
+        refreshCheckboxes();
 
         var containers = $(".chart-container");
         $.each(containers, function (index, value) {
@@ -126,13 +127,19 @@
 
     $(".rules-table").on("change", ".variable-select", function () {
         var id = $(this).val();
+        if (id == -1) {
+            $(this).parents(".panel").find("input[type=checkbox]").prop("disabled", true);
+            $(this).parents(".panel").find("input[type=checkbox]").prop("checked", false);
+        } else {
+            $(this).parents(".panel").find("input[type=checkbox]").prop("disabled", false);
+        }
         var container = $(this).parents(".panel").find(".chart-container");
         if ($(this).parents("tr").find(".collapse-button").hasClass('glyphicon-chevron-up')) {
             selectVariableOnChart(id, $(container).CanvasJSChart());
         }
     });
 
-    $(".rules-table").on("change", "select", function () {
+    $(".rules-table").on("change", "select, input[type=checkbox]", function () {
         changeRulesButtonsState(false);
     });
 
@@ -169,6 +176,7 @@
                 createChartForRuleRow($("tbody").find("#" + ruleId));
                 $("#" + ruleId + " .chart-container").hide();
                 changeRulesButtonsState(false);
+                refreshCheckboxes();
                 
             }
         });
@@ -176,7 +184,6 @@
 
     $("#btnSave").click(function () {
         var rules = collectRulesData();
-        console.log(rules);
         $.ajax({
             url: "@Url.Action("Save")",
             type: "POST",
@@ -184,17 +191,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                if (response.errors.length == 0) {
-                    printSaveSuccess();
-                    $("#btnCancel, #btnSave").prop("disabled", true);
-                    $(".header").text("Szczegóły wejścia");
-                    getInputsList($("#SystemId").val());
-                    $("#InputId").val(response.id);
-                }
-                else {
-                    printSaveErrors(response);
-                }
-                $("#alert-container").show();
+                var id = $("tbody tr").first().attr("data-systemId");
+                RefreshRules(id);
         }
     });
     });
