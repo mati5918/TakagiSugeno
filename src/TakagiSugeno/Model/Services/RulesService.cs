@@ -30,7 +30,7 @@ namespace TakagiSugeno.Model.Services
                 {
                     RuleId = r.RuleId,
                     SystemId = r.TSSystemId,
-                    RuleElements = r.RuleElements
+                    RuleElements = r.RuleElements.OrderBy(e => e.Type)
                 .Select(elem => new RuleElementVM
                 {
                     ElementId = elem.RuleElementId,

@@ -7,15 +7,15 @@
 }
 
 <tr id="@Model.RuleId" data-systemId="@Model.SystemId">
-    <td style="padding-top:25px;">
+    <td class="remove-col" style="padding-top:25px;">
         <span class="glyphicon glyphicon-remove remove-rule"></span>
     </td>
-    <td style="padding-top:25px;">
+    <td class="id-col" style="padding-top:25px;">
         <span><span class="index"></span>.&nbsp;&nbsp;<i class="glyphicon glyphicon-chevron-down collapse-button"></i></span>
     </td>
     @foreach (var elem in Model.RuleElements)
     {
-        <td class="element-variable">
+        <td class="element-variable variable-col">
             @{var i = Model.RuleElements.IndexOf(elem); }
             <input asp-for="RuleElements[i].ElementId" class="form-control elementId" type="hidden" />
             <input asp-for="RuleElements[i].Type" class="form-control elementType" type="hidden" />
@@ -63,7 +63,7 @@
             bool isLast = Model.RuleElements.Where((e, j) => e.Type == RuleElementType.OutputPart && j == Model.RuleElements.IndexOf(elem) + 1).Count() > 0;
             if (isLast)
             {
-                    <td>
+                    <td class="operation-col">
                         <div class="panel panel-danger">
                             <div class="panel-heading text-only">
                                 <span><b>Then</b></span>
@@ -73,7 +73,7 @@
              }
              else
              {
-                 <td class="operation">
+                 <td class="operation operation-col">
                      <div class="panel panel-info">
                          <div class="panel-heading">
                              <select asp-for="RuleElements[i].NextOperation" class="form-control">
@@ -89,7 +89,7 @@
         {
             if (Model.RuleElements.IndexOf(elem) != Model.RuleElements.Count - 1)
             {
-                <td>
+                <td class="operation-col">
                     <div class="panel panel-info">
                         <div class="panel-heading text-only">
                             <span><b>And</b></span>

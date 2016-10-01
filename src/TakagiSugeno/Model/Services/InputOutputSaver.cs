@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,7 @@ namespace TakagiSugeno.Model.Services
                 };
                 _context.InputsOutputs.Add(inputEntity);
                 _context.SaveChanges();
+                AddInputOutputToRules(inputEntity);
                 viewModel.InputId = inputEntity.InputOutputId;
             }
             SaveVariables(viewModel.InputId, viewModel.Variables);
@@ -58,6 +60,7 @@ namespace TakagiSugeno.Model.Services
                 };
                 _context.InputsOutputs.Add(outputEntity);
                 _context.SaveChanges();
+                AddInputOutputToRules(outputEntity);
                 viewModel.OutputId = outputEntity.InputOutputId;
             }
             SaveVariables(viewModel.OutputId, viewModel.Variables);
@@ -81,6 +84,7 @@ namespace TakagiSugeno.Model.Services
                 }
                 else
                 {
+                    RemoveVariableFromRules(variable);
                     _context.Variables.Remove(variable);
                 }
             }
@@ -123,6 +127,60 @@ namespace TakagiSugeno.Model.Services
                         break;
                 }
                 _context.Entry(v).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            _context.SaveChanges();
+        }
+
+        private void RemoveVariableFromRules(Variable variable)
+        {
+            var elements = _context.RuleElements.Where(e => e.VariableId == variable.VariableId);
+            foreach(var elem in elements)
+            {
+                elem.VariableId = null;
+                elem.IsNegation = false;
+                _context.Entry(elem).State = EntityState.Modified;
+            }
+        }
+
+        private void AddInputOutputToRules(InputOutput io)
+        {
+            var rules = _context.Rules.Include(r => r.RuleElements).Where(r => r.TSSystemId == io.TSSystemId);
+            foreach(var rule in rules)
+            {
+                RuleElement elem = new RuleElement
+                {
+                    InputOutputId = io.InputOutputId,
+                    IsNegation = false,
+                    NextOpartion = RuleNextOperation.None,
+                    RuleId = rule.RuleId,
+                    VariableId = null,
+                    Type = io.Type == IOType.Input ? RuleElementType.InputPart : RuleElementType.OutputPart
+                };
+                if (io.Type == IOType.Input)
+                {
+                    var last = rule.RuleElements.FirstOrDefault(e => e.Type == RuleElementType.InputPart && e.NextOpartion == RuleNextOperation.None);
+                    last.NextOpartion = RuleNextOperation.And;
+                    _context.Entry(last).State = EntityState.Modified;
+                }
+                _context.RuleElements.Add(elem);
+                
+            }
+            _context.SaveChanges();
+        }
+
+        public void RemoveRuleElements(InputOutput io)
+        {
+            var rules = _context.Rules.Include(r => r.RuleElements).Where(r => r.TSSystemId == io.TSSystemId);
+            foreach(var rule in rules)
+            {
+                var elem = rule.RuleElements.FirstOrDefault(e => e.InputOutputId == io.InputOutputId);
+                _context.RuleElements.Remove(elem);
+                if(elem.Type == RuleElementType.InputPart && elem.NextOpartion == RuleNextOperation.None)
+                {
+                    var lastElem = rule.RuleElements.LastOrDefault(e => e.Type == RuleElementType.InputPart && e.NextOpartion != RuleNextOperation.None);
+                    lastElem.NextOpartion = RuleNextOperation.None;
+                    _context.Entry(lastElem).State = EntityState.Modified;
+                }
             }
             _context.SaveChanges();
         }

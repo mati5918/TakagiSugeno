@@ -117,29 +117,30 @@ textarea {
     padding-bottom: 0px;
 }
 
-.rules-table th, .rules-table td select{
-    text-align:center;
-}
 
 .inputs-list, .outputs-list{
     text-shadow: none;
 }
 
+/*---------------------------------RULES---------------------------------------*/
 
+.rules-table th, .rules-table td select{
+    text-align:center;
+}
 
-.rules-table colgroup .variable-col {
+.rules-table .variable-col {
     min-width: 200px;
 }
 
-.rules-table colgroup .id-col {
+.rules-table .id-col {
     min-width: 60px;
 }
 
-.rules-table colgroup .remove-col {
+.rules-table .remove-col {
     min-width: 30px;
 }
 
-.rules-table colgroup .operation-col {
+.rules-table .operation-col {
     min-width: 120px;
 }
 
@@ -155,3 +156,38 @@ textarea {
     position: center;
     margin-left: 5px;
 }
+
+ .outer-container
+{
+    position: relative;
+    top:0;
+    left: 0;
+    right: 0px;
+    bottom: 40px;
+}
+
+.inner-container
+{
+    height: 100%;
+    overflow: hidden;
+}
+
+.table-header
+{
+    height: 40px;
+    position: relative;
+}
+.table-body
+{
+    height: auto;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.header-cell
+{
+    height: 40px;
+}
+
+
+/*---------------------------------RULES-END---------------------------------------*/

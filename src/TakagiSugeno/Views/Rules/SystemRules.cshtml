@@ -28,43 +28,37 @@
     <span class="glyphicon glyphicon-remove hide-alert pull-right" onclick="hideAlert()"></span>
     <text id="alert-message"></text>
 </div>
-<div class="row">
-<div class="col-sm-12" style="overflow-x:scroll;">
-<table class="table rules-table">
-    <colgroup>
-        <col span="1" class="remove-col" />
-        <col span="1" class="id-col" />
-        @foreach (string name in names)
-        {
-            <col span="1" class="variable-col" />
-            if (names.IndexOf(name) != names.Count - 1)
-            {
-                <col span="1" class="operation-col" />
-            }
-        }
-    </colgroup>
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-        @foreach (string name in names)
-        {
-            <th>@name is</th>
-            if (names.IndexOf(name) != names.Count - 1)
-            {
-                <th></th>
-            }
-        }
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (var rule in Model.Rules)
-        {
-            Html.RenderPartial("RuleRow", rule);
-        }
-    </tbody>
-</table>
-</div>
+<div class="outer-container">
+    <div class="inner-container">
+        <div class="table-header">
+            <table class="table rules-table" id="headertable">
+                <thead>
+                    <tr>
+                        <th class="header-cell remove-col"></th>
+                        <th class="header-cell id-col"></th>
+                        @foreach (string name in names)
+                        {
+                            <th class="header-cell variable-col">@name is</th>
+                            if (names.IndexOf(name) != names.Count - 1)
+                            {
+                                <th class="header-cell operation-col"></th>
+                            }
+                        }
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="table-body">
+            <table id="bodytable" class="table rules-table">
+                <tbody>
+                    @foreach (var rule in Model.Rules)
+                    {
+                        Html.RenderPartial("RuleRow", rule);
+                    }
+                </tbody>
+            </table>
+        </div>
+   </div>
 </div>
 <div id="temp" style="background-color:red;" hidden>
 </div>
@@ -87,6 +81,10 @@
     </div>
 </div>
 <script type="text/javascript">
+
+    var leftMargin = $(".body-content").offset().left;
+    var leftPadding = $(".body-content").css("padding-left").replace("px", "");
+
     $(document).ready(function () {
         numerateRulesRows();
         refreshCheckboxes();
@@ -213,5 +211,10 @@
         })
 
     }
+
+    $(".table-body").scroll(function () {
+        
+        $(".table-header").offset({ left: -1 * this.scrollLeft + leftMargin + parseInt(leftPadding) });
+    });
 </script>
 

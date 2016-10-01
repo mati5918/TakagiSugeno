@@ -53,7 +53,9 @@ namespace TakagiSugeno.Model.Services
 
         public void Remove(int id)
         {
-            _outputsRepository.Delete(_outputsRepository.GetById(id));
+            InputOutput item = _outputsRepository.GetById(id);
+            _saver.RemoveRuleElements(item);
+            _outputsRepository.Delete(item);
         }
 
         public SaveResult Save(OutputVM viewModel)

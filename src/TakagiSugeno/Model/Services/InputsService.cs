@@ -72,6 +72,7 @@ namespace TakagiSugeno.Model.Services
         public void Remove(int id)
         {
             InputOutput item = _inputRepository.GetById(id);
+            _saver.RemoveRuleElements(item);
             _inputRepository.Delete(item);
             _saver.ModifyOutputsVariables(item.TSSystemId, string.Empty, item.Name, ModifyVariableAction.Delete);
         }
