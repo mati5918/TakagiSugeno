@@ -26,7 +26,8 @@ namespace TakagiSugeno.Model
 
     public enum AndMethod
     {
-        Default //TODO
+        Product,
+        Min //TODO
     }
     
     public enum OrMethod
