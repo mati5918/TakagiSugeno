@@ -30,7 +30,7 @@ namespace TakagiSugent.Tests
             //Assert.Equal(5, Add(2, 2));
             string jsonStr = @"{a: 1, b: 2, c:3}";
             Variable var = new Variable { Data = jsonStr, Type = VariableType.Triangle };
-            VariableWrapper variable = new VariableWrapper(var);
+            InputVariableWrapper variable = new InputVariableWrapper(var);
             double res = variable.MembershipFunction.CalcMembership(value);
             Assert.Equal(expected, res);
         }

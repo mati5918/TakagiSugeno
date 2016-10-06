@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,53 +13,74 @@ namespace TakagiSugeno.Model
         
         public AndMethod AndMethod { get; set; }
         public OrMethod OrMethod { get; set; }
-        public List<VariableWrapper> Variables { get; set; }
         public Dictionary<int, double> InputValues { get; set; }
-        public List<Rule> SystemRules { get; set; }
 
-        private List<InputOutput> outputs;
-        private List<RuleValue> ruleValues = new List<RuleValue>();
-        //private List<Rule> _rules;
+        private TakagiSugenoDbContext _context;
+        //private List<InputOutput> _outputs;
+        private List<RuleWrapper> _ruleWrappers = new List<RuleWrapper>();
+        private List<InputVariableWrapper> _inputVariablesWrappers = new List<InputVariableWrapper>();
 
-        public void Calc()
+        public OutputCalculator(TakagiSugenoDbContext context)
         {
-            CalcRulesMembershipDegrees();
+            _context = context;
+        }
+        public void CalcOutputsValues(int systemId)
+        {
+            _inputVariablesWrappers = _context
+                .Variables
+                .Where(v => v.InputOutput.TSSystemId == systemId)
+                .Select(v => new InputVariableWrapper(v))
+                .ToList();
+              
+            _ruleWrappers = _context
+                .Rules
+                .Include(r => r.RuleElements)
+                .Where(r => r.TSSystemId == systemId)
+                .Select(r => new RuleWrapper()
+                {
+                    Rule = r,
+                    MembershipDegrees = CalcRuleMembershipDegrees(r)
+                    //CalculatedValue = PerformRuleOperation(this)
+                })
+                .ToList();
+
             PerformRulesOperations();
-            foreach(InputOutput output in outputs)
+
+            /*foreach (InputOutput output in _outputs)
             {
 
-            }
+            }*/
         }
 
         private void PerformRulesOperations()
         {
-            foreach(RuleValue val in ruleValues)
+            foreach(RuleWrapper val in _ruleWrappers)
             {
-                val.Value = PerformRuleOperation(val);
+                val.CalculatedValue = PerformRuleOperation(val);
             }
         }
 
-        private double PerformRuleOperation(RuleValue ruleValue)
+        private double PerformRuleOperation(RuleWrapper rule)
         {
-            if (ruleValue.MembershipDegrees.Count == 1)
+            if (rule.MembershipDegrees.Count == 1)
             {
-                return ruleValue.MembershipDegrees[0].Value;
+                return rule.MembershipDegrees[0].Value;
             }
             else
             {
-                double res = ruleValue.MembershipDegrees[0].Value;
-                RuleNextOperation operation = ruleValue.MembershipDegrees[0].NextOperation;
-                for (int i = 1; i < ruleValue.MembershipDegrees.Count; i++)
+                double res = rule.MembershipDegrees[0].Value;
+                RuleNextOperation operation = rule.MembershipDegrees[0].NextOperation;
+                for (int i = 1; i < rule.MembershipDegrees.Count; i++)
                 {
                     if(operation == RuleNextOperation.And)
                     {
-                        res = PerfromAndOpeation(res, ruleValue.MembershipDegrees[i].Value);
+                        res = PerfromAndOpeation(res, rule.MembershipDegrees[i].Value);
                     }
                     else if(operation == RuleNextOperation.Or)
                     {
-                        res = PerfromOrOpeation(res, ruleValue.MembershipDegrees[i].Value);
+                        res = PerfromOrOpeation(res, rule.MembershipDegrees[i].Value);
                     }
-                    operation = ruleValue.MembershipDegrees[i].NextOperation;
+                    operation = rule.MembershipDegrees[i].NextOperation;
                 }
                 return res;
             }
@@ -79,25 +101,25 @@ namespace TakagiSugeno.Model
             throw new NotImplementedException();
         }
 
-        private void CalcRulesMembershipDegrees()
+        /*private void CalcRulesMembershipDegrees()
         {
-            ruleValues.Clear();
+            _ruleWrappers.Clear();
             foreach (Rule r in SystemRules)
             {
-                RuleValue ruleValue = new RuleValue
+                RuleWrapper ruleWrapper = new RuleWrapper
                 {
-                    RuleId = r.RuleId,
+                    Rule = r,
                     MembershipDegrees = CalcRuleMembershipDegrees(r)
                 };
             }
-        }
+        }*/
 
-        private List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule)
+        public List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule) //TODO not-set variable
         {
             List<MembershipDegree> degrees = new List<MembershipDegree>();
             foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart))
             {
-                VariableWrapper variable = Variables.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
+                InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
                 if(variable != null)
                 {
                     double inputValue = InputValues[variable.InputId];
@@ -113,20 +135,6 @@ namespace TakagiSugeno.Model
                 }
             }
             return degrees;
-        }
-
-
-        private class RuleValue
-        {
-            public int RuleId { get; set; }
-            public List<MembershipDegree> MembershipDegrees { get; set; }
-            public double Value { get; set; }
-        }
-
-        private class MembershipDegree
-        {
-            public double Value { get; set; }
-            public RuleNextOperation NextOperation { get; set; }
         }
 
     }

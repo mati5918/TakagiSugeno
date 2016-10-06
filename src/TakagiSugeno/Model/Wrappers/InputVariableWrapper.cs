@@ -7,9 +7,9 @@ using TakagiSugeno.Model.MembershipFunctions;
 
 namespace TakagiSugeno.Model.Wrappers
 {
-    public class VariableWrapper
+    public class InputVariableWrapper
     {
-        public VariableWrapper(Variable variable)
+        public InputVariableWrapper(Variable variable)
         {
             _variable = variable; //TODO: get from repo with InputOutput include
             MembershipFunction = MembershipFunctionFactory.CreateMembershipFunction(_variable.Type, _variable.Data);
