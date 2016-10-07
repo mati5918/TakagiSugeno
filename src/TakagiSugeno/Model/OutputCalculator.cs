@@ -11,27 +11,43 @@ namespace TakagiSugeno.Model
     public class OutputCalculator
     {
         
-        public AndMethod AndMethod { get; set; }
-        public OrMethod OrMethod { get; set; }
-        public Dictionary<int, double> InputValues { get; set; }
+        
+        //public Dictionary<int, double> InputValues { get; set; }
 
         private TakagiSugenoDbContext _context;
         //private List<InputOutput> _outputs;
         private List<RuleWrapper> _ruleWrappers = new List<RuleWrapper>();
         private List<InputVariableWrapper> _inputVariablesWrappers = new List<InputVariableWrapper>();
+        private List<IOutputVariable> _outputVariablesWrappers = new List<IOutputVariable>();
+        private Dictionary<string, double> _inputValues;
+        private AndMethod AndMethod;
+        private OrMethod OrMethod;
 
         public OutputCalculator(TakagiSugenoDbContext context)
         {
             _context = context;
         }
-        public void CalcOutputsValues(int systemId)
+        public Dictionary<string, double> CalcOutputsValues(int systemId) //TODO add or method to db
         {
+            Dictionary<string, double> res = new Dictionary<string, double>();
+
+            var methods = _context.Systems.Where(s => s.TSSystemId == systemId)
+                .Select(s => new { And = s.AndMethod/*, Or = s.OrMethod */}).FirstOrDefault();
+            AndMethod = methods.And;
+            //OrMethod = methods.Or;
+
             _inputVariablesWrappers = _context
                 .Variables
-                .Where(v => v.InputOutput.TSSystemId == systemId)
+                .Where(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Input)
                 .Select(v => new InputVariableWrapper(v))
                 .ToList();
-              
+
+            _outputVariablesWrappers = _context
+                .Variables
+                .Where(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Output)
+                .Select(v => OutputVariableFactory.CreateOutputVariableWrapper(v))
+                .ToList();
+
             _ruleWrappers = _context
                 .Rules
                 .Include(r => r.RuleElements)
@@ -46,10 +62,29 @@ namespace TakagiSugeno.Model
 
             PerformRulesOperations();
 
-            /*foreach (InputOutput output in _outputs)
+            foreach (var output in _context.InputsOutputs.Where(o => o.TSSystemId == systemId && o.Type == IOType.Output))
             {
+                res.Add(output.Name, CalcOutputsValue(output));
+            }
 
-            }*/
+            return res;
+        }
+
+        private double CalcOutputsValue(InputOutput output)
+        {
+            double temp1 = 0;
+            double temp2 = 0;
+            foreach(RuleWrapper rule in _ruleWrappers)
+            {
+                RuleElement elem = rule.Rule.RuleElements.FirstOrDefault(e => e.InputOutputId == output.InputOutputId);
+                if (elem != null && elem.VariableId != -1)
+                {
+                    double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).GetValue(_inputValues);
+                    temp1 += (rule.CalculatedValue * variableValue);
+                    temp2 += rule.CalculatedValue;
+                }                
+            }
+            return temp2 != 0 ? temp1/temp2 : 0;
         }
 
         private void PerformRulesOperations()
@@ -96,25 +131,12 @@ namespace TakagiSugeno.Model
             return res;
         }
 
-        private double PerfromOrOpeation(double res, double val)
+        private double PerfromOrOpeation(double res, double val) //TODO implement
         {
             throw new NotImplementedException();
         }
 
-        /*private void CalcRulesMembershipDegrees()
-        {
-            _ruleWrappers.Clear();
-            foreach (Rule r in SystemRules)
-            {
-                RuleWrapper ruleWrapper = new RuleWrapper
-                {
-                    Rule = r,
-                    MembershipDegrees = CalcRuleMembershipDegrees(r)
-                };
-            }
-        }*/
-
-        public List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule) //TODO not-set variable
+        public List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule) //TODO not-set variable (done?)
         {
             List<MembershipDegree> degrees = new List<MembershipDegree>();
             foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart))
@@ -122,16 +144,12 @@ namespace TakagiSugeno.Model
                 InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
                 if(variable != null)
                 {
-                    double inputValue = InputValues[variable.InputId];
+                    double inputValue = _inputValues[variable.Name];
                     degrees.Add(new MembershipDegree
                     {
                         Value = variable.MembershipFunction.CalcMembership(inputValue),
                         NextOperation = elem.NextOpartion
                     });
-                }
-                else
-                {
-                    throw new Exception("Variable not found");
                 }
             }
             return degrees;

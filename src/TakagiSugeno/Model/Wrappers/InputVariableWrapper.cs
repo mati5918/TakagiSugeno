@@ -20,6 +20,7 @@ namespace TakagiSugeno.Model.Wrappers
         //public string InputName { get { return _variable.InputOutput.Name; } }
         //public string VariableName { get { return _variable.Name; } }
         public int VariableId { get { return _variable.VariableId; } }
+        public string Name { get { return _variable.Name; } }
         public int InputId { get { return _variable.InputOutputId; } }
     }
 }

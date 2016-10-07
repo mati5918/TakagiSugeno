@@ -14,6 +14,8 @@ namespace TakagiSugent.Tests
         /*[Fact]
         public void RuleMembershipDegressTest()
         {
+            //IServiceProvider provider = 
+            
             // Input A - id 1, variables A1 - id 1; A2 - id 2
             // Input B - id 2, variables B-1 - id 3; B1 - id 4; B3 - id 5
             Rule rule = new Rule { RuleElements = new List<RuleElement>() };
@@ -29,9 +31,9 @@ namespace TakagiSugent.Tests
             Variable var3 = new Variable { Data = @"{a: -1, b: 1, c: 3}", Type = VariableType.Triangle, VariableId = 4, InputOutputId = 2 };
             InputVariableWrapper B2 = new InputVariableWrapper(var3);
 
-            OutputCalculator calc = new OutputCalculator(
+            OutputCalculator calc = new OutputCalculator()
             {
-                Variables = new List<InputVariableWrapper> { A1, B1, B2 },
+                //Variables = new List<InputVariableWrapper> { A1, B1, B2 },
                 InputValues = new Dictionary<int, double> { {1, 1.5 },{2, 0.5 } }
             };
 
@@ -54,9 +56,9 @@ namespace TakagiSugent.Tests
             Variable var1 = new Variable { Data = @"{a: 0, b: 2, c: 4}", Type = VariableType.Triangle, VariableId = 2, InputOutputId = 1 };
             InputVariableWrapper A1 = new InputVariableWrapper(var1);
 
-            OutputCalculator calc = new OutputCalculator
+            OutputCalculator calc = new OutputCalculator()
             {
-                Variables = new List<InputVariableWrapper> { A1 },
+                //Variables = new List<InputVariableWrapper> { A1 },
                 InputValues = new Dictionary<int, double> { { 1, 1.5 }, { 2, -1 } }
             };
 
