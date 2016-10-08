@@ -32,7 +32,7 @@ namespace TakagiSugeno.Model
     
     public enum OrMethod
     {
-        Default //TODO
+        Max //TODO
     }
 
     public enum RuleElementType

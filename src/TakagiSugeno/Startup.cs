@@ -43,6 +43,7 @@ namespace TakagiSugeno
             services.AddScoped<RulesService>();
             services.AddScoped<RulesSaver>();
             services.AddScoped<OutputCalculator>();
+            services.AddScoped<SystemsService>();
             RegisterRepositories(services);
         }
 

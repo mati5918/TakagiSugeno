@@ -10,12 +10,16 @@ namespace TakagiSugeno.Model.ViewModels
         public int SystemId { get; set; }
         public List<string> Inputs { get; set; }
         public List<string> Outputs { get; set; }
-        
+        public AndMethod AndMethod { get; set; }
+        public OrMethod OrMethod { get; set; }
+
     }
 
     public class OutputCalcData
     {
         public int SystemId { get; set; }
         public Dictionary<string, double> InputsValues { get; set; }
+        public AndMethod AndMethod { get; set; }
+        public OrMethod OrMethod { get; set; }
     }
 }

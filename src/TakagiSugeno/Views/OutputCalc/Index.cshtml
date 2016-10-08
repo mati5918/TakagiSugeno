@@ -1,5 +1,7 @@
 ﻿@model TakagiSugeno.Model.ViewModels.OutputCalcVM
+@using TakagiSugeno.Model
 @{
+    ViewBag.Title = "Obliczanie wyjść";
 }
 
 <div class="row">
@@ -14,8 +16,22 @@
         </div>
     </div>
 </div>
-<br />
+<hr />
 <input asp-for="SystemId" class="form-control" id="SystemIdTemp" type="hidden" />
+<div class="row">
+    <form class="form-inline">
+    <div class="col-sm-3">
+        <label class="control-label">And-Metoda:&nbsp;&nbsp;</label>
+        <select asp-for="AndMethod" asp-items="Html.GetEnumSelectList<AndMethod>()" id="AndMethod" class="form-control" style="width:120px;"></select>
+    </div>
+    <div class="col-sm-3">
+        <label class="control-label">Or-Metoda:&nbsp;&nbsp;</label>
+        <select asp-for="OrMethod" asp-items="Html.GetEnumSelectList<OrMethod>()" id="OrMethod" class="form-control" style="width:120px;"></select>
+    </div>
+    </form>
+</div>
+
+<hr />
 <div class="row">
     <div class="col-sm-6 inputs-values">
         <h4>Wejścia</h4>
@@ -27,13 +43,14 @@
                     <label class="control-label" data-name="@input">@input:</label>
                 </div>
                 <div class="col-sm-10">
-                    <input class="form-control" value="0"/>
+                    <input class="form-control input-value" value="0"/>
                 </div>             
             </div>
         }
         </form>
     </div>
     <div class="col-sm-6">
+        <div class="">
         <h4>Wyjścia</h4>
         <form class="form-horizontal">
         @foreach (string output in Model.Outputs)
@@ -49,6 +66,7 @@
 
         }
         </form>
+        </div>
     </div>
 </div>
 
@@ -68,6 +86,26 @@
                 }               
             }
         });
+        
+    });
+
+    $(".inputs-values").on("change", ".input-value", function () {
+        var regex = /^\-?\d+([\.\,]\d+)?$/;
+        var val = $(this).val();
+        var isMatch = regex.test(val);
+        if (!isMatch) {
+            $(this).parents(".form-group").addClass("has-error");
+            $("#btnCalc").prop("disabled", true);
+        }
+        else {
+            $(this).parents(".form-group").removeClass("has-error");
+            val = val.replace(',', '.');
+            $(this).val(val);
+            var count = $(".has-error").length;
+            if (count == 0) {
+                $("#btnCalc").prop("disabled", false);
+            }
+        }
     });
 </script>
 

@@ -15,13 +15,15 @@ namespace TakagiSugeno.Controllers
     {
         private InputsService _inputsService;
         private OutputsService _outputsService;
+        private SystemsService _systemsService;
         private OutputCalculator _calc;
 
-        public OutputCalcController(InputsService inputsService, OutputsService outputsService, OutputCalculator calc)
+        public OutputCalcController(InputsService inputsService, OutputsService outputsService, SystemsService systemsService, OutputCalculator calc)
         {
             _calc = calc;
             _inputsService = inputsService;
-            _outputsService = outputsService;                
+            _outputsService = outputsService;
+            _systemsService = systemsService;              
         }
         // GET: /<controller>/
         public IActionResult Index(int systemId)
@@ -30,7 +32,9 @@ namespace TakagiSugeno.Controllers
             {
                 Inputs = _inputsService.GetSystemInputsNames(systemId),
                 Outputs = _outputsService.GetSystemOutputsNames(systemId),
-                SystemId = systemId
+                SystemId = systemId,
+                AndMethod = _systemsService.GetSystemAndMethod(systemId),
+                OrMethod = _systemsService.GetSystemOrMethod(systemId)
             };
             return View(vm);
         }
@@ -38,6 +42,7 @@ namespace TakagiSugeno.Controllers
         [HttpPost]
         public IActionResult Calc([FromBody] OutputCalcData data)
         {
+            _systemsService.ModifySystemMethods(data.SystemId, data.AndMethod, data.OrMethod);
             Dictionary<string, double> outputs = _calc.CalcOutputsValues(data);
             return Json(outputs);
         }

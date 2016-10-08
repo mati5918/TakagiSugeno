@@ -150,9 +150,10 @@ namespace TakagiSugeno.Model
                 if(variable != null)
                 {
                     double inputValue = _inputValues[variable.InputName];
+                    double membership = variable.MembershipFunction.CalcMembership(inputValue);
                     degrees.Add(new MembershipDegree
                     {
-                        Value = variable.MembershipFunction.CalcMembership(inputValue),
+                        Value = elem.IsNegation ? 1 - membership : membership,
                         NextOperation = elem.NextOpartion
                     });
                 }

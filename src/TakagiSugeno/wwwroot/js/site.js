@@ -435,7 +435,9 @@ function collectCalcData() {
     });
     var vm = {
         InputsValues: values,
-        SystemId: $("#SystemIdTemp").val()
+        SystemId: $("#SystemIdTemp").val(),
+        AndMethod: $("#AndMethod").val(),
+        OrMethod: $("#OrMethod").val()
     }
     return vm;
 }
