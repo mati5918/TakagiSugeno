@@ -6,14 +6,28 @@
     //string title = "overview";
 }
 
+<div class="row">
+    <div class="col-sm-8">
+        <h2 class="header">
+            System
+        </h2>
+    </div>
+    <div class="col-sm-4">
+        <div class="pull-right">
+            <button class="btn btn-success" id="btnCalc" style="margin-top:20px;"><span class="glyphicon glyphicon-check"></span> Oblicz</button>
+            <button class="btn btn-primary" id="" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz do pliku</button>
+            <button class="btn btn-danger" id="" style="margin-top:20px;" disabled data-toggle="modal" data-target="#cancelModal"><span class="glyphicon glyphicon-bullhorn"></span> Opublikuj</button>
+        </div>
+
+    </div>
+</div>
 <div>
-    <h2>Twój System</h2>
     <div class="row">
         <div class="col-sm-4">
             @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
         </div>
         <div class="col-sm-4">
-            <div class="panel panel-default panel-rules" style="width:200px; margin-top: 20px;">
+            <div class="panel panel-default panel-rules" style="width:200px; margin-top: 20px; margin-left:25%">
                 <div class="panel-heading">
                     Reguły
                 </div>
@@ -23,16 +37,22 @@
             </div>
         </div>
         <div class="col-sm-4">
+            <div class="pull-right">
             @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputsService.GetSystemOutputs(1));}
+            </div>
         </div>
     </div>
     
 </div>
 <script type="text/javascript">
     $(".panel-rules").click(function () {
-        var id = $(".inputs-list").attr("data-id");
-        console.log(id);
+        var id = $(".inputs-list").attr("data-id"); //TODO
         var url = "/Rules/SystemRules/?systemId=" + id;     
+        window.location.href = url;
+    });
+    $("#btnCalc").click(function () {
+        var id = $(".inputs-list").attr("data-id"); //TODO
+        var url = "/OutputCalc/?systemId=" + id;
         window.location.href = url;
     });
 </script>

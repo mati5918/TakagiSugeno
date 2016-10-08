@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
+using TakagiSugeno.Model.ViewModels;
 using TakagiSugeno.Model.Wrappers;
 
 namespace TakagiSugeno.Model
@@ -27,9 +28,11 @@ namespace TakagiSugeno.Model
         {
             _context = context;
         }
-        public Dictionary<string, double> CalcOutputsValues(int systemId) //TODO add or method to db
+        public Dictionary<string, double> CalcOutputsValues(OutputCalcData data) //TODO add or method to db
         {
             Dictionary<string, double> res = new Dictionary<string, double>();
+            int systemId = data.SystemId;
+            _inputValues = data.InputsValues;
 
             var methods = _context.Systems.Where(s => s.TSSystemId == systemId)
                 .Select(s => new { And = s.AndMethod/*, Or = s.OrMethod */}).FirstOrDefault();
@@ -38,7 +41,9 @@ namespace TakagiSugeno.Model
 
             _inputVariablesWrappers = _context
                 .Variables
+                .Include(v => v.InputOutput)
                 .Where(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Input)
+                .ToList()
                 .Select(v => new InputVariableWrapper(v))
                 .ToList();
 
@@ -77,7 +82,7 @@ namespace TakagiSugeno.Model
             foreach(RuleWrapper rule in _ruleWrappers)
             {
                 RuleElement elem = rule.Rule.RuleElements.FirstOrDefault(e => e.InputOutputId == output.InputOutputId);
-                if (elem != null && elem.VariableId != -1)
+                if (elem != null && elem.VariableId != null)
                 {
                     double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).GetValue(_inputValues);
                     temp1 += (rule.CalculatedValue * variableValue);
@@ -144,7 +149,7 @@ namespace TakagiSugeno.Model
                 InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
                 if(variable != null)
                 {
-                    double inputValue = _inputValues[variable.Name];
+                    double inputValue = _inputValues[variable.InputName];
                     degrees.Add(new MembershipDegree
                     {
                         Value = variable.MembershipFunction.CalcMembership(inputValue),

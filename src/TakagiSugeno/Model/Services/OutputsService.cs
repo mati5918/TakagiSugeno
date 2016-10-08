@@ -34,6 +34,12 @@ namespace TakagiSugeno.Model.Services
                 }).ToList();
         }
 
+        public List<string> GetSystemOutputsNames(int systemId)
+        {
+            return _outputsRepository.GetBySystemId(systemId).Where(o => o.Type == IOType.Output)
+                .Select(o => o.Name).ToList();
+        }
+
         public OutputVM GetOutput(int outputId)
         {
             return MapEntityToVM(_outputsRepository.GetById(outputId));

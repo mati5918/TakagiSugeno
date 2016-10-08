@@ -426,6 +426,20 @@ function collectRulesData() {
     return rules;
 }
 
+function collectCalcData() {
+    var values = {};
+    $(".inputs-values .form-group").each(function (i, v) {
+        var value = $(v).find("input").val();
+        var name = $(v).find("label").attr("data-name");
+        values[name] = parseFloat(value);
+    });
+    var vm = {
+        InputsValues: values,
+        SystemId: $("#SystemIdTemp").val()
+    }
+    return vm;
+}
+
 function printSaveSuccess(){
     $("#alert-container").removeClass("alert-danger");
     $("#alert-container").addClass("alert-success");
