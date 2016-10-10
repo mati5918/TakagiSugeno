@@ -1,4 +1,4 @@
-﻿@model TakagiSugeno.Model.ViewModels.SystemVM
+﻿@model int
 @inject TakagiSugeno.Model.Services.InputsService InputService
 @inject TakagiSugeno.Model.Services.OutputsService OutputsService
 @{
@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-sm-8">
         <h2 class="header">
-            System
+            @ViewBag.Title
         </h2>
     </div>
     <div class="col-sm-4">
@@ -21,24 +21,36 @@
 
     </div>
 </div>
+<br />
 <div>
     <div class="row">
         <div class="col-sm-4">
-            @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-default panel-rules" style="width:200px; margin-top: 20px; margin-left:25%">
+            <div class="panel panel-primary io-overview">
                 <div class="panel-heading">
-                    Reguły
+                    <button class="btn btn-success pull-right" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus"></span></button>
+                    <h4>Wejścia</h4>                  
                 </div>
-                <div class="panel-body">
-                    
+                <div class="panel-body io-overview-body">
+                    @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(Model));}
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="pull-right">
-            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputsService.GetSystemOutputs(1));}
+            <div class="panel panel-primary panel-rules" style="width:200px; margin-top: 180px; margin-left:25%;">               
+                <div class="panel-body">
+                    <button class="btn btn-primary center-block" id="addInput" onclick="addInput()" style="height:100%; width:100%; white-space:normal !important;"><span>Takagi Sugeno System (Reguły)</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="panel panel-primary io-overview pull-right">
+                <div class="panel-heading">
+                    <button class="btn btn-success pull-right" id="addOutput" onclick="addOutput()"><span class="glyphicon glyphicon-plus"></span></button>
+                    <h4>Wyjścia</h4>
+                </div>
+                <div class="panel-body io-overview-body">
+                    @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputsService.GetSystemOutputs(Model));}
+                </div>
             </div>
         </div>
     </div>

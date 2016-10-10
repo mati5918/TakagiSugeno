@@ -37,7 +37,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="SystemOverview" asp-action="Index">System</a></li>
+                    <li class="dropdown">
+                       <a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="1">System <span class="caret"></span></a> <!--TODO-->                           
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="1">Wejścia</a></li> <!--TODO-->
+                            <li><a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="1">Wyjścia</a></li> <!--TODO-->
+                            <li><a asp-area="" asp-controller="SystemOverview" asp-action="Reguły" asp-route-systemId="1">Reguły</a></li> <!--TODO-->
+                            <li><a asp-area="" asp-controller="SystemOverview" asp-action="Reguły" asp-route-systemId="1">Wyznaczanie wyjść</a></li> <!--TODO-->
+                        </ul>
+                    </li>  
                 </ul>
             </div>
         </div>

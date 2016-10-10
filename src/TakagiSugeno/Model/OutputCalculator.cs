@@ -138,7 +138,11 @@ namespace TakagiSugeno.Model
 
         private double PerfromOrOpeation(double res, double val) //TODO implement
         {
-            throw new NotImplementedException();
+            switch(this.OrMethod)
+            {
+                case OrMethod.Max: return Math.Max(res, val);
+            }
+            return res;
         }
 
         public List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule) //TODO not-set variable (done?)

@@ -11,7 +11,7 @@
         {
             <li class="output-element" id="Output-@item.OutputId">
                 <p hidden>@item.OutputId</p>
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-remove pull-right remove-output"></span>
                         <b>@item.Name</b>
@@ -48,6 +48,16 @@
         $("#removeModal").modal("show");
         return false;
 
+    });
+
+    $(".outputs-list").on("mouseenter", ".panel", function () {
+        $(this).removeClass("panel-info");
+        $(this).addClass("panel-primary");
+    });
+
+    $(".outputs-list").on("mouseleave", ".panel", function () {
+        $(this).removeClass("panel-primary");
+        $(this).addClass("panel-info");
     });
     </script>
 </div>

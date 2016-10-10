@@ -11,13 +11,9 @@ namespace TakagiSugeno.Controllers
     public class SystemOverviewController : Controller
     {
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(int systemId)
         {
-            TakagiSugeno.Model.ViewModels.SystemVM model = new Model.ViewModels.SystemVM();
-            model.Inputs = new List<Model.ViewModels.InputVM>();
-            model.Inputs.Add(new Model.ViewModels.InputVM { Name = "A" });
-            model.Inputs.Add(new Model.ViewModels.InputVM { Name = "B" });
-            return View(model);
+            return View(systemId);
         }
     }
 }

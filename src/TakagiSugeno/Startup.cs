@@ -79,7 +79,7 @@ namespace TakagiSugeno
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=SystemOverview}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
             SeedData.Initialize(app.ApplicationServices);

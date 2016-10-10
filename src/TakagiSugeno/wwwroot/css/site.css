@@ -56,8 +56,6 @@ textarea {
 
 .input-element :hover, .output-element :hover, .panel-rules :hover {
     cursor: pointer;
-    border: medium;
-    border-right: 5px;
 }
 
 .remove-variable:hover, .hide-alert:hover, .collapse-button:hover, .remove-rule:hover {
@@ -97,7 +95,7 @@ textarea {
 }
 
 .nav-header h3{
-    color: #dddddd;
+    color: #ffffff;
     text-align: center;
 }
 
@@ -190,4 +188,29 @@ textarea {
 }
 
 
-/*---------------------------------RULES-END---------------------------------------*/
+/*---------------------------------OVERVIEW---------------------------------------*/
+
+.io-overview {
+    width: 260px;
+    text-align: center;   
+}
+
+.io-overview .io-overview-body {
+    position: relative;
+    height: 520px;
+    overflow-y: scroll;
+}
+
+.io-overview h4 {
+     color: #ffffff;
+}
+
+/*--------------------------------- DROPDOWN-MENU---------------------------------------*/
+
+ul.nav li.dropdown:hover > ul.dropdown-menu {
+    display: block;    
+}
+
+.navbar .dropdown-menu {
+    margin-top: 0px;
+}
