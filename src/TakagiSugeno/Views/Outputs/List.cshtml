@@ -36,16 +36,17 @@
 
     $(".outputs-list").on("click", ".output-element", function () {
         var id = $(this).attr("id").split('-')[1];
-        var title = $(this).parents(".outputs-list").attr("id");
-        return openOutput(id, title);
+        var isAjax = !$(this).parents(".navbar-fixed-left").length == 0;
+        //var title = $(this).parents(".outputs-list").attr("id");
+        return openOutput(id, isAjax);
 
     });
 
     $(".outputs-list").on("click", ".remove-output", function () {
         var id = $(this).parents(".output-element").attr("id").split('-')[1];
-        $("#removeModal #remove-output-name").text($(this).parent().text().trim());
+        $("#removeOutputModal #remove-output-name").text($(this).parent().text().trim());
         $(".modal-footer .btn-success").attr('data-id', id);
-        $("#removeModal").modal("show");
+        $("#removeOutputModal").modal("show");
         return false;
 
     });

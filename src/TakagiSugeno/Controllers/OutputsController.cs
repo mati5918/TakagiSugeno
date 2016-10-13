@@ -36,7 +36,13 @@ namespace TakagiSugeno.Controllers
             }
             if (Request.IsAjaxRequest())
                 return PartialView("OutputDetails", vm);
+            ViewBag.SystemId = vm.SystemId;
             return View("OutputDetails", vm);
+        }
+
+        public IActionResult SystemOutputs(int systemId)
+        {
+            return RedirectToAction("Details", new { id = _outputsService.FirstSystemOutput(systemId) });
         }
 
         public IActionResult AddVariable(int fakeId)
@@ -71,7 +77,11 @@ namespace TakagiSugeno.Controllers
         public IActionResult Add(int systemId)
         {
             ViewBag.IsNewOutput = true;
-            return PartialView("OutputDetails", _outputsService.AddOutput(systemId));
+            OutputVM vm = _outputsService.AddOutput(systemId);
+            if (Request.IsAjaxRequest())
+                return PartialView("OutputDetails", vm);
+            ViewBag.SystemId = vm.SystemId;
+            return View("OutputDetails", vm);
         }
 
     }

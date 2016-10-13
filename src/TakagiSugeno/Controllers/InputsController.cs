@@ -20,7 +20,7 @@ namespace TakagiSugeno.Controllers
             _inputsService = inputsService;
             _variablesService = variablesService;
         }
-        // GET: /<controller>/
+
         public IActionResult Details(int? id)
         {
             InputVM vm = new InputVM();
@@ -30,7 +30,13 @@ namespace TakagiSugeno.Controllers
             }
             if (Request.IsAjaxRequest())
                 return PartialView(vm);
+            ViewBag.SystemId = vm.SystemId;
             return View(vm);
+        }
+
+        public IActionResult SystemInputs(int systemId)
+        {
+            return RedirectToAction("Details", new { id = _inputsService.FirstSystemInput(systemId) });
         }
 
         public IActionResult AddVariable(int fakeId)
@@ -72,7 +78,11 @@ namespace TakagiSugeno.Controllers
         public IActionResult Add(int systemId)
         {
             ViewBag.IsNewInput = true;
-            return PartialView("Details", _inputsService.AddInput(systemId));
+            InputVM vm = _inputsService.AddInput(systemId);
+            if (Request.IsAjaxRequest())
+                return PartialView("Details", vm);
+            ViewBag.SystemId = vm.SystemId;
+            return View("Details", vm);
         }
 
     }

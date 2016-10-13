@@ -13,6 +13,7 @@ namespace TakagiSugeno.Controllers
         // GET: /<controller>/
         public IActionResult Index(int systemId)
         {
+            ViewBag.SystemId = systemId;
             return View(systemId);
         }
     }

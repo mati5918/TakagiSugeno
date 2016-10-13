@@ -38,6 +38,11 @@ namespace TakagiSugeno.Model.Services
                 .Select(i => i.Name).ToList();
         }
 
+        public int FirstSystemInput(int systemId)
+        {
+            return _inputRepository.GetBySystemId(systemId).FirstOrDefault(o => o.Type == IOType.Input)?.InputOutputId ?? -1;
+        }
+
         public InputVM GetInput(int inputId)
         {
             return MapEntityToVM(_inputRepository.GetById(inputId));

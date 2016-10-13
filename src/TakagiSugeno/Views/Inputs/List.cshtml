@@ -43,17 +43,18 @@
 
     $(".inputs-list").on("click", ".remove-input", function () {
         var id = $(this).parents(".input-element").attr("id").split('-')[1];
-        $("#removeModal #remove-input-name").text($(this).parent().text().trim());
+        $("#removeInputModal #remove-input-name").text($(this).parent().text().trim());
         $(".modal-footer .btn-success").attr('data-id', id);
-        $("#removeModal").modal("show");
+        $("#removeInputModal").modal("show");
         return false;
 
     });
 
     $(".inputs-list").on("click", ".input-element", function () {
         var id = $(this).attr("id").split('-')[1];
-        var title = $(this).parents(".inputs-list").attr("id");
-        return openInput(id, title);
+        //var title = $(this).parents(".inputs-list").attr("id");
+        var isAjax = !$(this).parents(".navbar-fixed-left").length == 0;
+        return openInput(id, isAjax);
 
     });
 

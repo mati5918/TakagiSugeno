@@ -70,7 +70,7 @@
 
         </div>
     </div>
-    <div id="removeModal" class="modal fade" role="dialog">
+    <div id="removeOutputModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -81,7 +81,7 @@
                     <p>Czy na pewno chcesz usunąć wyjście <span id="remove-output-name"></span>?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="removeOutput(this)">Tak</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="removeOutput(this, true)">Tak</button>
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Nie</button>
                 </div>
             </div>

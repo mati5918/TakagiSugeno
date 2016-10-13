@@ -36,6 +36,7 @@ namespace TakagiSugeno.Controllers
                 AndMethod = _systemsService.GetSystemAndMethod(systemId),
                 OrMethod = _systemsService.GetSystemOrMethod(systemId)
             };
+            ViewBag.SystemId = systemId;
             return View(vm);
         }
 

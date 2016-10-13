@@ -26,6 +26,7 @@ namespace TakagiSugeno.Controllers
             ViewBag.SystemId = systemId;
             if (Request.IsAjaxRequest())
                 return PartialView(vm);
+            ViewBag.SystemId = systemId;
             return View(vm);
         }
 

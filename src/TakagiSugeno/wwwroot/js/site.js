@@ -41,10 +41,10 @@ function createChartFromJSONData(chart, dataObj) {
 }*/
 
 
-function openInput(id, title)
+function openInput(id, isAjax)
 {
     var url = "/Inputs/Details/" + id;
-    if (title === "Przegląd systemu") {        
+    if (!isAjax) {        
         window.location.href = url;
     }
     else {
@@ -58,10 +58,10 @@ function openInput(id, title)
     }
 }
 
-function openOutput(id, title) {
+function openOutput(id, isAjax) {
     id = parseInt(id);
     var url = "/Outputs/Details/" + id;
-    if (title === "Przegląd systemu") {        
+    if (!isAjax) {        
         window.location.href = url;
     }
     else {
@@ -266,7 +266,7 @@ function changeRulesButtonsState(isDisabled) {
     $("#btnCancel").prop("disabled", isDisabled);
 }
 
-function removeInput(obj) {
+function removeInput(obj, isInputsList) {
     var id = $(obj).attr("data-id");
     setTimeout(function () {
         var url = "/Inputs/Remove/" + id;
@@ -274,17 +274,19 @@ function removeInput(obj) {
             url: url,
             type: "POST",
             success: function (response) {
-                getInputsList($("#SystemId").val());
-                var openedId = $("#InputId").val();
-                if (openedId == id) {
-                    $(".body-content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
+                getInputsList($("#SysId").attr("data-system-id"));
+                if (isInputsList) {
+                    var openedId = $("#InputId").val();
+                    if (openedId == id) {
+                        $(".body-content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
+                    }
                 }
             }
         });
     }, 200);
 }
 
-function removeOutput(obj) {
+function removeOutput(obj, isOutputsList) {
     var id = $(obj).attr("data-id");
     setTimeout(function () {
         var url = "/Outputs/Remove/" + id;
@@ -292,10 +294,12 @@ function removeOutput(obj) {
             url: url,
             type: "POST",
             success: function (response) {
-                getOutputsList($("#SystemId").val());
-                var openedId = $("#OutputId").val()
-                if (openedId == id) {
-                    $(".body-content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
+                getOutputsList($("#SysId").attr("data-system-id"));
+                if (isOutputsList) {
+                    var openedId = $("#OutputId").val()
+                    if (openedId == id) {
+                        $(".body-content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
+                    }
                 }
             }
         });
