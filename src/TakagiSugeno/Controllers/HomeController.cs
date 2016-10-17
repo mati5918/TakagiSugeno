@@ -10,27 +10,27 @@ namespace TakagiSugeno.Controllers
     {
         public IActionResult Index()
         {
-            ViewBag.SystemId = 1;
+            //ViewBag.SystemId = 1;
             return View();
         }
 
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-            ViewBag.SystemId = 1;
+            //ViewBag.SystemId = 1;
             return View();
         }
 
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
-            ViewBag.SystemId = 1;
+            //ViewBag.SystemId = 1;
             return View();
         }
 
         public IActionResult Error()
         {
-            ViewBag.SystemId = 1;
+            //ViewBag.SystemId = 1;
             return View();
         }
     }

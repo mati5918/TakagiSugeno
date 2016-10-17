@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
 using TakagiSugeno.Model.Repository;
+using TakagiSugeno.Model.ViewModels;
 
 namespace TakagiSugeno.Model.Services
 {
@@ -31,6 +32,20 @@ namespace TakagiSugeno.Model.Services
             system.AndMethod = andMethod;
             system.OrMethod = orMethod;
             _repository.Update(system);
+        }
+
+        public List<SystemVM> GetSystems()
+        {
+            //TODO where IsPublished
+            return _repository.GetAll().Select(s => new SystemVM
+            {
+                CreatedBy = s.CreatedBy,
+                CreatedDate = s.CreatedDate,
+                Description = s.Description,
+                Name = s.Name,
+                PublishedDate = s.PublishedDate,
+                TSSystemId = s.TSSystemId
+            }).ToList();
         }
     }
 }

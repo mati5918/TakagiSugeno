@@ -8,9 +8,10 @@ using TakagiSugeno.Model;
 namespace TakagiSugeno.Migrations
 {
     [DbContext(typeof(TakagiSugenoDbContext))]
-    partial class TakagiSugenoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161017174955_SystemsUpdate")]
+    partial class SystemsUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")

@@ -11,6 +11,9 @@ namespace TakagiSugeno.Model.Entity
         public string Name { get; set; }
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime PublishedDate { get; set; }
+        public bool IsPublished { get; set; }
+        public string Description { get; set; }
         public AndMethod AndMethod { get; set; }
         public OrMethod OrMethod { get; set; }
         public List<InputOutput> InputsOutputs { get; set; }

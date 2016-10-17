@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TakagiSugeno.Model.ViewModels.SystemVM>
+@{
+    ViewBag.Title = "Lista systemów";
+}
+
+
+<h3>List opupblikowanych systemów</h3>
+<br />
+
+<table class="table systems-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nazwa</th>
+            <th>Autor</th>
+            <th>Data publikacji</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var system in Model)
+        {
+            <tr>
+                <td class="counter col-sm-1">1.</td>
+                <td class="col-sm-3 system-desc"><span data-toggle="tooltip" data-placement="top" title="@system.Description">@system.Name</span></td>
+                <td class="col-sm-3">@system.CreatedBy</td>
+                <td class="col-sm-3">@system.PublishedDate.ToString("d")</td>
+                <td class="col-sm-2">
+                    <div class="pull-right">
+                        <a asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Otwórz do odczytu"><span class="glyphicon glyphicon-open glyph-button" ></span></a>&nbsp;&nbsp;
+                        <a data-toggle="tooltip" data-placement="top" title="Otwórz kopię do edycji"><span class="glyphicon glyphicon-edit glyph-button"></span></a>&nbsp;&nbsp;
+                        <a data-toggle="tooltip" data-placement="top" title="Zapisz do pliku"><span class="glyphicon glyphicon-save-file glyph-button"></span></a>
+                    </div>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

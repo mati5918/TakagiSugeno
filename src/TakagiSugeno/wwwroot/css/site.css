@@ -120,6 +120,18 @@ textarea {
     text-shadow: none;
 }
 
+.glyph-button:hover {
+    cursor: pointer;
+}
+
+.system-desc span:hover{
+    cursor: default;
+}
+
+.systems-table th, .systems-table td{
+    text-align:center;
+}
+
 /*---------------------------------RULES---------------------------------------*/
 
 .rules-table th, .rules-table td select{
