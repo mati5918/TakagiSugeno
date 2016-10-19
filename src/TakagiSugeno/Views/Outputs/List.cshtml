@@ -4,9 +4,7 @@
 }
 
 <div>
-@if (Model != null && Model.Count() > 0)
-{
-    <ul class="outputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault().SystemId'>
+    <ul class="outputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault()?.SystemId'>
         @foreach (var item in Model)
         {
             <li class="output-element" id="Output-@item.OutputId">
@@ -31,7 +29,7 @@
             </li>
         }
     </ul>
-}
+
 <script type="text/javascript">
 
     $(".outputs-list").on("click", ".output-element", function () {

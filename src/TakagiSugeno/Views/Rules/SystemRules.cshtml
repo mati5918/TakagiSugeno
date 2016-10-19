@@ -162,7 +162,7 @@
     }
 
     $("#btnAdd").click(function () {
-        var id = $("tbody tr").first().attr("data-systemId");
+        var id = $("#SysId").attr("data-system-id");
         var ruleId = createFakeRuleId();
         var url = "/Rules/NewRule/?systemId=" + id + "&ruleId=" + ruleId;
         $.ajax({
@@ -189,7 +189,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                var id = $("tbody tr").first().attr("data-systemId");
+                var id = $("#SysId").attr("data-system-id");
                 RefreshRules(id);
         }
     });

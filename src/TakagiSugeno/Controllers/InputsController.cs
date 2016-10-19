@@ -36,7 +36,11 @@ namespace TakagiSugeno.Controllers
 
         public IActionResult SystemInputs(int systemId)
         {
-            return RedirectToAction("Details", new { id = _inputsService.FirstSystemInput(systemId) });
+            int inputId = _inputsService.FirstSystemInput(systemId);
+            if(inputId != -1)
+                return RedirectToAction("Details", new { id = inputId});
+            else
+                return RedirectToAction("Add", new { systemId = systemId });
         }
 
         public IActionResult AddVariable(int fakeId)

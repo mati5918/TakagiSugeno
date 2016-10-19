@@ -39,12 +39,13 @@
                 
                 <ul class="nav navbar-nav">   
                     <li><a asp-area="" asp-controller="Systems" asp-action="SystemsList" asp-route-openedSystem="@ViewBag.SystemId">Przeglądaj </a></li>
+                    <li><a asp-area="" asp-controller="Systems" asp-action="New">Nowy </a></li>
                     @if(ViewBag.SystemId != null)
                     {               
                     <li class="dropdown">
                        <a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@ViewBag.SystemId" id="SysId" data-system-id="@ViewBag.SystemId">Wybrany System <span class="caret"></span></a>                         
                         <ul class="dropdown-menu">
-                            <li><a asp-area="" asp-controller="Inputs" asp-action="SystemInputs" asp-route-systemId="@ViewBag.SystemId">Wejścia</a></li> <!--TODO-->
+                            <li><a asp-area="" asp-controller="Inputs" asp-action="SystemInputs" asp-route-systemId="@ViewBag.SystemId">Wejścia</a></li>
                             <li><a asp-area="" asp-controller="Outputs" asp-action="SystemOutputs" asp-route-systemId="@ViewBag.SystemId">Wyjścia</a></li>
                             <li><a asp-area="" asp-controller="Rules" asp-action="SystemRules" asp-route-systemId="@ViewBag.SystemId">Reguły</a></li> 
                             <li><a asp-area="" asp-controller="OutputCalc" asp-action="Index" asp-route-systemId="@ViewBag.SystemId">Wyznaczanie wyjść</a></li> 
@@ -63,7 +64,7 @@
                 <div class="col-sm-8"><h3>Wejścia</h3></div>
                 <div class="col-sm-4"><button class="btn btn-success pull-right" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus" ></span></button></div>
             </div>
-            @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs(1));}
+            @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs((int)ViewBag.SystemId));}
         <br /><br />
         </div>
 
@@ -76,7 +77,7 @@
                 <div class="col-sm-8"><h3>Wyjścia</h3></div>
                 <div class="col-sm-4"><button class="btn btn-success pull-right" id="addOutput" onclick="addOutput()"><span class="glyphicon glyphicon-plus"></span></button></div>
             </div>
-            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputService.GetSystemOutputs(1));}
+            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputService.GetSystemOutputs((int)ViewBag.SystemId));}
             <br /><br />
         </div>
     }

@@ -29,8 +29,8 @@ namespace TakagiSugeno.Controllers
 
         public IActionResult Details(int? id)
         {
-            OutputVM vm = new OutputVM();
-            if (id.HasValue)
+            OutputVM vm = new OutputVM() { Variables = new List<VariableVM>(), OutputId = -1 };
+            if (id.HasValue && id.Value != -1)
             {
                 vm = _outputsService.GetOutput(id.Value);
             }
@@ -42,7 +42,11 @@ namespace TakagiSugeno.Controllers
 
         public IActionResult SystemOutputs(int systemId)
         {
-            return RedirectToAction("Details", new { id = _outputsService.FirstSystemOutput(systemId) });
+            int outputId = _outputsService.FirstSystemOutput(systemId);
+            if (outputId != -1)
+                return RedirectToAction("Details", new { id = outputId });
+            else
+                return RedirectToAction("Add", new { systemId = systemId });
         }
 
         public IActionResult AddVariable(int fakeId)

@@ -47,5 +47,18 @@ namespace TakagiSugeno.Model.Services
                 TSSystemId = s.TSSystemId
             }).ToList();
         }
+
+        public int CreateSystem()
+        {
+            TSSystem system = new TSSystem
+            {
+                AndMethod = AndMethod.Product,
+                OrMethod = OrMethod.Max,
+                CreatedDate = DateTime.Now,
+                IsPublished = false
+            };
+            _repository.Add(system);
+            return system.TSSystemId;
+        }
     }
 }

@@ -3,7 +3,7 @@
     ViewBag.Title = "Wyjścia";
     string header = (ViewBag.IsNewOutput != null) ? "Nowe wyjście" : "Szczegóły wyjścia";
 }
-
+<div class="content">
 <div class="row">
 <div class="col-sm-8">
     <h2 class="header">
@@ -52,6 +52,9 @@
             <div id="chart-container"></div>
         </div>
     </div>
+</div>
+</div>
+<div>
     <div id="cancelModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -182,7 +185,7 @@
                 printSaveSuccess();
                 $("#btnCancel, #btnSave").prop("disabled", true);
                 $(".header").text("Szczegóły wyjścia");
-                getOutputsList($("#SystemId").val());
+                getOutputsList($("#SysId").attr("data-system-id"));
                 $("#OutputId").val(response.id);
             }
             else {
@@ -194,8 +197,13 @@
     }
 
     function cancelChanges() {
-        setTimeout(function(){
-            openOutput( $("#OutputId").val(), '@ViewBag.Title')
-        },200)
+        setTimeout(function () {
+            var id = $("#OutputId").val();
+            if (id != -1) {
+                openOutput(id, '@ViewBag.Title');
+            } else {
+                addOutput();
+            }
+        }, 200)
     }
 </script>

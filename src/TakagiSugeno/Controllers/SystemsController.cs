@@ -23,5 +23,11 @@ namespace TakagiSugeno.Controllers
             ViewBag.SystemId = openedSystem;
             return View(_service.GetSystems());
         }
+
+        public IActionResult New()
+        {
+            int newId = _service.CreateSystem();
+            return RedirectToAction("Index", "SystemOverview", new { systemId = newId });
+        }
     }
 }

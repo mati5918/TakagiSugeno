@@ -278,7 +278,7 @@ function removeInput(obj, isInputsList) {
                 if (isInputsList) {
                     var openedId = $("#InputId").val();
                     if (openedId == id) {
-                        $(".body-content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
+                        $(".content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
                     }
                 }
             }
@@ -298,7 +298,7 @@ function removeOutput(obj, isOutputsList) {
                 if (isOutputsList) {
                     var openedId = $("#OutputId").val()
                     if (openedId == id) {
-                        $(".body-content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
+                        $(".content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
                     }
                 }
             }
@@ -390,7 +390,7 @@ function collectData() {
     var VM = {
         Name: $("#InputName").val(),
         //InputId: $("#InputId").val(),
-        SystemId: $("#SystemId").val(),
+        SystemId: $("#SysId").attr("data-system-id"),
         Variables: variables
     };
 
@@ -422,7 +422,7 @@ function collectRulesData() {
         
         var rule = {
             RuleId: $(v).attr("id"),
-            SystemId: $(v).attr("data-systemId"),
+            SystemId: $("#SysId").attr("data-system-id"),
             RuleElements: elements
         }
         rules.push(rule);

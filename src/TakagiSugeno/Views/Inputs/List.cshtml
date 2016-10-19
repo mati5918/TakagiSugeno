@@ -3,7 +3,7 @@
 @{
 }
 <div>
-<ul class="inputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault().SystemId'>
+<ul class="inputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault()?.SystemId'>
     @foreach (var item in Model)
     {
         <li class="input-element" id="Input-@item.InputId">
