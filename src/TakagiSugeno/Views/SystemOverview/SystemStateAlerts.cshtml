@@ -1,0 +1,22 @@
+﻿@model int
+@inject TakagiSugeno.Model.Services.SystemStateHelper _stateHelper;
+@{ 
+
+    var inputsCount = _stateHelper.GetInputsCount(Model);
+    var outputsCount = _stateHelper.GetOutputsCount(Model);
+    var rulesCount = _stateHelper.GetRulesCount(Model);
+}
+
+@if (inputsCount == 0 || outputsCount == 0)
+{
+    <div class="alert alert-info rules-alert">
+        <span class="glyphicon glyphicon-info-sign"></span><strong> Aby tworzyć reguły system musi posiadać conajmniej jedno wejście i jedno wyjście.</strong>
+    </div>
+}
+
+@if (inputsCount == 0 || outputsCount == 0 || rulesCount == 0)
+{
+    <div class="alert alert-info calc-alert">
+        <span class="glyphicon glyphicon-info-sign"></span><strong> Aby obliczać wyjścia system musi posiadać conajmniej jedno wejście, jedno wyjście i jedną regułę. </strong>
+    </div>
+}

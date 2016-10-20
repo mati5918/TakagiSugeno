@@ -159,8 +159,11 @@ namespace TakagiSugeno.Model.Services
                 if (io.Type == IOType.Input)
                 {
                     var last = rule.RuleElements.FirstOrDefault(e => e.Type == RuleElementType.InputPart && e.NextOpartion == RuleNextOperation.None);
-                    last.NextOpartion = RuleNextOperation.And;
-                    _context.Entry(last).State = EntityState.Modified;
+                    if (last != null)
+                    {
+                        last.NextOpartion = RuleNextOperation.And;
+                        _context.Entry(last).State = EntityState.Modified;
+                    }
                 }
                 _context.RuleElements.Add(elem);
                 
@@ -178,8 +181,11 @@ namespace TakagiSugeno.Model.Services
                 if(elem.Type == RuleElementType.InputPart && elem.NextOpartion == RuleNextOperation.None)
                 {
                     var lastElem = rule.RuleElements.LastOrDefault(e => e.Type == RuleElementType.InputPart && e.NextOpartion != RuleNextOperation.None);
-                    lastElem.NextOpartion = RuleNextOperation.None;
-                    _context.Entry(lastElem).State = EntityState.Modified;
+                    if (lastElem != null)
+                    {
+                        lastElem.NextOpartion = RuleNextOperation.None;
+                        _context.Entry(lastElem).State = EntityState.Modified;
+                    }
                 }
             }
             _context.SaveChanges();

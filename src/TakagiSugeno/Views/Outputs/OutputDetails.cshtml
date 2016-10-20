@@ -182,6 +182,7 @@
             dataType: "json",
             success: function (response) {
             if (response.errors.length == 0) {
+                refreshSystemMenu();
                 printSaveSuccess();
                 $("#btnCancel, #btnSave").prop("disabled", true);
                 $(".header").text("Szczegóły wyjścia");

@@ -41,16 +41,8 @@
                     <li><a asp-area="" asp-controller="Systems" asp-action="SystemsList" asp-route-openedSystem="@ViewBag.SystemId">Przeglądaj </a></li>
                     <li><a asp-area="" asp-controller="Systems" asp-action="New">Nowy </a></li>
                     @if(ViewBag.SystemId != null)
-                    {               
-                    <li class="dropdown">
-                       <a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@ViewBag.SystemId" id="SysId" data-system-id="@ViewBag.SystemId">Wybrany System <span class="caret"></span></a>                         
-                        <ul class="dropdown-menu">
-                            <li><a asp-area="" asp-controller="Inputs" asp-action="SystemInputs" asp-route-systemId="@ViewBag.SystemId">Wejścia</a></li>
-                            <li><a asp-area="" asp-controller="Outputs" asp-action="SystemOutputs" asp-route-systemId="@ViewBag.SystemId">Wyjścia</a></li>
-                            <li><a asp-area="" asp-controller="Rules" asp-action="SystemRules" asp-route-systemId="@ViewBag.SystemId">Reguły</a></li> 
-                            <li><a asp-area="" asp-controller="OutputCalc" asp-action="Index" asp-route-systemId="@ViewBag.SystemId">Wyznaczanie wyjść</a></li> 
-                        </ul>
-                    </li>
+                    {
+                        Html.RenderPartial("SystemMenu", (int)ViewBag.SystemId);
                     }  
                 </ul>
             </div>

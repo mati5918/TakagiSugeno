@@ -275,11 +275,15 @@ function removeInput(obj, isInputsList) {
             type: "POST",
             success: function (response) {
                 getInputsList($("#SysId").attr("data-system-id"));
+                refreshSystemMenu();
                 if (isInputsList) {
                     var openedId = $("#InputId").val();
                     if (openedId == id) {
                         $(".content").html("<h2>Wybierz wejście z listy lub stwórz nowe</h2>");
                     }
+                }
+                if (typeof (systemStateAlerts) !== 'undefined') {
+                    systemStateAlerts();
                 }
             }
         });
@@ -295,11 +299,16 @@ function removeOutput(obj, isOutputsList) {
             type: "POST",
             success: function (response) {
                 getOutputsList($("#SysId").attr("data-system-id"));
+                refreshSystemMenu();
                 if (isOutputsList) {
                     var openedId = $("#OutputId").val()
                     if (openedId == id) {
                         $(".content").html("<h2>Wybierz wyjście z listy lub stwórz nowe</h2>");
                     }
+                }
+                //if ($.isFunction(systemStateAlerts)) {
+                if (typeof(systemStateAlerts) !== 'undefined') {
+                    systemStateAlerts();
                 }
             }
         });
@@ -470,3 +479,16 @@ function numerateRulesRows() {
         $(v).find(".index").text(i++);
     });
 }
+
+function refreshSystemMenu() {
+    var id = $("#SysId").attr("data-system-id");
+    var url = "/SystemOverview/SystemMenu/?systemId=" + id;
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function (response) {
+            $(".system-menu").replaceWith(response);
+        }
+    })
+}
+

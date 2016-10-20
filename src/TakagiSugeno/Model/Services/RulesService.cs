@@ -112,5 +112,14 @@ namespace TakagiSugeno.Model.Services
         {
             _saver.Save(rules);
         }
+
+        public void ClearRules(int systemId)
+        {
+            var rules = _ruleRepository.GetBySystemId(systemId).ToList();
+            foreach(var rule in rules)
+            {
+                _ruleRepository.Delete(rule);
+            }
+        }
     }
 }

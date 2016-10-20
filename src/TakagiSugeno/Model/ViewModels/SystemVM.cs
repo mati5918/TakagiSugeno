@@ -15,4 +15,5 @@ namespace TakagiSugeno.Model.ViewModels
         public bool IsPublished { get; set; }
         public string Description { get; set; }
     }
+
 }

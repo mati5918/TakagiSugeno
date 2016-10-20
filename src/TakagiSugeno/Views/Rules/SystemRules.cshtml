@@ -182,17 +182,31 @@
 
     $("#btnSave").click(function () {
         var rules = collectRulesData();
-        $.ajax({
-            url: "@Url.Action("Save")",
-            type: "POST",
-            data: JSON.stringify(rules),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                var id = $("#SysId").attr("data-system-id");
-                RefreshRules(id);
+        if (rules.length > 0) {
+            $.ajax({
+                url: "@Url.Action("Save")",
+                type: "POST",
+                data: JSON.stringify(rules),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var id = $("#SysId").attr("data-system-id");
+                    refreshSystemMenu();
+                    RefreshRules(id);
+                }
+            });
+        } else {
+            var id = $("#SysId").attr("data-system-id");
+            var url = "/Rules/ClearRules/?systemId=" + id;
+            $.ajax({
+                url: url,
+                type: "POST",
+                success: function (response) {
+                    refreshSystemMenu();
+                    RefreshRules(id);
+                }
+            });
         }
-    });
     });
 
     function createChartForRuleRow(row) {

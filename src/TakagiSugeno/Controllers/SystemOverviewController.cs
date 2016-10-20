@@ -16,5 +16,15 @@ namespace TakagiSugeno.Controllers
             ViewBag.SystemId = systemId;
             return View(systemId);
         }
+
+        public IActionResult SystemStateAlerts(int systemId)
+        {
+            return PartialView(systemId);
+        }
+
+        public IActionResult SystemMenu(int systemId)
+        {
+            return PartialView(systemId);
+        }
     }
 }

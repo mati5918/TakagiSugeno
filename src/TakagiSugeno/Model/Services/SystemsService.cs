@@ -60,5 +60,6 @@ namespace TakagiSugeno.Model.Services
             _repository.Add(system);
             return system.TSSystemId;
         }
+
     }
 }

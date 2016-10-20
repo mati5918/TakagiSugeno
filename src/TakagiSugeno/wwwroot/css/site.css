@@ -54,7 +54,7 @@ textarea {
 }
 
 
-.input-element :hover, .output-element :hover, .panel-rules :hover {
+.input-element :hover, .output-element :hover {
     cursor: pointer;
 }
 
@@ -134,24 +134,31 @@ textarea {
 
 /*---------------------------------RULES---------------------------------------*/
 
+.rules-table{
+    width:auto;
+}
 .rules-table th, .rules-table td select{
     text-align:center;
 }
 
 .rules-table .variable-col {
     min-width: 200px;
+    max-width: 200px;
 }
 
 .rules-table .id-col {
     min-width: 60px;
+    max-width: 60px;
 }
 
 .rules-table .remove-col {
     min-width: 30px;
+    max-width: 30px;
 }
 
 .rules-table .operation-col {
     min-width: 120px;
+    max-width: 120px;
 }
 
 .panel .text-only {

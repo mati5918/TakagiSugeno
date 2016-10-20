@@ -1,0 +1,33 @@
+﻿@model int
+@inject TakagiSugeno.Model.Services.SystemStateHelper _stateHelper;
+@{
+
+    var inputsCount = _stateHelper.GetInputsCount(Model);
+    var outputsCount = _stateHelper.GetOutputsCount(Model);
+    var rulesCount = _stateHelper.GetRulesCount(Model);
+}
+
+<li class="dropdown system-menu">
+    <a asp-area="" asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@Model" id="SysId" data-system-id="@Model">Wybrany System <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+        <li><a asp-area="" asp-controller="Inputs" asp-action="SystemInputs" asp-route-systemId="@Model">Wejścia</a></li>
+        <li><a asp-area="" asp-controller="Outputs" asp-action="SystemOutputs" asp-route-systemId="@Model">Wyjścia</a></li>
+        @if (inputsCount == 0 || outputsCount == 0)
+        {
+            <li id="rulesLink" class="disabled"><a asp-area="" asp-controller="Rules" asp-action="SystemRules" asp-route-systemId="@Model">Reguły</a></li>
+        }
+        else
+        {
+            <li id="rulesLink"><a asp-area="" asp-controller="Rules" asp-action="SystemRules" asp-route-systemId="@Model">Reguły</a></li>
+        }
+        @if (inputsCount == 0 || outputsCount == 0 || rulesCount == 0)
+        {
+            <li id="calcLink" class="disabled"><a asp-area="" asp-controller="OutputCalc" asp-action="Index" asp-route-systemId="@Model">Wyznaczanie wyjść</a></li>
+        }
+        else
+        {
+            <li id="calcLink"><a asp-area="" asp-controller="OutputCalc" asp-action="Index" asp-route-systemId="@Model">Wyznaczanie wyjść</a></li>
+        }
+        
+    </ul>
+</li>

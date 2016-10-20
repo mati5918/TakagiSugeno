@@ -1,9 +1,11 @@
 ﻿@model int
 @inject TakagiSugeno.Model.Services.InputsService InputService
 @inject TakagiSugeno.Model.Services.OutputsService OutputsService
+
 @{
     ViewBag.Title = "Przegląd systemu";
     //string title = "overview";
+
 }
 
 <div class="row">
@@ -22,6 +24,11 @@
     </div>
 </div>
 <br />
+
+<div class="alerts-container">
+
+</div>
+
 <div>
     <div class="row">
         <div class="col-sm-4">
@@ -38,7 +45,7 @@
         <div class="col-sm-4">
             <div class="panel panel-primary panel-rules" style="width:200px; margin-top: 180px; margin-left:25%;">               
                 <div class="panel-body">
-                    <button class="btn btn-primary center-block" id="addInput" onclick="addInput()" style="height:100%; width:100%; white-space:normal !important;"><span>Takagi Sugeno System (Reguły)</span></button>
+                    <button class="btn btn-primary center-block" id="btnRules" style="height:100%; width:100%; white-space:normal !important;"><span>Takagi Sugeno System (Reguły)</span></button>
                 </div>
             </div>
         </div>
@@ -93,7 +100,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(".panel-rules").click(function () {
+    $("#btnRules").click(function () {
         var id = $("#SysId").attr("data-system-id");
         var url = "/Rules/SystemRules/?systemId=" + id;     
         window.location.href = url;
@@ -103,4 +110,30 @@
         var url = "/OutputCalc/?systemId=" + id;
         window.location.href = url;
     });
+
+    $(document).ready(function () {
+        systemStateAlerts();
+    });
+
+    function systemStateAlerts() {
+        var id = $("#SysId").attr("data-system-id");
+        var url = "/SystemOverview/SystemStateAlerts/?systemId=" + id;
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {
+                $(".alerts-container").html(response);
+                if ($(".rules-alert").length > 0) {
+                    $("#btnRules").prop("disabled", true);
+                    //$("#rulesLink").addClass("disabled");
+                };
+                if ($(".calc-alert").length > 0) {
+                    $("#btnCalc").prop("disabled", true);
+                    //$("#calcLink").addClass("disabled");
+                };
+            }
+        })
+    }
+
+
 </script>

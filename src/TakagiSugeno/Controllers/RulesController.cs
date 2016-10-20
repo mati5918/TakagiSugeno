@@ -41,5 +41,12 @@ namespace TakagiSugeno.Controllers
             _service.Save(rules);
             return Json("");
         }
+
+        [HttpPost]
+        public IActionResult ClearRules(int systemId)
+        {
+            _service.ClearRules(systemId);
+            return Json("");
+        }
     }
 }
