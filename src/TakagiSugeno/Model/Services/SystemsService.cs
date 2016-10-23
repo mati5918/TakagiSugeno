@@ -48,6 +48,16 @@ namespace TakagiSugeno.Model.Services
             }).ToList();
         }
 
+        public void Publish(PublishVM publishData)
+        {
+            TSSystem system = _repository.GetById(publishData.SystemId);
+            system.IsPublished = true;
+            system.PublishedDate = DateTime.Now;
+            system.CreatedBy = publishData.Author;
+            system.Description = publishData.Description;
+            _repository.Update(system);
+        }
+
         public int CreateSystem()
         {
             TSSystem system = new TSSystem

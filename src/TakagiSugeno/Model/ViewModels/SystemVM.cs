@@ -16,4 +16,11 @@ namespace TakagiSugeno.Model.ViewModels
         public string Description { get; set; }
     }
 
+    public class PublishVM
+    {
+        public int SystemId { get; set; }
+        public string Author { get; set; }
+        public string Description { get; set; }
+    }
+
 }

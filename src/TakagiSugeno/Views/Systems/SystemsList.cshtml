@@ -21,7 +21,7 @@
         @foreach(var system in Model)
         {
             <tr>
-                <td class="counter col-sm-1">1.</td>
+                <td class="counter col-sm-1"><span class="index"></span>.</td>
                 <td class="col-sm-3 system-desc"><span data-toggle="tooltip" data-placement="top" title="@system.Description">@system.Name</span></td>
                 <td class="col-sm-3">@system.CreatedBy</td>
                 <td class="col-sm-3">@system.PublishedDate.ToString("d")</td>
@@ -41,5 +41,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
+
+        $(".systems-table tr").each(function (i, v) {
+            $(v).find(".index").text(i++);
+        });
     });
 </script>

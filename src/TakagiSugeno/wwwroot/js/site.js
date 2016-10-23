@@ -455,6 +455,15 @@ function collectCalcData() {
     return vm;
 }
 
+function collectPublishData() {
+    var vm = {
+        SystemId: $("#SysId").attr("data-system-id"),
+        Description: $("#descInput").val(),
+        Author: $("#authorInput").val()
+    };
+    return vm;
+}
+
 function printSaveSuccess(){
     $("#alert-container").removeClass("alert-danger");
     $("#alert-container").addClass("alert-success");
