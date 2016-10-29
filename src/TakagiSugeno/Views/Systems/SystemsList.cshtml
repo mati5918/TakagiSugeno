@@ -4,7 +4,7 @@
 }
 
 
-<h3>List opupblikowanych systemów</h3>
+<h3>List opublikowanych systemów</h3>
 <br />
 
 <table class="table systems-table">
@@ -28,7 +28,7 @@
                 <td class="col-sm-2">
                     <div class="pull-right">
                         <a asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Otwórz do odczytu"><span class="glyphicon glyphicon-open glyph-button" ></span></a>&nbsp;&nbsp;
-                        <a data-toggle="tooltip" data-placement="top" title="Otwórz kopię do edycji"><span class="glyphicon glyphicon-edit glyph-button"></span></a>&nbsp;&nbsp;
+                        <a asp-controller="Systems" asp-action="Clone" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Otwórz kopię do edycji"><span class="glyphicon glyphicon-edit glyph-button"></span></a>&nbsp;&nbsp;
                         <a data-toggle="tooltip" data-placement="top" title="Zapisz do pliku"><span class="glyphicon glyphicon-save-file glyph-button"></span></a>
                     </div>
                 </td>

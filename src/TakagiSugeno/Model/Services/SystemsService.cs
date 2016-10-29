@@ -11,9 +11,11 @@ namespace TakagiSugeno.Model.Services
     public class SystemsService
     {
         private IRepository<TSSystem> _repository;
-        public SystemsService(IRepository<TSSystem> repository)
+        private SystemCloner _cloner;
+        public SystemsService(IRepository<TSSystem> repository, SystemCloner cloner)
         {
             _repository = repository;
+            _cloner = cloner;
         }
 
         public AndMethod GetSystemAndMethod(int systemId)
@@ -69,6 +71,11 @@ namespace TakagiSugeno.Model.Services
             };
             _repository.Add(system);
             return system.TSSystemId;
+        }
+
+        public int CloneSystem(int systemId)
+        {
+            return _cloner.CloneSystem(systemId);
         }
 
     }

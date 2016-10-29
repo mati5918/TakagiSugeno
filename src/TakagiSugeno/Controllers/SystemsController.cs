@@ -36,5 +36,11 @@ namespace TakagiSugeno.Controllers
             _service.Publish(publishData);
             return Json("");
         }
+
+        public IActionResult Clone(int systemId)
+        {
+            int newId = _service.CloneSystem(systemId);
+            return RedirectToAction("Index", "SystemOverview", new { systemId = newId });
+        }
     }
 }
