@@ -57,6 +57,7 @@ namespace TakagiSugeno.Model.Services
             system.PublishedDate = DateTime.Now;
             system.CreatedBy = publishData.Author;
             system.Description = publishData.Description;
+            system.Name = publishData.Name;
             _repository.Update(system);
         }
 

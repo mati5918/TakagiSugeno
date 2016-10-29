@@ -459,7 +459,8 @@ function collectPublishData() {
     var vm = {
         SystemId: $("#SysId").attr("data-system-id"),
         Description: $("#descInput").val(),
-        Author: $("#authorInput").val()
+        Author: $("#authorInput").val(),
+        Name: $("#nameInput").val()
     };
     return vm;
 }
