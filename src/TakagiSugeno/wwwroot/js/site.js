@@ -502,3 +502,35 @@ function refreshSystemMenu() {
     })
 }
 
+function checkReadOnly() {
+    var id = $("#SysId").attr("data-system-id");
+    var url = "/Systems/IsSystemPublished/?systemId=" + id;
+    $.ajax({
+        url: url,
+        type: "POST",
+        success: function (response) {
+            console.log(response);
+            setReadOnly(response);
+        }
+    });
+}
+
+
+function setReadOnly() {
+        //general
+        $("#btnPublishModal").prop("disabled", true);
+        $('.btn-add').bind('click', false);
+        $('.btn-add').addClass('disabled');
+        $('.remove-input').hide();
+        $('.remove-output').hide();
+        //$('.remove-input').bind('click', false);
+        //$('.remove-output').bind('click', false);
+        //inputs/outputs
+        $("input, select").prop("disabled", true);
+        $("#addVariable").prop("disabled", true);
+        $('.remove-variable').hide();
+        //$('.remove-variable').bind('click', false);
+        //rules
+        $('.remove-rule').hide();
+        $("#btnAdd").prop("disabled", true);
+}

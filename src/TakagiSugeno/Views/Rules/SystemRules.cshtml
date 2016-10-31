@@ -1,11 +1,12 @@
 ﻿@model TakagiSugeno.Model.ViewModels.RuleGeneralVM
 @inject TakagiSugeno.Model.Services.RulesService rulesService;
-@using TakagiSugeno.Model;
+@inject TakagiSugeno.Model.Services.SystemStateHelper StateHelper
 @{
     ViewBag.Title = "Reguły";
     var names = rulesService.GetSystemInputsOutputsNames(ViewBag.SystemId);
     ViewBag.VariablesList = Model.VariablesLists;
     ViewBag.ChartsData = Model.ChartsData;
+    bool isPublished = StateHelper.IsSystemPublished(ViewBag.SystemId);
 }
 
 
@@ -88,6 +89,9 @@
     $(document).ready(function () {
         numerateRulesRows();
         refreshCheckboxes();
+        if ('@isPublished' == 'True') {
+            setReadOnly();
+        }
 
         var containers = $(".chart-container");
         $.each(containers, function (index, value) {
@@ -155,7 +159,7 @@
                 url: url,
                 type: "GET",
                 success: function (response) {
-                    $(".body-content").html(response);                   
+                    $(".body-content").html(response);
                 }
             });
         }, 200)
@@ -168,14 +172,14 @@
         $.ajax({
             url: url,
             type: "GET",
-            success: function (response) {              
+            success: function (response) {
                 $(".rules-table tbody").append(response);
                 numerateRulesRows();
                 createChartForRuleRow($("tbody").find("#" + ruleId));
                 $("#" + ruleId + " .chart-container").hide();
                 changeRulesButtonsState(false);
                 refreshCheckboxes();
-                
+
             }
         });
     });
@@ -227,7 +231,7 @@
     }
 
     $(".table-body").scroll(function () {
-        
+
         $(".table-header").offset({ left: -1 * this.scrollLeft + leftMargin + parseInt(leftPadding) });
     });
 </script>

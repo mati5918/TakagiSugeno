@@ -13,10 +13,12 @@ namespace TakagiSugeno.Controllers
     public class SystemsController : Controller
     {
         private SystemsService _service;
+        private SystemStateHelper _stateHelper;
 
-        public SystemsController(SystemsService service)
+        public SystemsController(SystemsService service, SystemStateHelper stateHelper)
         {
             _service = service;
+            _stateHelper = stateHelper;
         }
         // GET: /<controller>/
         public IActionResult SystemsList(int? openedSystem)
@@ -41,6 +43,11 @@ namespace TakagiSugeno.Controllers
         {
             int newId = _service.CloneSystem(systemId);
             return RedirectToAction("Index", "SystemOverview", new { systemId = newId });
+        }
+        [HttpPost]
+        public IActionResult IsSystemPublished(int systemId)
+        {
+            return Json(_stateHelper.IsSystemPublished(systemId));
         }
     }
 }

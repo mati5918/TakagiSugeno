@@ -1,10 +1,12 @@
 ﻿@model int
 @inject TakagiSugeno.Model.Services.InputsService InputService
 @inject TakagiSugeno.Model.Services.OutputsService OutputsService
+@inject TakagiSugeno.Model.Services.SystemStateHelper StateHelper
 
 @{
     ViewBag.Title = "Przegląd systemu";
     //string title = "overview";
+    bool isPublished = StateHelper.IsSystemPublished(Model);
 
 }
 
@@ -38,7 +40,7 @@
         <div class="col-sm-4">
             <div class="panel panel-primary io-overview">
                 <div class="panel-heading">
-                    <a class="btn btn-success pull-right" asp-controller="Inputs" asp-action="Add" asp-route-systemId="@Model"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a class="btn btn-success pull-right btn-add" asp-controller="Inputs" asp-action="Add" asp-route-systemId="@Model"><span class="glyphicon glyphicon-plus"></span></a>
                     <h4>Wejścia</h4>                  
                 </div>
                 <div class="panel-body io-overview-body">
@@ -56,7 +58,7 @@
         <div class="col-sm-4">
             <div class="panel panel-primary io-overview pull-right">
                 <div class="panel-heading">
-                    <a class="btn btn-success pull-right" asp-controller="Outputs" asp-action="Add" asp-route-systemId="@Model"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a class="btn btn-success pull-right btn-add" asp-controller="Outputs" asp-action="Add" asp-route-systemId="@Model"><span class="glyphicon glyphicon-plus"></span></a>
                     <h4>Wyjścia</h4>
                 </div>
                 <div class="panel-body io-overview-body">
@@ -165,6 +167,10 @@
     });
 
     $(document).ready(function () {
+        if ('@isPublished' == 'True') {
+            setReadOnly();
+        }
+        
         systemStateAlerts();
     });
 

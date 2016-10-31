@@ -1,7 +1,9 @@
 ﻿@model TakagiSugeno.Model.ViewModels.OutputCalcVM
 @using TakagiSugeno.Model
+@inject TakagiSugeno.Model.Services.SystemStateHelper StateHelper
 @{
     ViewBag.Title = "Obliczanie wyjść";
+    bool isPublished = StateHelper.IsSystemPublished(ViewBag.SystemId);
 }
 
 <div class="row">
@@ -71,6 +73,12 @@
 </div>
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        if ('@isPublished' == 'True') {
+            $("select").prop("disabled", true);
+        }
+    });
+
     $("#btnCalc").click(function () {
         var vm = collectCalcData();
         $.ajax({

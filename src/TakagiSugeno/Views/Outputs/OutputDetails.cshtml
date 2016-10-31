@@ -1,7 +1,9 @@
 ﻿@model TakagiSugeno.Model.ViewModels.OutputVM
+@inject TakagiSugeno.Model.Services.SystemStateHelper StateHelper
 @{
     ViewBag.Title = "Wyjścia";
     string header = (ViewBag.IsNewOutput != null) ? "Nowe wyjście" : "Szczegóły wyjścia";
+    bool isPublished = StateHelper.IsSystemPublished(ViewBag.SystemId);
 }
 <div class="content">
 <div class="row">
@@ -94,6 +96,11 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        if ('@isPublished' == 'True') {
+            setReadOnly();
+        }
+        
         $(".variables-list").on("click", ".variable-row", function () {
             var clickedId = $(this).attr("id");
             selectVariable(clickedId);

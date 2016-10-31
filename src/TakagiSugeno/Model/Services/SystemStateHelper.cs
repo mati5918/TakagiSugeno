@@ -28,5 +28,10 @@ namespace TakagiSugeno.Model.Services
         {
             return _context.Rules.Count(r => r.TSSystemId == systemId);
         }
+
+        public bool IsSystemPublished(int systemId)
+        {
+            return _context.Systems.FirstOrDefault(s => s.TSSystemId == systemId)?.IsPublished ?? false;
+        }
     }
 }

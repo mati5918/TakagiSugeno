@@ -1,8 +1,9 @@
 ﻿@model TakagiSugeno.Model.ViewModels.InputVM
-@using TakagiSugeno.Model;
+@inject TakagiSugeno.Model.Services.SystemStateHelper StateHelper
 @{
     ViewBag.Title = "Wejścia";
     string header = (ViewBag.IsNewInput != null)  ? "Nowe wejście" : "Szczegóły wejścia";
+    bool isPublished = StateHelper.IsSystemPublished(ViewBag.SystemId);
 }
 <div class="content">
 <div class="row">
@@ -139,6 +140,9 @@
     $(document).ready(function () {
         createCharts(chart);
         chart.render();
+        if ('@isPublished' == 'True') {
+            setReadOnly();
+        }
     });
 
 
@@ -233,7 +237,7 @@
         }
     });
 
-    function save() {       
+    function save() {
         var inputVM = collectData();
         inputVM.InputId = $("#InputId").val();
         $.ajax({
@@ -268,6 +272,6 @@
                 addInput();
             }
         }, 200)
-        
+
     }
 </script>
