@@ -19,7 +19,7 @@
     <div class="col-sm-4">
         <div class="pull-right">
             <button class="btn btn-success" id="btnCalc" style="margin-top:20px;"><span class="glyphicon glyphicon-check"></span> Oblicz</button>
-            <button class="btn btn-primary" id="" style="margin-top:20px;" disabled><span class="glyphicon glyphicon-save"></span> Zapisz do pliku</button>
+            <button class="btn btn-primary" id="btnSaveToFile" style="margin-top:20px;"><span class="glyphicon glyphicon-save"></span> Zapisz do pliku</button>
             <button class="btn btn-danger" id="btnPublishModal" style="margin-top:20px;" data-toggle="modal" data-target="#publishModal"><span class="glyphicon glyphicon-bullhorn"></span> Opublikuj</button>
         </div>
 
@@ -184,12 +184,11 @@
                 $(".alerts-container").html(response);
                 if ($(".rules-alert").length > 0) {
                     $("#btnRules").prop("disabled", true);
-                    //$("#rulesLink").addClass("disabled");
                 };
                 if ($(".calc-alert").length > 0) {
                     $("#btnCalc").prop("disabled", true);
                     $("#btnPublishModal").prop("disabled", true);
-                    //$("#calcLink").addClass("disabled");
+                    $("#btnSaveToFile").prop("disabled", true);
                 };
             }
         })
@@ -218,6 +217,10 @@
             });
         }, 200);
     })
+
+    $("#btnSaveToFile").click(function () {
+        window.location.href = "@Url.Action("SaveToFile", "Systems", new { systemId = Model})";
+    });
 
 
 </script>

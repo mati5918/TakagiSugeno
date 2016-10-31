@@ -519,6 +519,8 @@ function checkReadOnly() {
 function setReadOnly() {
         //general
         $("#btnPublishModal").prop("disabled", true);
+        //$('#btnPublishModal').bind('click', false);
+        //$('#btnPublishModal').addClass('disabled');
         $('.btn-add').bind('click', false);
         $('.btn-add').addClass('disabled');
         $('.remove-input').hide();

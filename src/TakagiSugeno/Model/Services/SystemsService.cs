@@ -79,5 +79,10 @@ namespace TakagiSugeno.Model.Services
             return _cloner.CloneSystem(systemId);
         }
 
+        public string SystemToJson(int systemId)
+        {
+            return _cloner.SystemToJson(systemId);
+        }
+
     }
 }

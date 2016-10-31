@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,44 @@ namespace TakagiSugeno.Model.Services
         public SystemCloner(TakagiSugenoDbContext context)
         {
             _context = context;
+        }
+
+        public string SystemToJson(int systemId)
+        {
+            TSSystem system = _context.Systems
+                .Include(s => s.InputsOutputs)
+                    .ThenInclude(io => io.Variables)
+                .Include(s => s.Rules)
+                    .ThenInclude(r => r.RuleElements)
+                .FirstOrDefault(s => s.TSSystemId == systemId);
+
+            foreach(InputOutput io in system.InputsOutputs)
+            {
+                io.System = null;
+                foreach(Variable var in io.Variables)
+                {
+                    var.InputOutput = null;
+                }
+            }
+            foreach(Rule r in system.Rules)
+            {
+                r.System = null;
+                foreach(RuleElement elem in r.RuleElements)
+                {
+                    elem.Rule = null;
+                    elem.InputOutput = null;
+                    elem.Variable = null;
+                }
+            }
+            //string systemJson = JsonConvert.SerializeObject(system, Formatting.Indented);
+            //TSSystem testsystem = JsonToSystem(systemJson);
+            return JsonConvert.SerializeObject(system, Formatting.Indented);
+        }
+
+        public TSSystem JsonToSystem(string systemJson)
+        {
+            TSSystem system = JsonConvert.DeserializeObject<TSSystem>(systemJson);
+            return system;
         }
 
         public int CloneSystem(int systemId)
