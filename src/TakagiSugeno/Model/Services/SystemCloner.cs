@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
@@ -19,51 +21,70 @@ namespace TakagiSugeno.Model.Services
 
         public string SystemToJson(int systemId)
         {
-            TSSystem system = _context.Systems
-                .Include(s => s.InputsOutputs)
-                    .ThenInclude(io => io.Variables)
-                .Include(s => s.Rules)
-                    .ThenInclude(r => r.RuleElements)
-                .FirstOrDefault(s => s.TSSystemId == systemId);
+            TSSystem system = ReadFullSystem(systemId);
 
-            foreach(InputOutput io in system.InputsOutputs)
+            foreach (InputOutput io in system.InputsOutputs)
             {
                 io.System = null;
-                foreach(Variable var in io.Variables)
+                foreach (Variable var in io.Variables)
                 {
                     var.InputOutput = null;
                 }
             }
-            foreach(Rule r in system.Rules)
+            foreach (Rule r in system.Rules)
             {
                 r.System = null;
-                foreach(RuleElement elem in r.RuleElements)
+                foreach (RuleElement elem in r.RuleElements)
                 {
                     elem.Rule = null;
                     elem.InputOutput = null;
                     elem.Variable = null;
                 }
             }
-            //string systemJson = JsonConvert.SerializeObject(system, Formatting.Indented);
-            //TSSystem testsystem = JsonToSystem(systemJson);
             return JsonConvert.SerializeObject(system, Formatting.Indented);
         }
 
-        public TSSystem JsonToSystem(string systemJson)
+        public int? ReadFromFile(IFormFile file)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(file.OpenReadStream()))
+                {
+                    string systemJson = reader.ReadToEnd();
+                    TSSystem newSystem = JsonToSystem(systemJson);
+                    return CopySystem(newSystem);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private TSSystem JsonToSystem(string systemJson)
         {
             TSSystem system = JsonConvert.DeserializeObject<TSSystem>(systemJson);
             return system;
         }
 
-        public int CloneSystem(int systemId)
+        private TSSystem ReadFullSystem(int systemId)
         {
-            TSSystem sourceSystem = _context.Systems.AsNoTracking()
+            return _context.Systems.AsNoTracking()
                 .Include(s => s.InputsOutputs)
                     .ThenInclude(io => io.Variables)
                 .Include(s => s.Rules)
                     .ThenInclude(r => r.RuleElements)
                 .FirstOrDefault(s => s.TSSystemId == systemId);
+        }
 
+        public int CloneSystem(int systemId)
+        {
+            TSSystem sourceSystem = ReadFullSystem(systemId);
+            return CopySystem(sourceSystem);
+        }
+
+        private int CopySystem(TSSystem sourceSystem)
+        {
             TSSystem newSystem = new TSSystem
             {
                 AndMethod = sourceSystem.AndMethod,
@@ -77,7 +98,7 @@ namespace TakagiSugeno.Model.Services
 
             Dictionary<int, int> ioMap = new Dictionary<int, int>();
             Dictionary<int, int> variablesMap = new Dictionary<int, int>();
-            foreach(InputOutput io in sourceSystem.InputsOutputs)
+            foreach (InputOutput io in sourceSystem.InputsOutputs)
             {
                 InputOutput newIo = new InputOutput
                 {
@@ -90,7 +111,7 @@ namespace TakagiSugeno.Model.Services
 
                 ioMap.Add(io.InputOutputId, newIo.InputOutputId);
 
-                foreach(Variable var in io.Variables)
+                foreach (Variable var in io.Variables)
                 {
                     Variable newVar = new Variable
                     {
@@ -103,10 +124,10 @@ namespace TakagiSugeno.Model.Services
                     _context.SaveChanges();
                     variablesMap.Add(var.VariableId, newVar.VariableId);
                 }
-                
+
             }
 
-            foreach(Rule r in sourceSystem.Rules)
+            foreach (Rule r in sourceSystem.Rules)
             {
                 Rule newRule = new Rule
                 {
@@ -115,7 +136,7 @@ namespace TakagiSugeno.Model.Services
                 _context.Rules.Add(newRule);
                 _context.SaveChanges();
 
-                foreach(RuleElement elem in r.RuleElements)
+                foreach (RuleElement elem in r.RuleElements)
                 {
                     int? fakeId = null;
                     RuleElement newElem = new RuleElement
@@ -133,7 +154,7 @@ namespace TakagiSugeno.Model.Services
 
             }
 
-            return newSystem.TSSystemId;           
+            return newSystem.TSSystemId;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,6 +83,15 @@ namespace TakagiSugeno.Model.Services
         public string SystemToJson(int systemId)
         {
             return _cloner.SystemToJson(systemId);
+        }
+
+        public int? ReadFromFile(IFormFile file)
+        {
+            if(file.ContentType == "application/json")
+            {
+                return _cloner.ReadFromFile(file);
+            }
+            return null;
         }
 
     }

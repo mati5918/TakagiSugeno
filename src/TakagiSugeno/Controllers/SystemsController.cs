@@ -56,5 +56,13 @@ namespace TakagiSugeno.Controllers
             string systemJson = _service.SystemToJson(systemId);
             return File(Encoding.UTF8.GetBytes(systemJson), "application/json", "TakagiSugenoSystem.json");
         }
+
+        [HttpPost]
+        public IActionResult ReadFromFile()
+        {
+            var file = Request.Form.Files.GetFile("system");
+            int? res = _service.ReadFromFile(file);
+            return Json(res);
+        }
     }
 }

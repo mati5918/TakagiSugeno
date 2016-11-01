@@ -4,9 +4,24 @@
 }
 
 
-<h3>List opublikowanych systemów</h3>
-<br />
+<div class="row">
+    <div class="col-sm-8">
+        <h2 class="header">
+            List opublikowanych systemów
+        </h2>
+    </div>
+    <div class="col-sm-4">
+        <div class="pull-right">
+            <a asp-controller="Systems" asp-action="New" class="btn btn-success" id="btnAdd" style="margin-top:20px;"><span class="glyphicon glyphicon-plus"></span> Nowy</a>
+            <label class="btn btn-primary btn-file" style="margin-top:20px;">
+                <span class="glyphicon glyphicon-open-file"></span> Wczytaj z pliku 
+                <input type="file" id="fileOpen" style="display: none;" accept=".json">
+            </label>
+        </div>
 
+    </div>
+</div>
+<br /><br />
 <table class="table systems-table">
     <thead>
         <tr>
@@ -29,7 +44,7 @@
                     <div class="pull-right">
                         <a asp-controller="SystemOverview" asp-action="Index" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Otwórz do odczytu"><span class="glyphicon glyphicon-open glyph-button" ></span></a>&nbsp;&nbsp;
                         <a asp-controller="Systems" asp-action="Clone" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Otwórz kopię do edycji"><span class="glyphicon glyphicon-edit glyph-button"></span></a>&nbsp;&nbsp;
-                        <a data-toggle="tooltip" data-placement="top" title="Zapisz do pliku"><span class="glyphicon glyphicon-save-file glyph-button"></span></a>
+                        <a asp-controller="Systems" asp-action="SaveToFile" asp-route-systemId="@system.TSSystemId" data-toggle="tooltip" data-placement="top" title="Zapisz do pliku"><span class="glyphicon glyphicon-save-file glyph-button"></span></a>
                     </div>
                 </td>
             </tr>
@@ -44,6 +59,27 @@
 
         $(".systems-table tr").each(function (i, v) {
             $(v).find(".index").text(i++);
+        });
+    });
+
+    $("#fileOpen").change(function () {
+        var file = $('#fileOpen').get(0).files[0];
+        var formData = new FormData();
+        formData.append('system', file);
+        $.ajax({
+            type: "POST",
+            url: "/Systems/ReadFromFile",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (resposne) {
+                if (resposne == null) {
+                    alert("Błąd podczas czytania z pliku - zły fromat lub błędne dane");
+                } else {
+                    var url = "/SystemOverview/Index/?systemId=" + resposne;
+                    window.location.href = url;
+                }
+            },
         });
     });
 </script>
