@@ -13,6 +13,7 @@ namespace TakagiSugeno.Model.MembershipFunctions
             {
                 case VariableType.Triangle: return new TriangularMembershipFunction(jsonData);
                 case VariableType.Trapeze: return new TrapezoidalMembershipFunction(jsonData);
+                case VariableType.Gaussian: return new GaussianMembershipFunction(jsonData);
             }
             return null;
         }

@@ -8,7 +8,7 @@
     {
         <li class="input-element" id="Input-@item.InputId">
             <p hidden>@item.InputId</p>
-            <div class="panel panel-info">
+            <div class="panel panel-info" data-range-start=@item.RangeStart data-range-end="@item.RangeEnd">
                 <div class="panel-heading">
                     <span class="glyphicon glyphicon-remove pull-right remove-input"></span>
                     <b>@item.Name</b>
@@ -30,8 +30,19 @@
         
         var containers = $(".inputs-list .panel-body");
         $.each(containers, function (index, value) {
+            var max = parseFloat($(value).parent().attr("data-range-end"));
+            var min = parseFloat($(value).parent().attr("data-range-start"));
+            console.log(min);
             var id = $(value).attr("id")
             var chart = new CanvasJS.Chart(id, {
+                axisX: {
+                    minimum: min,
+                    maximum: max
+                },
+                axisY: {
+                    minimum: 0,
+                    maximum: 1.05
+                },
                 data: [],
             });
             $(value).parent().find(".json-data").each(function () {

@@ -12,6 +12,8 @@ namespace TakagiSugeno.Model
         Triangle,
         [Display(Name = "Trapez")]
         Trapeze,
+        [Display(Name = "Gaussian")]
+        Gaussian,
         [Display(Name = "Stała")]
         OutputConst = 100,
         [Display(Name = "Funkcja")]
@@ -26,12 +28,17 @@ namespace TakagiSugeno.Model
 
     public enum AndMethod
     {
+        [Display(Name = "Produkt algebraiczny")]
         Product,
-        Min //TODO
+        [Display(Name = "Minimum")]
+        Min 
     }
     
     public enum OrMethod
     {
+        [Display(Name = "Suma algebraiczna")]
+        Sum,
+        [Display(Name = "Maksimum")]
         Max //TODO
     }
 

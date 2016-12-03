@@ -36,5 +36,7 @@ namespace TakagiSugeno.Model.ViewModels
         public String Data { get; set; }
         public int VariableId { get; set; }
         public VariableType Type { get; set; }
+        public double RangeStart { get; set; }
+        public double RangeEnd { get; set; }
     }
 }

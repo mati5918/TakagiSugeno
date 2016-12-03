@@ -28,10 +28,21 @@
     <div class="row">
         <div class="col-sm-8">
             <form class="form-inline">
-                <label asp-for="Name">Nazwa</label>
+                <label asp-for="Name" class="control-label" style="width:80px;">Nazwa</label>
                 <input asp-for="Name" class="form-control" id="InputName" />
                 <input asp-for="InputId" class="form-control" id="InputId" type="hidden" />
                 <input asp-for="SystemId" class="form-control" id="SystemId" type="hidden" />
+            </form>
+            <br />
+            <form class="form-inline">
+                <div class="form-group">
+                    <label asp-for="RangeStart" class="control-label" style="width:80px;">Zakres od </label>
+                    <input asp-for="RangeStart" class="form-control" id="RangeStart" style="width:85px;"/>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RangeEnd" class="control-label"> &nbsp;do&nbsp; </label>
+                    <input asp-for="RangeEnd" class="form-control" id="RangeEnd" style="width:85px;" />
+                </div>
             </form>
         </div>
         
@@ -135,9 +146,16 @@
     //var isModfied = false;
     var id = $(".row #chart-container").attr("id");
     var chart = new CanvasJS.Chart(id, {
+        axisX: {},
+        axisY: {
+            minimum: 0,
+            maximum: 1.05
+        },
         data: [],
     });
     $(document).ready(function () {
+        chart.options.axisX.minimum = $("#RangeStart").val();
+        chart.options.axisX.maximum = $("#RangeEnd").val();
         createCharts(chart);
         chart.render();
         if ('@isPublished' == 'True') {
@@ -222,6 +240,8 @@
             $(this).parent(".form-group").addClass("has-error");
         }
         else {
+            var type = $(this).parents(".variable-row").find(".select-type").val();      
+            var isGaussian = type == 2;
             $(this).parent(".form-group").removeClass("has-error");
             val = val.replace(',', '.');
             var id = $(this).parents(".panel").attr("id");
@@ -230,16 +250,26 @@
             for (var i in chart.options.data) {
                 var data = chart.options.data[i];
                 if (data.name == id) {
-                    data.dataPoints[pos].x = val;
+                    if (!isGaussian) {
+                        data.dataPoints[pos].x = val;
+                    } else {
+                        var gaussianData = [];
+                        $(this).parents(".variable-row").find(".chart-data-input").each(function(i,v){
+                            gaussianData.push($(v).val());
+                        });
+                        data.dataPoints = getGaussianDataPoints(gaussianData,chart);
+                    }
                 }
             }
-            // chart.render();
+            chart.render();
         }
     });
 
     function save() {
         var inputVM = collectData();
         inputVM.InputId = $("#InputId").val();
+        inputVM.RangeStart = $("#RangeStart").val();
+        inputVM.RangeEnd = $("#RangeEnd").val();
         $.ajax({
             url: "@Url.Action("Save")",
             type: "POST",
@@ -262,6 +292,46 @@
             }
         });
     }
+
+    $("#RangeStart").change(function () {
+        var regex = /^\-?\d+([\.\,]\d+)?$/;
+        var val = $(this).val();
+        var isMatch = regex.test(val);
+        if (!isMatch) {
+            $(this).parent(".form-group").addClass("has-error");
+        }
+        else {
+            $(this).parent(".form-group").removeClass("has-error");
+            var end = $("#RangeEnd").val();
+            if (val >= end) {
+                end = parseFloat(val) + 5;
+                $("#RangeEnd").val(end);
+                chart.options.axisX.maximum = end;
+            }
+            chart.options.axisX.minimum = val;
+            chart.render();
+        }
+    });
+
+    $("#RangeEnd").change(function () {
+        var regex = /^\-?\d+([\.\,]\d+)?$/;
+        var val = $(this).val();
+        var isMatch = regex.test(val);
+        if (!isMatch) {
+            $(this).parent(".form-group").addClass("has-error");
+        }
+        else {
+            $(this).parent(".form-group").removeClass("has-error");
+            var start = $("#RangeStart").val();
+            if (val <= start) {
+                start = parseFloat(val) - 5;
+                $("#RangeStart").val(start);
+                chart.options.axisX.minimum = start;
+            }
+            chart.options.axisX.maximum = val;
+            chart.render();
+        }
+    });
 
     function cancelChanges() {
         setTimeout(function () {

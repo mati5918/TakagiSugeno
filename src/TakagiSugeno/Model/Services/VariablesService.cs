@@ -91,6 +91,7 @@ namespace TakagiSugeno.Model.Services
             {
                 case VariableType.Triangle: return NewTriangleData();
                 case VariableType.Trapeze: return NewTrapezeData();
+                case VariableType.Gaussian: return NewGaussianData();
                 case VariableType.OutputConst: return NewOutputConstData();
                 case VariableType.OutputFunction: return NewOutputFunctionData(systemId);
                 default: return null;
@@ -105,6 +106,11 @@ namespace TakagiSugeno.Model.Services
         private Dictionary<string, double> NewTrapezeData()
         {
             return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 }, {"d", 0 } };
+        }
+
+        private Dictionary<string, double> NewGaussianData()
+        {
+            return new Dictionary<string, double> { { "sigma", 1 }, { "c", 2 } };
         }
 
         private Dictionary<string, double> NewOutputConstData()

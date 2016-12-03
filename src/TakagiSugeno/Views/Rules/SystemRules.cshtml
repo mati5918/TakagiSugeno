@@ -95,7 +95,17 @@
 
         var containers = $(".chart-container");
         $.each(containers, function (index, value) {
+            var max = parseFloat($(value).attr("data-range-end"));
+            var min = parseFloat($(value).attr("data-range-start"));
             var chart = new CanvasJS.Chart("temp", {
+                axisX: {
+                    minimum: min,
+                    maximum: max
+                },
+                axisY: {
+                    minimum: 0,
+                    maximum: 1.05            
+                },
                 data: [],
             });
 
@@ -216,7 +226,17 @@
     function createChartForRuleRow(row) {
         var containers = $(row).find(".chart-container");
         $.each(containers, function (index, value) {
+            var max = parseFloat($(value).attr("data-range-end"));
+            var min = parseFloat($(value).attr("data-range-start"));
             var chart = new CanvasJS.Chart("temp", {
+                axisX: {
+                    minimum: min,
+                    maximum: max
+                },
+                axisY: {
+                    minimum: 0,
+                    maximum: 1.05
+                },
                 data: [],
             });
 

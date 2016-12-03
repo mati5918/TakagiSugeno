@@ -28,16 +28,16 @@ namespace TakagiSugeno.Model
         {
             _context = context;
         }
-        public Dictionary<string, double> CalcOutputsValues(OutputCalcData data) //TODO add or method to db
+        public Dictionary<string, double> CalcOutputsValues(OutputCalcData data)
         {
             Dictionary<string, double> res = new Dictionary<string, double>();
             int systemId = data.SystemId;
             _inputValues = data.InputsValues;
 
             var methods = _context.Systems.Where(s => s.TSSystemId == systemId)
-                .Select(s => new { And = s.AndMethod/*, Or = s.OrMethod */}).FirstOrDefault();
+                .Select(s => new { And = s.AndMethod, Or = s.OrMethod }).FirstOrDefault();
             AndMethod = methods.And;
-            //OrMethod = methods.Or;
+            OrMethod = methods.Or;
 
             _inputVariablesWrappers = _context
                 .Variables
@@ -69,7 +69,7 @@ namespace TakagiSugeno.Model
 
             foreach (var output in _context.InputsOutputs.Where(o => o.TSSystemId == systemId && o.Type == IOType.Output))
             {
-                res.Add(output.Name, CalcOutputsValue(output));
+                res.Add(output.Name, Math.Round(CalcOutputsValue(output),3));
             }
 
             return res;
@@ -136,11 +136,12 @@ namespace TakagiSugeno.Model
             return res;
         }
 
-        private double PerfromOrOpeation(double res, double val) //TODO implement
+        private double PerfromOrOpeation(double res, double val)
         {
             switch(this.OrMethod)
             {
                 case OrMethod.Max: return Math.Max(res, val);
+                case OrMethod.Sum: return res + val - res * val;
             }
             return res;
         }

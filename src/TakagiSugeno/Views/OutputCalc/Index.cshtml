@@ -22,13 +22,13 @@
 <input asp-for="SystemId" class="form-control" id="SystemIdTemp" type="hidden" />
 <div class="row">
     <form class="form-inline">
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <label class="control-label">And-Metoda:&nbsp;&nbsp;</label>
-        <select asp-for="AndMethod" asp-items="Html.GetEnumSelectList<AndMethod>()" id="AndMethod" class="form-control" style="width:120px;"></select>
+        <select asp-for="AndMethod" asp-items="Html.GetEnumSelectList<AndMethod>()" id="AndMethod" class="form-control" style="width:200px;"></select>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <label class="control-label">Or-Metoda:&nbsp;&nbsp;</label>
-        <select asp-for="OrMethod" asp-items="Html.GetEnumSelectList<OrMethod>()" id="OrMethod" class="form-control" style="width:120px;"></select>
+        <select asp-for="OrMethod" asp-items="Html.GetEnumSelectList<OrMethod>()" id="OrMethod" class="form-control" style="width:200px;"></select>
     </div>
     </form>
 </div>

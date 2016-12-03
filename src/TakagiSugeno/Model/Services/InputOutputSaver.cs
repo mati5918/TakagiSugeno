@@ -23,6 +23,8 @@ namespace TakagiSugeno.Model.Services
             if (inputEntity != null)
             {
                 inputEntity.Name = viewModel.Name;
+                inputEntity.RangeStart = viewModel.RangeStart;
+                inputEntity.RangeEnd = viewModel.RangeEnd;
                 _context.Entry(inputEntity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;               
             }
             else
@@ -31,7 +33,9 @@ namespace TakagiSugeno.Model.Services
                 {
                     Name = viewModel.Name,
                     TSSystemId = viewModel.SystemId,
-                    Type = IOType.Input
+                    Type = IOType.Input,
+                    RangeEnd = viewModel.RangeEnd,
+                    RangeStart = viewModel.RangeStart
                 };
                 _context.InputsOutputs.Add(inputEntity);
                 _context.SaveChanges();

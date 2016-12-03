@@ -28,7 +28,7 @@ namespace TakagiSugeno.Model.Services
         public List<InputVM> GetSystemInputs(int systemId)
         {
             return  _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
-                .Select(i => new InputVM { Name = i.Name, InputId = i.InputOutputId, SystemId = i.TSSystemId,
+                .Select(i => new InputVM { Name = i.Name, InputId = i.InputOutputId, SystemId = i.TSSystemId, RangeStart = i.RangeStart, RangeEnd = i.RangeEnd,
                     Variables = i.Variables.Select(v => new VariableVM { Type = v.Type, JsonData = v.Data}).ToList()}).ToList();         
         }
 
@@ -49,7 +49,14 @@ namespace TakagiSugeno.Model.Services
         }
         private InputVM MapEntityToVM(InputOutput entity)
         {
-            InputVM vm = new InputVM { Name = entity.Name, InputId = entity.InputOutputId, Variables = new List<VariableVM>(), SystemId = entity.TSSystemId };
+            InputVM vm = new InputVM {
+                Name = entity.Name,
+                InputId = entity.InputOutputId,
+                Variables = new List<VariableVM>(),
+                SystemId = entity.TSSystemId,
+                RangeEnd = entity.RangeEnd,
+                RangeStart = entity.RangeStart
+            };
             vm.Variables.AddRange(entity.Variables.Select(v => new VariableVM
             {
                 Name = v.Name,

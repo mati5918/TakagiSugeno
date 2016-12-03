@@ -94,33 +94,73 @@ function plotData(chartPoints, type, id, chart) {
     switch (parseInt(type)) {
         case 0: plotTriangle(chartPoints, id, chart); break;
         case 1: plotTrapeze(chartPoints, id, chart); break;
+        case 2: plotGaussian(chartPoints, id, chart); break;
     }
     switch (type) {
         case "Triangle": plotTriangle(chartPoints, id, chart); break;
         case "Trapeze": plotTrapeze(chartPoints, id, chart); break;
+        case "Gaussian": plotGaussian(chartPoints, id, chart); break;
     }
 
 }
 
 function plotTriangle(chartPoints, id, chart) {
     var dataPoints = [];
+    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
+        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
+    }
     dataPoints.push({ x: chartPoints[0], y: 0 });
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 0 });
+    if (parseFloat(chartPoints[2]) < parseFloat(chart.options.axisX.maximum)) {
+        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
+    }
+    console.log(dataPoints);
     chart.options.interactivityEnabled = false;
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness, markerType: "none" });
     //chart.render();
 }
 
 function plotTrapeze(chartPoints, id, chart) {
     var dataPoints = [];
+    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
+        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
+    }
     dataPoints.push({ x: chartPoints[0], y: 0 });
     dataPoints.push({ x: chartPoints[1], y: 1 });
     dataPoints.push({ x: chartPoints[2], y: 1 });
     dataPoints.push({ x: chartPoints[3], y: 0 });
+    if (parseFloat(chartPoints[3]) < parseFloat(chart.options.axisX.maximum)) {
+        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
+    }
     chart.options.interactivityEnabled = false;
-    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness});
+    chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness, markerType: "none" });
     //chart.render();
+}
+
+function plotGaussian(chartPoints, id, chart) {
+    var dataPoints = getGaussianDataPoints(chartPoints, chart);
+    //console.log(dataPoints);
+    chart.options.interactivityEnabled = false;
+    chart.options.data.push({ type: "spline", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness, markerType: "none" });
+}
+
+function getGaussianValue(sigma, c, x) {
+    var temp = (-1 * Math.pow(x - c, 2)) / (2 * Math.pow(sigma, 2));
+    return Math.pow(Math.E, temp);
+}
+
+function getGaussianDataPoints(chartPoints, chart) {
+    var dataPoints = [];
+    var sigma = chartPoints[0];
+    var c = chartPoints[1];
+    var min = parseFloat(chart.options.axisX.minimum);
+    var max = parseFloat(chart.options.axisX.maximum);
+    var jump = (max - min) / 20;
+    for (var i = min; i <= max; i += jump) {
+        dataPoints.push({ x: i, y: getGaussianValue(sigma, c, i) });
+    }
+    return dataPoints;
 }
 
 function selectVariable(clickedId, chart) {

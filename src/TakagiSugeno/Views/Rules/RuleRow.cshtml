@@ -1,5 +1,6 @@
 ﻿@model TakagiSugeno.Model.ViewModels.RuleVM
 @using TakagiSugeno.Model
+@using TakagiSugeno.Model.ViewModels
 @inject TakagiSugeno.Model.Services.RulesService rulesService
 @{
     var VariablesLists = ViewBag.VariablesList ?? rulesService.CreateVariablesLists(Model.SystemId);
@@ -35,8 +36,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body chart-container">
-                        @{var chartData = ChartsData[elem.InputOutputId];}
+                    @{
+                        List<VariableChartData> chartData = ChartsData[elem.InputOutputId];
+                        var data = chartData.FirstOrDefault();
+                        double min = data?.RangeStart ?? 0;
+                        double max = data?.RangeEnd ?? 10;
+                    }
+                    <div class="panel-body chart-container" data-range-start=@min data-range-end=@max>                       
                         @foreach (var item in chartData)
                         {
                             <div class="json-data" hidden data-chartJson='@item.Data' data-type=@item.Type data-id=@item.VariableId></div>

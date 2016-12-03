@@ -80,7 +80,9 @@ namespace TakagiSugeno.Model.Services
                     {
                          Data = variable.Data,
                          VariableId = variable.VariableId,
-                         Type = variable.Type
+                         Type = variable.Type,
+                         RangeStart = item.RangeStart,
+                         RangeEnd = item.RangeEnd
                     });
                 }
                 chartsData.Add(item.InputOutputId, data);
