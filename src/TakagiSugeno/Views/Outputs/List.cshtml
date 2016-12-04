@@ -9,7 +9,7 @@
         {
             <li class="output-element" id="Output-@item.OutputId">
                 <p hidden>@item.OutputId</p>
-                <div class="panel panel-info">
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-remove pull-right remove-output"></span>
                         <b>@item.Name</b>
@@ -50,13 +50,17 @@
     });
 
     $(".outputs-list").on("mouseenter", ".panel", function () {
-        $(this).removeClass("panel-info");
-        $(this).addClass("panel-primary");
+        $(this).removeClass("panel-default");
+        if (!$(this).hasClass("panel-primary")) {
+            $(this).addClass("panel-info");
+        }
     });
 
     $(".outputs-list").on("mouseleave", ".panel", function () {
-        $(this).removeClass("panel-primary");
-        $(this).addClass("panel-info");
+        $(this).removeClass("panel-info");
+        if (!$(this).hasClass("panel-primary")) {
+            $(this).addClass("panel-default");
+        }
     });
     </script>
 </div>

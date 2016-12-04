@@ -161,6 +161,7 @@
         if ('@isPublished' == 'True') {
             setReadOnly();
         }
+        selectInput($("#InputId").val());
     });
 
 
@@ -223,6 +224,7 @@
             type: "GET",
             data: form.serialize(),
             success: function (response) {
+                //$(form).reset();
                 form.replaceWith(response);
                 refreshSerie(id, chart, type);
                 selectVariable(id, chart);
@@ -240,8 +242,8 @@
             $(this).parent(".form-group").addClass("has-error");
         }
         else {
-            var type = $(this).parents(".variable-row").find(".select-type").val();      
-            var isGaussian = type == 2;
+            var type = $(this).parents(".variable-row").find(".select-type").val();
+            console.log(type);
             $(this).parent(".form-group").removeClass("has-error");
             val = val.replace(',', '.');
             var id = $(this).parents(".panel").attr("id");
@@ -250,14 +252,14 @@
             for (var i in chart.options.data) {
                 var data = chart.options.data[i];
                 if (data.name == id) {
-                    if (!isGaussian) {
-                        data.dataPoints[pos].x = val;
-                    } else {
-                        var gaussianData = [];
-                        $(this).parents(".variable-row").find(".chart-data-input").each(function(i,v){
-                            gaussianData.push($(v).val());
-                        });
-                        data.dataPoints = getGaussianDataPoints(gaussianData,chart);
+                    var functionData = [];
+                    $(this).parents(".variable-row").find(".chart-data-input").each(function (i, v) {
+                        functionData.push($(v).val().replace(',', '.'));
+                    });
+                    switch (parseInt(type)) {
+                        case 0: data.dataPoints = getTriangleDataPoints(functionData, chart); break;
+                        case 1: data.dataPoints = getTrapezeDataPoints(functionData, chart); break;
+                        case 2: data.dataPoints = getGaussianDataPoints(functionData, chart); break;
                     }
                 }
             }
@@ -295,13 +297,14 @@
 
     $("#RangeStart").change(function () {
         var regex = /^\-?\d+([\.\,]\d+)?$/;
-        var val = $(this).val();
+        var val = $(this).val();      
         var isMatch = regex.test(val);
         if (!isMatch) {
             $(this).parent(".form-group").addClass("has-error");
         }
         else {
             $(this).parent(".form-group").removeClass("has-error");
+            val = val.replace(',', '.');
             var end = $("#RangeEnd").val();
             if (val >= end) {
                 end = parseFloat(val) + 5;
@@ -309,6 +312,8 @@
                 chart.options.axisX.maximum = end;
             }
             chart.options.axisX.minimum = val;
+            clearChart(chart);
+            createCharts(chart);
             chart.render();
         }
     });
@@ -322,6 +327,7 @@
         }
         else {
             $(this).parent(".form-group").removeClass("has-error");
+            val = val.replace(',', '.');
             var start = $("#RangeStart").val();
             if (val <= start) {
                 start = parseFloat(val) - 5;
@@ -329,6 +335,8 @@
                 chart.options.axisX.minimum = start;
             }
             chart.options.axisX.maximum = val;
+            clearChart(chart);
+            createCharts(chart);
             chart.render();
         }
     });

@@ -83,11 +83,18 @@ function createCharts(chart) {
         var chartPoints = [];
         var type = $(value).find(".select-type").first().val();
         $(value).find(".chart-data-input").each(function () {
-            var value = parseFloat($(this).val());
+            var value = parseFloat($(this).val().replace(',', '.'));
             chartPoints.push(value);
         })
         plotData(chartPoints, type, id, chart);
     })
+}
+
+function clearChart(chart) {
+    for (var i in chart.options.data) {
+        var data = chart.options.data[i];
+        data.dataPoints = [];
+    }
 }
 
 function plotData(chartPoints, type, id, chart) {
@@ -105,34 +112,14 @@ function plotData(chartPoints, type, id, chart) {
 }
 
 function plotTriangle(chartPoints, id, chart) {
-    var dataPoints = [];
-    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
-        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
-    }
-    dataPoints.push({ x: chartPoints[0], y: 0 });
-    dataPoints.push({ x: chartPoints[1], y: 1 });
-    dataPoints.push({ x: chartPoints[2], y: 0 });
-    if (parseFloat(chartPoints[2]) < parseFloat(chart.options.axisX.maximum)) {
-        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
-    }
-    console.log(dataPoints);
+    var dataPoints = getTriangleDataPoints(chartPoints, chart);
     chart.options.interactivityEnabled = false;
     chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness, markerType: "none" });
     //chart.render();
 }
 
 function plotTrapeze(chartPoints, id, chart) {
-    var dataPoints = [];
-    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
-        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
-    }
-    dataPoints.push({ x: chartPoints[0], y: 0 });
-    dataPoints.push({ x: chartPoints[1], y: 1 });
-    dataPoints.push({ x: chartPoints[2], y: 1 });
-    dataPoints.push({ x: chartPoints[3], y: 0 });
-    if (parseFloat(chartPoints[3]) < parseFloat(chart.options.axisX.maximum)) {
-        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
-    }
+    var dataPoints = getTrapezeDataPoints(chartPoints, chart);
     chart.options.interactivityEnabled = false;
     chart.options.data.push({ type: "line", dataPoints: dataPoints, color: "red", name: id, lineThickness: unselectedThickness, markerType: "none" });
     //chart.render();
@@ -163,12 +150,41 @@ function getGaussianDataPoints(chartPoints, chart) {
     return dataPoints;
 }
 
+function getTriangleDataPoints(chartPoints, chart) {
+    var dataPoints = [];
+    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
+        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
+    }
+    dataPoints.push({ x: chartPoints[0], y: 0 });
+    dataPoints.push({ x: chartPoints[1], y: 1 });
+    dataPoints.push({ x: chartPoints[2], y: 0 });
+    if (parseFloat(chartPoints[2]) < parseFloat(chart.options.axisX.maximum)) {
+        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
+    }
+    return dataPoints;
+}
+
+function getTrapezeDataPoints(chartPoints, chart) {
+    var dataPoints = [];
+    if (parseFloat(chartPoints[0]) > parseFloat(chart.options.axisX.minimum)) {
+        dataPoints.push({ x: chart.options.axisX.minimum, y: 0 });
+    }
+    dataPoints.push({ x: chartPoints[0], y: 0 });
+    dataPoints.push({ x: chartPoints[1], y: 1 });
+    dataPoints.push({ x: chartPoints[2], y: 1 });
+    dataPoints.push({ x: chartPoints[3], y: 0 });
+    if (parseFloat(chartPoints[3]) < parseFloat(chart.options.axisX.maximum)) {
+        dataPoints.push({ x: chart.options.axisX.maximum, y: 0 });
+    }
+    return dataPoints;
+}
+
 function selectVariable(clickedId, chart) {
     $(".variable-row").each(function () {
         var currId = $(this).attr("id");
         if (clickedId == currId) {
             $(this).removeClass("panel-default");
-            $(this).removeClass("panel-success");
+            $(this).removeClass("panel-info");
             $(this).addClass("panel-primary");
         } else {
             $(this).removeClass("panel-primary");
@@ -244,13 +260,13 @@ function hoverVariable(clickedId, chart) {
         var currId = $(this).attr("id");
         if (clickedId == currId && !$(this).hasClass("panel-primary")) {
             $(this).removeClass("panel-default");
-            $(this).addClass("panel-success");
+            $(this).addClass("panel-info");
         }
     })
     if (chart != null) {
         $.each(chart.options.data, function (i, v) {
             if (v.name == clickedId && v.color != "blue") {
-                v.color = "green";
+                v.color = "#b6cce2";
                 v.lineThickness = hoverThickness;
             }
         })
@@ -260,14 +276,14 @@ function hoverVariable(clickedId, chart) {
 
 function cancelHoverVariable(chart) {
     $(".variable-row").each(function () {
-        if ($(this).hasClass("panel-success")) {
-            $(this).removeClass("panel-success");
+        if ($(this).hasClass("panel-info")) {
+            $(this).removeClass("panel-info");
             $(this).addClass("panel-default");
         }
     });
     if (chart != null) {
         $.each(chart.options.data, function (i, v) {
-            if (v.color == "green") {
+            if (v.color == "#b6cce2") {
                 v.color = "red";
                 v.lineThickness = unselectedThickness;
             }
@@ -549,7 +565,7 @@ function checkReadOnly() {
         url: url,
         type: "POST",
         success: function (response) {
-            console.log(response);
+            //console.log(response);
             setReadOnly(response);
         }
     });
@@ -576,3 +592,28 @@ function setReadOnly() {
         $('.remove-rule').hide();
         $("#btnAdd").prop("disabled", true);
 }
+
+function selectInput(id) {
+    $(".input-element").each(function (i,v) {
+        var inputId = $(v).attr("id").split('-')[1];
+        var panel = $(v).find(".panel");
+        $(panel).removeClass("panel-primary");
+        if (inputId == id) {
+            $(panel).removeClass("panel-info");
+            $(panel).addClass("panel-primary");
+        }
+    });
+}
+
+function selectOutput(id) {
+    $(".output-element").each(function (i, v) {
+        var inputId = $(v).attr("id").split('-')[1];
+        var panel = $(v).find(".panel");
+        $(panel).removeClass("panel-primary");
+        if (inputId == id) {
+            $(panel).removeClass("panel-info");
+            $(panel).addClass("panel-primary");
+        }
+    });
+}
+    

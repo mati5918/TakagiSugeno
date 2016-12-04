@@ -83,9 +83,9 @@ namespace TakagiSugeno.Controllers
         {
             ViewBag.IsNewOutput = true;
             OutputVM vm = _outputsService.AddOutput(systemId);
-            if (Request.IsAjaxRequest())
-                return PartialView("OutputDetails", vm);
             ViewBag.SystemId = vm.SystemId;
+            if (Request.IsAjaxRequest())
+                return PartialView("OutputDetails", vm);       
             return View("OutputDetails", vm);
         }
 

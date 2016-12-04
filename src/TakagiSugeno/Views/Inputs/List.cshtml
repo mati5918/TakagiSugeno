@@ -8,7 +8,7 @@
     {
         <li class="input-element" id="Input-@item.InputId">
             <p hidden>@item.InputId</p>
-            <div class="panel panel-info" data-range-start=@item.RangeStart data-range-end="@item.RangeEnd">
+            <div class="panel panel-default" data-range-start=@item.RangeStart data-range-end="@item.RangeEnd">
                 <div class="panel-heading">
                     <span class="glyphicon glyphicon-remove pull-right remove-input"></span>
                     <b>@item.Name</b>
@@ -70,13 +70,17 @@
     });
 
     $(".inputs-list").on("mouseenter", ".panel", function () {
-        $(this).removeClass("panel-info");
-        $(this).addClass("panel-primary");
+        $(this).removeClass("panel-default");
+        if (!$(this).hasClass("panel-primary")) {
+            $(this).addClass("panel-info");
+        }
     });
 
     $(".inputs-list").on("mouseleave", ".panel", function () {
-        $(this).removeClass("panel-primary");
-        $(this).addClass("panel-info");
+        $(this).removeClass("panel-info");
+        if (!$(this).hasClass("panel-primary")) {
+            $(this).addClass("panel-default");
+        }
     });
 </script>
 </div>

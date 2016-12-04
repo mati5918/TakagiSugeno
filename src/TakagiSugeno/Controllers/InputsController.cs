@@ -84,9 +84,9 @@ namespace TakagiSugeno.Controllers
         {
             ViewBag.IsNewInput = true;
             InputVM vm = _inputsService.AddInput(systemId);
-            if (Request.IsAjaxRequest())
-                return PartialView("Details", vm);
             ViewBag.SystemId = vm.SystemId;
+            if (Request.IsAjaxRequest())
+                return PartialView("Details", vm);          
             return View("Details", vm);
         }
 

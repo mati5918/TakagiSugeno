@@ -100,6 +100,7 @@
         if ('@isPublished' == 'True') {
             setReadOnly();
         }
+        selectOutput($("#OutputId").val());
         
         $(".variables-list").on("click", ".variable-row", function () {
             var clickedId = $(this).attr("id");

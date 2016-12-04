@@ -26,7 +26,7 @@ namespace TakagiSugeno.Model.Services
             {
                 Dictionary<string, double> newData = GetVariableNewData(variable.Type, systemId);
                 List<string> keys = new List<string>(newData.Keys);
-                if (newData != null)
+                /*if (newData != null)
                 {
                     foreach (var item in keys)
                     {
@@ -35,7 +35,7 @@ namespace TakagiSugeno.Model.Services
                             newData[item] = variable.FunctionData[item];
                         }
                     }
-                }
+                }*/
                 variable.FunctionData = newData;
             }
         }
@@ -100,12 +100,12 @@ namespace TakagiSugeno.Model.Services
 
         private Dictionary<string, double> NewTriangleData()
         {
-            return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 } };
+            return new Dictionary<string, double> { { "a", 1 }, { "b", 2 }, { "c", 3 } };
         }
 
         private Dictionary<string, double> NewTrapezeData()
         {
-            return new Dictionary<string, double> { { "a", 0 }, { "b", 0 }, { "c", 0 }, {"d", 0 } };
+            return new Dictionary<string, double> { { "a", 1 }, { "b", 2 }, { "c", 3 }, {"d", 4 } };
         }
 
         private Dictionary<string, double> NewGaussianData()
