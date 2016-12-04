@@ -144,6 +144,7 @@
 </div>
 <script type="text/javascript">
     //var isModfied = false;
+    
     var id = $(".row #chart-container").attr("id");
     var chart = new CanvasJS.Chart(id, {
         axisX: {},
@@ -162,6 +163,8 @@
             setReadOnly();
         }
         selectInput($("#InputId").val());
+        var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
+        $(".body-content").css("margin-left", leftMargin-235 + "px");
     });
 
 

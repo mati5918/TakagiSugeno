@@ -67,22 +67,22 @@ textarea {
 }
 
 .navbar-fixed-left {
-  width: 230px;
+  width: 235px;
   position: fixed;
   border-radius: 0;
   border: none;
   height: 100%;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
   background-color: #a0b8d1 !important;
   background-image: none; 
 }
 
 .navbar-fixed-left + .container {
   position: center;
-  padding-left: 240px;
+  padding-left: 255px;
   padding-right: 0px;
-  margin-left: 20px;
-  margin-right: 0px;
+  /*margin-left: 20px;
+  margin-right: 0px;*/
 }
 
 .variable-row{
@@ -92,7 +92,7 @@ textarea {
 .nav-header {
    margin-left: 0px;
    background-color: #3e648d;
-   width: 230px;
+   width: 235px;
    
 }
 
@@ -103,7 +103,7 @@ textarea {
 
 .nav-header button{
     margin-top: 10px;
-    margin-right: 10px;
+    margin-right: -5px;
 }
 
 .variable-row .panel-body .form-group{
@@ -199,7 +199,7 @@ textarea {
 .table-body
 {
     height: auto;
-    max-height: 400px;
+    max-height: 700px; /*TODO*/
     overflow: auto;
 }
 
@@ -234,4 +234,11 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 
 .navbar .dropdown-menu {
     margin-top: 0px;
+}
+
+
+.menu-io-list {
+    position: relative;
+    height: 89%;
+    overflow-y: scroll;
 }

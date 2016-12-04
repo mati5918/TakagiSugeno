@@ -101,6 +101,8 @@
             setReadOnly();
         }
         selectOutput($("#OutputId").val());
+        var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
+        $(".body-content").css("margin-left", leftMargin - 235 + "px");
         
         $(".variables-list").on("click", ".variable-row", function () {
             var clickedId = $(this).attr("id");

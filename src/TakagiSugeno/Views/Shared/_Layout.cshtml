@@ -53,10 +53,12 @@
         @inject TakagiSugeno.Model.Services.InputsService InputService
         <div class="navbar navbar-inverse navbar-fixed-left">
             <div class="nav-header row">
-                <div class="col-sm-8"><h3>Wejścia</h3></div>
-                <div class="col-sm-4"><button class="btn btn-success pull-right btn-add" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus" ></span></button></div>
+                <div class="col-sm-10"><h3>Wejścia</h3></div>
+                <div class="col-sm-2"><button class="btn btn-success pull-right btn-add" id="addInput" onclick="addInput()"><span class="glyphicon glyphicon-plus" ></span></button></div>
             </div>
+            <div class="menu-io-list">
             @{Html.RenderPartial("~/Views/Inputs/List.cshtml", InputService.GetSystemInputs((int)ViewBag.SystemId));}
+            </div>
         <br /><br />
         </div>
 
@@ -66,12 +68,14 @@
         @inject TakagiSugeno.Model.Services.OutputsService OutputService
         <div class="navbar navbar-inverse navbar-fixed-left ">
             <div class="nav-header row">
-                <div class="col-sm-8"><h3>Wyjścia</h3></div>
-                <div class="col-sm-4"><button class="btn btn-success pull-right btn-add" id="addOutput" onclick="addOutput()"><span class="glyphicon glyphicon-plus"></span></button></div>
+                <div class="col-sm-10"><h3>Wyjścia</h3></div>
+                <div class="col-sm-2"><button class="btn btn-success pull-right btn-add" id="addOutput" onclick="addOutput()"><span class="glyphicon glyphicon-plus"></span></button></div>
             </div>
-            @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputService.GetSystemOutputs((int)ViewBag.SystemId));}
+            <div class="menu-io-list">
+                @{Html.RenderPartial("~/Views/Outputs/List.cshtml", OutputService.GetSystemOutputs((int)ViewBag.SystemId));}
+            </div>
             <br /><br />
-        </div>
+            </div>
     }
     <div class="container body-content">
         @RenderBody()
