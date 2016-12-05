@@ -242,3 +242,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
     height: 89%;
     overflow-y: scroll;
 }
+
+.systems-table tbody tr td{
+    padding-right: 30px;
+}
