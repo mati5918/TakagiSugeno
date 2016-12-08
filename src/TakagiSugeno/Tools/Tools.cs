@@ -58,12 +58,12 @@ namespace TakagiSugeno.Tools
                 validationErros.Add($"Nazwa {type} nie może być pusta");
                 return false;
             }
-            if (name.Length > 30)
+            if (name.Length > 20)
             {
-                validationErros.Add($"Nazwa {type} nie może być dłuższa niż 30 znaków");
+                validationErros.Add($"Nazwa {type} nie może być dłuższa niż 20 znaków");
                 return false;
             }
-            if (!Regex.IsMatch(name, @"^[-a-zA-Z0-9]*$"))
+            if (!Regex.IsMatch(name, @"^[-a-zA-Z0-9 ąęóźżćłĄĘÓŻŹŁĆ]*$"))
             {
                 validationErros.Add($"Nazwa {type} zawiera niedozwolone znaki");
                 return false;
