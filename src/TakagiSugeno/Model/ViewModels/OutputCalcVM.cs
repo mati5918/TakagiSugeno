@@ -8,7 +8,7 @@ namespace TakagiSugeno.Model.ViewModels
     public class OutputCalcVM
     {
         public int SystemId { get; set; }
-        public List<string> Inputs { get; set; }
+        public List<InputVM> Inputs { get; set; }
         public List<string> Outputs { get; set; }
         public AndMethod AndMethod { get; set; }
         public OrMethod OrMethod { get; set; }
@@ -21,5 +21,11 @@ namespace TakagiSugeno.Model.ViewModels
         public Dictionary<string, double> InputsValues { get; set; }
         public AndMethod AndMethod { get; set; }
         public OrMethod OrMethod { get; set; }
+    }
+
+    public class OutputCalcResults
+    {
+        public Dictionary<string, double> CalculatedValues { get; set; }
+        public string InfoLog { get; set; }
     }
 }

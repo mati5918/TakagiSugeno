@@ -246,3 +246,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu {
 .systems-table tbody tr td{
     padding-right: 30px;
 }
+
+.slider-track-low, .slider-selection {
+	background: green !important;
+}

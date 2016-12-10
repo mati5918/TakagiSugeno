@@ -38,6 +38,12 @@ namespace TakagiSugeno.Model.Services
                 .Select(i => i.Name).ToList();
         }
 
+        public List<InputVM> GetSystemInputsForCalc(int systemId)
+        {
+            return _inputRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Input)
+                .Select(i =>  new InputVM { Name = i.Name, RangeStart = i.RangeStart, RangeEnd = i.RangeEnd}).ToList();
+        }
+
         public int FirstSystemInput(int systemId)
         {
             return _inputRepository.GetBySystemId(systemId).FirstOrDefault(o => o.Type == IOType.Input)?.InputOutputId ?? -1;

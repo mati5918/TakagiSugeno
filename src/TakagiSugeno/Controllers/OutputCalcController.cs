@@ -30,7 +30,7 @@ namespace TakagiSugeno.Controllers
         {
             OutputCalcVM vm = new OutputCalcVM
             {
-                Inputs = _inputsService.GetSystemInputsNames(systemId),
+                Inputs = _inputsService.GetSystemInputsForCalc(systemId),
                 Outputs = _outputsService.GetSystemOutputsNames(systemId),
                 SystemId = systemId,
                 AndMethod = _systemsService.GetSystemAndMethod(systemId),
@@ -44,8 +44,8 @@ namespace TakagiSugeno.Controllers
         public IActionResult Calc([FromBody] OutputCalcData data)
         {
             _systemsService.ModifySystemMethods(data.SystemId, data.AndMethod, data.OrMethod);
-            Dictionary<string, double> outputs = _calc.CalcOutputsValues(data);
-            return Json(outputs);
+            OutputCalcResults result = _calc.CalcOutputsValues(data);
+            return Json(result);
         }
     }
 }

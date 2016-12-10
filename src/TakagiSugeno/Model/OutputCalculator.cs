@@ -23,12 +23,13 @@ namespace TakagiSugeno.Model
         private Dictionary<string, double> _inputValues;
         private AndMethod AndMethod;
         private OrMethod OrMethod;
+        private List<string> outputPartLog = new List<string>();
 
         public OutputCalculator(TakagiSugenoDbContext context)
         {
             _context = context;
         }
-        public Dictionary<string, double> CalcOutputsValues(OutputCalcData data)
+        public OutputCalcResults CalcOutputsValues(OutputCalcData data)
         {
             Dictionary<string, double> res = new Dictionary<string, double>();
             int systemId = data.SystemId;
@@ -56,6 +57,8 @@ namespace TakagiSugeno.Model
             _ruleWrappers = _context
                 .Rules
                 .Include(r => r.RuleElements)
+                    .ThenInclude(e => e.Variable)
+                    .ThenInclude(e => e.InputOutput)
                 .Where(r => r.TSSystemId == systemId)
                 .Select(r => new RuleWrapper()
                 {
@@ -66,13 +69,16 @@ namespace TakagiSugeno.Model
                 .ToList();
 
             PerformRulesOperations();
+            InitLog();
 
             foreach (var output in _context.InputsOutputs.Where(o => o.TSSystemId == systemId && o.Type == IOType.Output))
             {
                 res.Add(output.Name, Math.Round(CalcOutputsValue(output),3));
             }
-
-            return res;
+        
+            string log = CreateLog();
+            
+            return new OutputCalcResults {CalculatedValues = res, InfoLog = log };
         }
 
         private double CalcOutputsValue(InputOutput output)
@@ -87,8 +93,10 @@ namespace TakagiSugeno.Model
                     double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).GetValue(_inputValues);
                     temp1 += (rule.CalculatedValue * variableValue);
                     temp2 += rule.CalculatedValue;
+                    rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {temp1}{Environment.NewLine}";
                 }                
             }
+            AppendOutputLog(temp1, temp2, output.Name);
             return temp2 != 0 ? temp1/temp2 : 0;
         }
 
@@ -164,6 +172,40 @@ namespace TakagiSugeno.Model
                 }
             }
             return degrees;
+        }
+
+        private void InitLog()
+        {
+            string values = string.Join(", ", _inputValues.Values);
+            List<string> logParts = new List<string>();
+            foreach(RuleWrapper wrapper in _ruleWrappers)
+            {
+                int index = _ruleWrappers.IndexOf(wrapper) + 1;
+                string prefix = $"P{index}({values})";
+                string membershipInfo = $"{prefix} = {wrapper.RuleMemebershipInfo()}";
+                string ruleInfo = wrapper.RuleInfo();
+                wrapper.LogPrefix = prefix;
+                wrapper.RuleLog = $"{index}. {ruleInfo}{Environment.NewLine}{membershipInfo}{Environment.NewLine}";
+            }
+        }
+
+        private string CreateLog()
+        {
+            List<string> logParts = new List<string>();
+            logParts.Add("------------------------------------------Reguły------------------------------------------");
+            foreach (RuleWrapper wrapper in _ruleWrappers)
+            {
+                logParts.Add(wrapper.RuleLog);
+            }
+            logParts.Add("------------------------------------------Wyjścia------------------------------------------");
+            logParts.AddRange(outputPartLog);
+            return string.Join(Environment.NewLine, logParts);
+        }
+
+        private void AppendOutputLog(double sum1, double sum2, string name)
+        {
+            double value = sum2 != 0 ? sum1 / sum2 : 0;
+            outputPartLog.Add($"sum(Pi * ui) = {sum1}{Environment.NewLine}sum(Pi) = {sum2}{Environment.NewLine}{name} = {sum1}/{sum2} = {value}{Environment.NewLine}");
         }
 
     }
