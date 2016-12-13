@@ -31,7 +31,7 @@ namespace TakagiSugeno.Controllers
             OutputCalcVM vm = new OutputCalcVM
             {
                 Inputs = _inputsService.GetSystemInputsForCalc(systemId),
-                Outputs = _outputsService.GetSystemOutputsNames(systemId),
+                Outputs = _outputsService.GetSystemOutputsForCalc(systemId),
                 SystemId = systemId,
                 AndMethod = _systemsService.GetSystemAndMethod(systemId),
                 OrMethod = _systemsService.GetSystemOrMethod(systemId)

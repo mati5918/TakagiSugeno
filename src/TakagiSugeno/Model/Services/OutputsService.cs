@@ -40,6 +40,12 @@ namespace TakagiSugeno.Model.Services
                 .Select(o => o.Name).ToList();
         }
 
+        public List<OutputVM> GetSystemOutputsForCalc(int systemId)
+        {
+            return _outputsRepository.GetBySystemId(systemId).Where(i => i.Type == IOType.Output)
+                .Select(i => new OutputVM { Name = i.Name, OutputId = i.InputOutputId }).ToList();
+        }
+
         public int FirstSystemOutput(int systemId)
         {
             return _outputsRepository.GetBySystemId(systemId).FirstOrDefault(o => o.Type == IOType.Output)?.InputOutputId ?? -1;

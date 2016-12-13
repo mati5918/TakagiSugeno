@@ -31,7 +31,7 @@ namespace TakagiSugeno.Model
         }
         public OutputCalcResults CalcOutputsValues(OutputCalcData data)
         {
-            Dictionary<string, double> res = new Dictionary<string, double>();
+            Dictionary<int, double> res = new Dictionary<int, double>();
             int systemId = data.SystemId;
             _inputValues = data.InputsValues;
 
@@ -73,7 +73,7 @@ namespace TakagiSugeno.Model
 
             foreach (var output in _context.InputsOutputs.Where(o => o.TSSystemId == systemId && o.Type == IOType.Output))
             {
-                res.Add(output.Name, Math.Round(CalcOutputsValue(output),3));
+                res.Add(output.InputOutputId, Math.Round(CalcOutputsValue(output),3));
             }
         
             string log = CreateLog();
@@ -93,7 +93,7 @@ namespace TakagiSugeno.Model
                     double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).GetValue(_inputValues);
                     temp1 += (rule.CalculatedValue * variableValue);
                     temp2 += rule.CalculatedValue;
-                    rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {temp1}{Environment.NewLine}";
+                    rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {Math.Round(temp1, 3)}{Environment.NewLine}";
                 }                
             }
             AppendOutputLog(temp1, temp2, output.Name);
@@ -205,7 +205,10 @@ namespace TakagiSugeno.Model
         private void AppendOutputLog(double sum1, double sum2, string name)
         {
             double value = sum2 != 0 ? sum1 / sum2 : 0;
-            outputPartLog.Add($"sum(Pi * ui) = {sum1}{Environment.NewLine}sum(Pi) = {sum2}{Environment.NewLine}{name} = {sum1}/{sum2} = {value}{Environment.NewLine}");
+            sum1 = Math.Round(sum1, 3);
+            sum2 = Math.Round(sum2, 3);
+            value = Math.Round(value, 3);
+            outputPartLog.Add($"{name}:{Environment.NewLine}sum(Pi * ui) = {sum1}{Environment.NewLine}sum(Pi) = {sum2}{Environment.NewLine}{name} = {sum1}/{sum2} = {value}{Environment.NewLine}");
         }
 
     }

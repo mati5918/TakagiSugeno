@@ -371,24 +371,30 @@ function removeOutput(obj, isOutputsList) {
     }, 200);
 }
 
-function getInputsList(systemId) {
+function getInputsList(systemId, newId) {
     var url = "/Inputs/InputsList/?systemId=" + systemId;
     $.ajax({
         url: url,
         type: "GET",
         success: function (response) {
             $(".inputs-list").parent().replaceWith(response);
+            if (newId != null) {
+                selectInput(newId);
+            }
         }
     })
 }
 
-function getOutputsList(systemId) {
+function getOutputsList(systemId, newId) {
     var url = "/Outputs/OutputsList/?systemId=" + systemId;
     $.ajax({
         url: url,
         type: "GET",
         success: function (response) {
             $(".outputs-list").parent().replaceWith(response);
+            if (newId != null) {
+                selectOutput(newId);
+            }
         }
     })
 }

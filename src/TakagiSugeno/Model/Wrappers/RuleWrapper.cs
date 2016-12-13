@@ -21,10 +21,10 @@ namespace TakagiSugeno.Model.Wrappers
             foreach(MembershipDegree degree in MembershipDegrees)
             {
                 string nextOperation = degree.NextOperation != RuleNextOperation.None ? degree.NextOperation.ToString() + " " : string.Empty;
-                res.Append($"{degree.Value} {nextOperation}");
+                res.Append($"{Math.Round(degree.Value, 3)} {nextOperation}");
             }
 
-            res.Append($" = {CalculatedValue}");
+            res.Append($" = {Math.Round(CalculatedValue, 3)}");
 
             return res.ToString();
         }
