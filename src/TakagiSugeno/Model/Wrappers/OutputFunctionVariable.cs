@@ -7,14 +7,12 @@ using TakagiSugeno.Model.Entity;
 
 namespace TakagiSugeno.Model.Wrappers
 {
-    public class OutputFunctionVariable : IOutputVariable
+    public class OutputFunctionVariable : IOutputVariableFunction
     {
-        public Variable Variable { get; }
         private Dictionary<string, double> data = new Dictionary<string, double>();
 
         public OutputFunctionVariable(Variable variable)
         {
-            this.Variable = variable;
             data = JsonConvert.DeserializeObject<Dictionary<string, double>>(variable.Data);
         }
 

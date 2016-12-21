@@ -4,111 +4,94 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TakagiSugeno.Model.Entity;
+using TakagiSugeno.Model.Repository;
 using TakagiSugeno.Model.ViewModels;
 using TakagiSugeno.Model.Wrappers;
 
 namespace TakagiSugeno.Model
 {
     public class OutputCalculator
-    {
-        
-        
-        //public Dictionary<int, double> InputValues { get; set; }
-
+    {      
         private TakagiSugenoDbContext _context;
         //private List<InputOutput> _outputs;
+        private IRepository<InputOutput> _ioRepository;
+        private IRepository<Rule> _rulesReposistory;
+        private IRepository<Variable> _variablesRepository;
+        private IRepository<TSSystem> _systemsRepostiory;
         private List<RuleWrapper> _ruleWrappers = new List<RuleWrapper>();
         private List<InputVariableWrapper> _inputVariablesWrappers = new List<InputVariableWrapper>();
-        private List<IOutputVariable> _outputVariablesWrappers = new List<IOutputVariable>();
+        private List<OutputVariableWrapper> _outputVariablesWrappers = new List<OutputVariableWrapper>();
         private Dictionary<string, double> _inputValues;
-        private AndMethod AndMethod;
-        private OrMethod OrMethod;
+        private AndMethod andMethod;
+        private OrMethod orMethod;
         private List<string> outputPartLog = new List<string>();
 
-        public OutputCalculator(TakagiSugenoDbContext context)
+        public OutputCalculator(/*TakagiSugenoDbContext context,*/ IRepository<InputOutput> ioRepository, IRepository<Rule> rulesReposistory, 
+            IRepository<Variable> variablesRepository, IRepository<TSSystem> systemsRepository)
         {
-            _context = context;
+            //_context = context;
+            _ioRepository = ioRepository;
+            _rulesReposistory = rulesReposistory;
+            _variablesRepository = variablesRepository;
+            _systemsRepostiory = systemsRepository;
         }
         public OutputCalcResults CalcOutputsValues(OutputCalcData data)
         {
-            Dictionary<int, double> res = new Dictionary<int, double>();
             int systemId = data.SystemId;
             _inputValues = data.InputsValues;
 
-            var methods = _context.Systems.Where(s => s.TSSystemId == systemId)
-                .Select(s => new { And = s.AndMethod, Or = s.OrMethod }).FirstOrDefault();
-            AndMethod = methods.And;
-            OrMethod = methods.Or;
-
-            _inputVariablesWrappers = _context
-                .Variables
-                .Include(v => v.InputOutput)
-                .Where(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Input)
-                .ToList()
-                .Select(v => new InputVariableWrapper(v))
-                .ToList();
-
-            _outputVariablesWrappers = _context
-                .Variables
-                .Where(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Output)
-                .Select(v => OutputVariableFactory.CreateOutputVariableWrapper(v))
-                .ToList();
-
-            _ruleWrappers = _context
-                .Rules
-                .Include(r => r.RuleElements)
-                    .ThenInclude(e => e.Variable)
-                    .ThenInclude(e => e.InputOutput)
-                .Where(r => r.TSSystemId == systemId)
-                .Select(r => new RuleWrapper()
-                {
-                    Rule = r,
-                    MembershipDegrees = CalcRuleMembershipDegrees(r)
-                    //CalculatedValue = PerformRuleOperation(this)
-                })
-                .ToList();
+            ReadAndOrMethods(systemId);
+            ReadInputVariables(systemId);
+            ReadOutputVariables(systemId);
+            ReadRules(systemId);
 
             PerformRulesOperations();
             InitLog();
 
-            foreach (var output in _context.InputsOutputs.Where(o => o.TSSystemId == systemId && o.Type == IOType.Output))
-            {
-                res.Add(output.InputOutputId, Math.Round(CalcOutputsValue(output),3));
-            }
-        
+            Dictionary<int, double> outputsValues = CalcOutputsValues(systemId);
             string log = CreateLog();
-            
-            return new OutputCalcResults {CalculatedValues = res, InfoLog = log };
+
+            return new OutputCalcResults {CalculatedValues = outputsValues, InfoLog = log };
         }
 
-        private double CalcOutputsValue(InputOutput output)
+        private Dictionary<int, double> CalcOutputsValues(int systemId)
         {
-            double temp1 = 0;
-            double temp2 = 0;
+            Dictionary<int, double> outputsValues = new Dictionary<int, double>();
+            foreach (var output in _ioRepository.GetBySystemId(systemId).Where(o => o.Type == IOType.Output))
+            {
+                outputsValues.Add(output.InputOutputId, Math.Round(CalcOutputValue(output), 3));
+            }
+            return outputsValues;
+        }
+
+        private double CalcOutputValue(InputOutput output)
+        {
+            double nominator = 0;
+            double denominator = 0;
             foreach(RuleWrapper rule in _ruleWrappers)
             {
                 RuleElement elem = rule.Rule.RuleElements.FirstOrDefault(e => e.InputOutputId == output.InputOutputId);
                 if (elem != null && elem.VariableId != null)
                 {
-                    double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).GetValue(_inputValues);
-                    temp1 += (rule.CalculatedValue * variableValue);
-                    temp2 += rule.CalculatedValue;
-                    rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {Math.Round(temp1, 3)}{Environment.NewLine}";
+                    double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).Function.GetValue(_inputValues);
+                    nominator += (rule.CalculatedValue * variableValue);
+                    denominator += rule.CalculatedValue;
+                    rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {Math.Round(nominator, 3)}{Environment.NewLine}";
                 }                
             }
-            AppendOutputLog(temp1, temp2, output.Name);
-            return temp2 != 0 ? temp1/temp2 : 0;
+            AppendOutputLog(nominator, denominator, output.Name);
+            return denominator != 0 ? nominator/denominator : 0;
         }
 
         private void PerformRulesOperations()
         {
             foreach(RuleWrapper val in _ruleWrappers)
             {
-                val.CalculatedValue = PerformRuleOperation(val);
+                val.CalculatedValue = PerformRuleOperations(val);
             }
         }
 
-        private double PerformRuleOperation(RuleWrapper rule)
+        private double PerformRuleOperations(RuleWrapper rule)
         {
             if (rule.MembershipDegrees.Count == 1)
             {
@@ -136,7 +119,7 @@ namespace TakagiSugeno.Model
 
         private double PerfromAndOpeation(double res, double val)
         {
-            switch(this.AndMethod)
+            switch(this.andMethod)
             {
                 case AndMethod.Product: return res * val;
                 case AndMethod.Min: return Math.Min(res, val);
@@ -146,7 +129,7 @@ namespace TakagiSugeno.Model
 
         private double PerfromOrOpeation(double res, double val)
         {
-            switch(this.OrMethod)
+            switch(this.orMethod)
             {
                 case OrMethod.Max: return Math.Max(res, val);
                 case OrMethod.Sum: return res + val - res * val;
@@ -154,13 +137,13 @@ namespace TakagiSugeno.Model
             return res;
         }
 
-        public List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule) //TODO not-set variable (done?)
+        private List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule)
         {
             List<MembershipDegree> degrees = new List<MembershipDegree>();
             foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart))
             {
                 InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
-                if(variable != null)
+                if (variable != null)
                 {
                     double inputValue = _inputValues[variable.InputName];
                     double membership = variable.MembershipFunction.CalcMembership(inputValue);
@@ -173,6 +156,43 @@ namespace TakagiSugeno.Model
             }
             return degrees;
         }
+
+
+        private void ReadAndOrMethods(int systemId)
+        {
+            var methods = _systemsRepostiory.GetBySystemId(systemId)
+                .Select(s => new { And = s.AndMethod, Or = s.OrMethod }).FirstOrDefault();
+            andMethod = methods.And;
+            orMethod = methods.Or;
+        }
+
+        private void ReadInputVariables(int systemId)
+        {
+            _inputVariablesWrappers = _variablesRepository
+                .Get(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Input)
+                .Select(v => new InputVariableWrapper(v))
+                .ToList();
+        }
+
+        private void ReadOutputVariables(int systemId)
+        {
+            _outputVariablesWrappers = _variablesRepository
+               .Get(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Output)
+               .Select(v => new OutputVariableWrapper(v))
+               .ToList();
+        }
+
+        private void ReadRules(int systemId)
+        {
+            _ruleWrappers = _rulesReposistory
+                .GetBySystemId(systemId)
+                .Select(r => new RuleWrapper()
+                {
+                    Rule = r,
+                    MembershipDegrees = CalcRuleMembershipDegrees(r)
+                }).ToList();
+        }
+
 
         private void InitLog()
         {

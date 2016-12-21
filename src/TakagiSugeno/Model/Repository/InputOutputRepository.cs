@@ -42,17 +42,19 @@ namespace TakagiSugeno.Model.Repository
 
         public InputOutput GetById(int id)
         {
-            return _context.InputsOutputs.Include(io => io.Variables).FirstOrDefault(io => io.InputOutputId == id);
+            return _context.InputsOutputs.Include(io => io.Variables)
+                .FirstOrDefault(io => io.InputOutputId == id);
         }
 
         public IEnumerable<InputOutput> GetBySystemId(int systemId)
         {
-            return _context.InputsOutputs.Include(io => io.Variables).Where(io => io.TSSystemId == systemId);
+            return _context.InputsOutputs.Include(io => io.Variables)
+                .Where(io => io.TSSystemId == systemId);
         }
 
         public void Update(InputOutput entity)
         {
-            _context.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Entry(entity).State = EntityState.Modified;
             _context.SaveChanges();
         }
     }

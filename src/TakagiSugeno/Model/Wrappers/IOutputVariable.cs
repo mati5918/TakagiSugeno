@@ -6,9 +6,8 @@ using TakagiSugeno.Model.Entity;
 
 namespace TakagiSugeno.Model.Wrappers
 {
-    public interface IOutputVariable
+    public interface IOutputVariableFunction
     {
         double GetValue(Dictionary<string, double> inputs = null);
-        Variable Variable { get; }
     }
 }

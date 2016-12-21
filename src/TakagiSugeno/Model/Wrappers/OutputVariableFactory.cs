@@ -8,7 +8,7 @@ namespace TakagiSugeno.Model.Wrappers
 {
     public static class OutputVariableFactory
     {
-        public static IOutputVariable CreateOutputVariableWrapper(Variable variable)
+        public static IOutputVariableFunction CreateOutputVariableFunction(Variable variable)
         {
             switch(variable.Type)
             {

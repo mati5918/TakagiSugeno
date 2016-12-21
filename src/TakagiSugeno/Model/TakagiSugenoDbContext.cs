@@ -9,7 +9,8 @@ namespace TakagiSugeno.Model
 {
     public class TakagiSugenoDbContext : DbContext
     {
-        public TakagiSugenoDbContext(DbContextOptions<TakagiSugenoDbContext> options) : base(options)
+        public TakagiSugenoDbContext(DbContextOptions<TakagiSugenoDbContext> options) 
+            : base(options)
         {
         }
 
