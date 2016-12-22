@@ -51,7 +51,8 @@ namespace TakagiSugeno.Model
             Dictionary<int, double> outputsValues = CalcOutputsValues(systemId);
             string log = CreateLog();
 
-            return new OutputCalcResults {CalculatedValues = outputsValues, InfoLog = log };
+            return new OutputCalcResults {CalculatedValues = outputsValues,
+                InfoLog = log };
         }
 
         private Dictionary<int, double> CalcOutputsValues(int systemId)
@@ -70,10 +71,13 @@ namespace TakagiSugeno.Model
             double denominator = 0;
             foreach(RuleWrapper rule in _ruleWrappers)
             {
-                RuleElement elem = rule.Rule.RuleElements.FirstOrDefault(e => e.InputOutputId == output.InputOutputId);
+                RuleElement elem = rule.Rule.RuleElements
+                    .FirstOrDefault(e => e.InputOutputId == output.InputOutputId);
                 if (elem != null && elem.VariableId != null)
                 {
-                    double variableValue = _outputVariablesWrappers.FirstOrDefault(v => v.Variable.VariableId == elem.VariableId).Function.GetValue(_inputValues);
+                    double variableValue = _outputVariablesWrappers
+                        .FirstOrDefault(v => v.Variable.VariableId == elem.VariableId)
+                        .Function.GetValue(_inputValues);
                     nominator += (rule.CalculatedValue * variableValue);
                     denominator += rule.CalculatedValue;
                     rule.RuleLog += $"{rule.LogPrefix} * {elem.Variable.Name} = {Math.Round(nominator, 3)}{Environment.NewLine}";
@@ -169,7 +173,8 @@ namespace TakagiSugeno.Model
         private void ReadInputVariables(int systemId)
         {
             _inputVariablesWrappers = _variablesRepository
-                .Get(v => v.InputOutput.TSSystemId == systemId && v.InputOutput.Type == IOType.Input)
+                .Get(v => v.InputOutput.TSSystemId == systemId 
+                        && v.InputOutput.Type == IOType.Input)
                 .Select(v => new InputVariableWrapper(v))
                 .ToList();
         }

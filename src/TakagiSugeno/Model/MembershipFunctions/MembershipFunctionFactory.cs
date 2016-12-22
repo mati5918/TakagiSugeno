@@ -7,13 +7,17 @@ namespace TakagiSugeno.Model.MembershipFunctions
 {
     public class MembershipFunctionFactory
     {
-        public static IMembershipFunction CreateMembershipFunction(VariableType type, string jsonData)
+        public static IMembershipFunction CreateMembershipFunction(VariableType type,
+            string jsonData)
         {
             switch(type)
             {
-                case VariableType.Triangle: return new TriangularMembershipFunction(jsonData);
-                case VariableType.Trapeze: return new TrapezoidalMembershipFunction(jsonData);
-                case VariableType.Gaussian: return new GaussianMembershipFunction(jsonData);
+                case VariableType.Triangle:
+                    return new TriangularMembershipFunction(jsonData);
+                case VariableType.Trapeze:
+                    return new TrapezoidalMembershipFunction(jsonData);
+                case VariableType.Gaussian:
+                    return new GaussianMembershipFunction(jsonData);
             }
             return null;
         }
