@@ -91,6 +91,7 @@ namespace TakagiSugeno.Model
         {
             foreach(RuleWrapper val in _ruleWrappers)
             {
+                val.MembershipDegrees = CalcRuleMembershipDegrees(val.Rule);
                 val.CalculatedValue = PerformRuleOperations(val);
             }
         }
@@ -109,7 +110,8 @@ namespace TakagiSugeno.Model
                 {
                     if(operation == RuleNextOperation.And)
                     {
-                        res = PerfromAndOpeation(res, rule.MembershipDegrees[i].Value);
+                        res = PerfromAndOpeation(res,
+                            rule.MembershipDegrees[i].Value);
                     }
                     else if(operation == RuleNextOperation.Or)
                     {
@@ -144,13 +146,17 @@ namespace TakagiSugeno.Model
         private List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule)
         {
             List<MembershipDegree> degrees = new List<MembershipDegree>();
-            foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart))
+            foreach (RuleElement elem in rule.RuleElements
+                .Where(e => e.Type == RuleElementType.InputPart))
             {
-                InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
+                InputVariableWrapper variable = _inputVariablesWrappers
+                    .FirstOrDefault(v => v.InputId == elem.InputOutputId 
+                                    && v.VariableId == elem.VariableId);
                 if (variable != null)
                 {
                     double inputValue = _inputValues[variable.InputName];
-                    double membership = variable.MembershipFunction.CalcMembership(inputValue);
+                    double membership = variable.MembershipFunction
+                        .CalcMembership(inputValue);
                     degrees.Add(new MembershipDegree
                     {
                         Value = elem.IsNegation ? 1 - membership : membership,
@@ -194,7 +200,7 @@ namespace TakagiSugeno.Model
                 .Select(r => new RuleWrapper()
                 {
                     Rule = r,
-                    MembershipDegrees = CalcRuleMembershipDegrees(r)
+                    //MembershipDegrees = CalcRuleMembershipDegrees(r)
                 }).ToList();
         }
 

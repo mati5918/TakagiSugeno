@@ -54,7 +54,8 @@ namespace TakagiSugeno.Controllers
         public IActionResult SaveToFile(int systemId)
         {
             string systemJson = _service.SystemToJson(systemId);
-            return File(Encoding.UTF8.GetBytes(systemJson), "application/json", "TakagiSugenoSystem.json");
+            return File(Encoding.UTF8.GetBytes(systemJson),
+                "application/json", "TakagiSugenoSystem.json");
         }
 
         [HttpPost]
