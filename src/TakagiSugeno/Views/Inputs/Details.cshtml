@@ -157,12 +157,22 @@
         axisY: {
             minimum: 0,
             maximum: 1.05,
+            labelAutoFit: true,
             //labelAngle: -30
         },
         height: 400,
         data: [],
     });
     $(document).ready(function () {
+        var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
+        var addPadding = leftMargin < 250
+        if (addPadding) {
+            //$(".body-content").css("padding-left", 260 + "px");
+            //$(".body-content").css("margin-left", 0 + "px");
+
+        }
+
+
         chart.options.axisX.minimum = $("#RangeStart").val();
         chart.options.axisX.maximum = $("#RangeEnd").val();
         createCharts(chart);
@@ -171,13 +181,7 @@
             setReadOnly();
         }
         selectInput($("#InputId").val());
-        var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
-        var addPadding = leftMargin < 250
-        if (addPadding) {
-            $(".body-content").css("padding-left", 260 + "px");
-            $(".body-content").css("margin-left", 0 + "px");
 
-        }
     });
 
 

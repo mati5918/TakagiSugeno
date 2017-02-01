@@ -77,12 +77,22 @@ textarea {
   background-image: none; 
 }
 
+@media (max-width: 1400px) {
 .navbar-fixed-left + .container {
   position: center;
-
+  padding-left: 250px;
   padding-right: 0px;
-  /*margin-left: 20px;
-  margin-right: 0px;*/
+  margin-left: 20px;
+  margin-right: 0px;
+}
+}
+
+.navbar-fixed-left + .container {
+  position: center;
+  padding-left: 250px;
+  padding-right: 0px;
+  margin-left: 20px;
+  margin-right: 0px;
 }
 
 .variable-row{
