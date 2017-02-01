@@ -104,7 +104,9 @@ namespace TakagiSugeno.Model.Services
                 {
                     Name = io.Name,
                     Type = io.Type,
-                    TSSystemId = newSystem.TSSystemId
+                    TSSystemId = newSystem.TSSystemId,
+                    RangeStart = io.RangeStart,
+                    RangeEnd = io.RangeEnd
                 };
                 _context.InputsOutputs.Add(newIo);
                 _context.SaveChanges();

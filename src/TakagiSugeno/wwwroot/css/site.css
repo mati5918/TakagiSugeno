@@ -79,7 +79,7 @@ textarea {
 
 .navbar-fixed-left + .container {
   position: center;
-  padding-left: 255px;
+
   padding-right: 0px;
   /*margin-left: 20px;
   margin-right: 0px;*/
@@ -199,7 +199,7 @@ textarea {
 .table-body
 {
     height: auto;
-    max-height: 700px; /*TODO*/
+    max-height: 500px; /*TODO*/
     overflow: auto;
 }
 
@@ -218,7 +218,7 @@ textarea {
 
 .io-overview .io-overview-body {
     position: relative;
-    height: 520px;
+    height: 520px; /*520*/
     overflow-y: scroll;
 }
 

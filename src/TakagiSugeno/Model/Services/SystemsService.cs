@@ -40,7 +40,7 @@ namespace TakagiSugeno.Model.Services
         public List<SystemVM> GetSystems()
         {
             //TODO where IsPublished
-            return _repository.GetAll().Where(s => s.PublishedDate.Month == 12).Select(s => new SystemVM
+            return _repository.GetAll().Where(s => s.IsPublished).Select(s => new SystemVM
             {
                 CreatedBy = s.CreatedBy,
                 CreatedDate = s.CreatedDate,

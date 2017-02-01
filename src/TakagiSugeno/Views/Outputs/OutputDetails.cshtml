@@ -101,8 +101,14 @@
             setReadOnly();
         }
         selectOutput($("#OutputId").val());
+
         var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
-        $(".body-content").css("margin-left", leftMargin - 235 + "px");
+        var addPadding = leftMargin < 250
+        if (addPadding) {
+            $(".body-content").css("padding-left", 260 + "px");
+            $(".body-content").css("margin-left", 0 + "px");
+
+        }
         
         $(".variables-list").on("click", ".variable-row", function () {
             var clickedId = $(this).attr("id");

@@ -32,7 +32,7 @@ namespace TakagiSugeno.Model.Wrappers
         public string RuleInfo()
         {
             StringBuilder info = new StringBuilder("If ");
-            foreach(RuleElement elem in Rule.RuleElements)
+            foreach(RuleElement elem in Rule.RuleElements.OrderBy(r => r.RuleElementId))
             {             
                 string nextOperation = elem.NextOpartion != RuleNextOperation.None ? elem.NextOpartion.ToString().ToLower() + " " : "then ";
                 string negation = elem.IsNegation ? " not" : string.Empty;

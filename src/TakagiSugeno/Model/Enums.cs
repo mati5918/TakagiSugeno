@@ -28,7 +28,7 @@ namespace TakagiSugeno.Model
 
     public enum AndMethod
     {
-        [Display(Name = "Produkt algebraiczny")]
+        [Display(Name = "Iloczyn algebraiczny")]
         Product,
         [Display(Name = "Minimum")]
         Min 

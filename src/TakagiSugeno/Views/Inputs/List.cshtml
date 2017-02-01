@@ -3,22 +3,26 @@
 @{
 }
 <div>
-<ul class="inputs-list" id='@ViewBag.Title' data-id='@Model.FirstOrDefault()?.SystemId'>
+<ul class="inputs-list" id='@ViewBag.Title' 
+    data-id='@Model.FirstOrDefault()?.SystemId'>
     @foreach (var item in Model)
     {
         <li class="input-element" id="Input-@item.InputId">
             <p hidden>@item.InputId</p>
-            <div class="panel panel-default" data-range-start=@item.RangeStart data-range-end="@item.RangeEnd">
+            <div class="panel panel-default" data-range-start=@item.RangeStart
+                  data-range-end="@item.RangeEnd">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-remove pull-right remove-input"></span>
+                    <span class="glyphicon glyphicon-remove 
+                          pull-right remove-input"></span>
                     <b>@item.Name</b>
                     @foreach (var variable in item.Variables)
                     {
-                        <div class="json-data" hidden data-chartJson='@variable.JsonData' data-type=@variable.Type></div>
+                        <div class="json-data" 
+                             hidden data-chartJson='@variable.JsonData' 
+                             data-type=@variable.Type></div>
                     }
                 </div>
-                <div class="panel-body" id="@item.InputId">
-                    
+                <div class="panel-body" id="@item.InputId">                  
                 </div>
             </div>
         </li>

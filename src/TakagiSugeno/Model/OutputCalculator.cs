@@ -144,7 +144,7 @@ namespace TakagiSugeno.Model
         private List<MembershipDegree> CalcRuleMembershipDegrees(Rule rule)
         {
             List<MembershipDegree> degrees = new List<MembershipDegree>();
-            foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart))
+            foreach (RuleElement elem in rule.RuleElements.Where(e => e.Type == RuleElementType.InputPart).OrderBy(r => r.RuleElementId))
             {
                 InputVariableWrapper variable = _inputVariablesWrappers.FirstOrDefault(v => v.InputId == elem.InputOutputId && v.VariableId == elem.VariableId);
                 if (variable != null)

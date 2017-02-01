@@ -159,7 +159,7 @@
             maximum: 1.05,
             //labelAngle: -30
         },
-        
+        height: 400,
         data: [],
     });
     $(document).ready(function () {
@@ -172,7 +172,12 @@
         }
         selectInput($("#InputId").val());
         var leftMargin = $(".navbar-fixed-top .container").css("margin-left").replace("px", "");
-        $(".body-content").css("margin-left", leftMargin-235 + "px");
+        var addPadding = leftMargin < 250
+        if (addPadding) {
+            $(".body-content").css("padding-left", 260 + "px");
+            $(".body-content").css("margin-left", 0 + "px");
+
+        }
     });
 
 
